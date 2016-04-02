@@ -1,0 +1,37 @@
+﻿@model IEnumerable<SoftwareCelta.Models.user>
+@{
+    ViewBag.Title = "Contact";
+}
+<h2>@ViewBag.Title.</h2>
+<h3>@ViewBag.Message</h3>
+<div class="table-responsive">
+    <table class="table">
+        <tr>
+            <th>
+                ID
+            </th>
+            <th>
+                NOMBRE
+            </th>
+            <th>
+                Apellido
+            </th>                        
+        </tr>        
+        @foreach (var item in Model)
+        {
+            <tr>
+                
+                <td>
+                    @Html.DisplayFor(modelItem => item.userID)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.nombre)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.apellido)
+                </td>               
+            </tr>
+        }
+
+    </table>
+</div>
