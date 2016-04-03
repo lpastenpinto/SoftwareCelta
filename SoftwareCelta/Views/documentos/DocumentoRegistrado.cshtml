@@ -1,0 +1,89 @@
+﻿@model SoftwareCelta.Models.documento
+@{
+    ViewBag.Title = "Documento Registrado";
+    int contadorProductos = 1;
+    string despacho = "despacho";
+    SoftwareCelta.DAL.ContextBDCelta db = new SoftwareCelta.DAL.ContextBDCelta();
+    SoftwareCelta.Models.datosEnvio datosEnvio = (SoftwareCelta.Models.datosEnvio)ViewData["datosEnvio"];
+}
+
+<h2>Documento @Model.numeroDocumento</h2>
+<br />
+@Model.fechaEmisionDocumento
+<br />
+<div class="row">
+    <div class="col-md-12">
+        <label>Direccion</label>
+        <br />
+        <textarea style="max-width: 100% !important; width:100%;" class="form-control" name="direccion">@datosEnvio.direccion</textarea>
+    </div>
+    <div class="col-md-12">
+        <label>Referencia</label>
+        <br />
+        <textarea style="max-width: 100% !important; width:100%;" class="form-control" name="referencia">@datosEnvio.referencia</textarea>
+    </div>
+</div>
+<br />
+    <div class="table-responsive">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>
+                        Codigo Producto
+                    </th>
+                    <th>
+                        Descripcion Producto
+                    </th>
+                    <th>
+                        Cantidad Producto
+                    </th>
+                    <th>
+                        Area Interna /Bodega
+                    </th>
+                    <th>Entrega</th>                    
+                </tr>
+            </thead>
+            <tbody>
+
+                @foreach (SoftwareCelta.Models.detalleDocumento detalle in (List<SoftwareCelta.Models.detalleDocumento>)ViewData["detalleDocumento"])
+                {
+                    string nameDespacho = despacho + contadorProductos;
+                    <tr>
+                        <td>
+                            @detalle.codigoProducto
+                        </td>
+                        <td>
+                            @detalle.descripcionProducto
+                        </td>
+                        <td>
+                            @detalle.cantidadProducto
+                        </td>
+                        <td>                                                            
+                            @{                                
+                                string nombreBodega = db.Bodegas.Find(@detalle.bodegaID).nombre;                                        
+                            }
+                            @nombreBodega
+                        </td>
+                        <td>
+                            @if (@detalle.despachoProducto.Equals(0)) { 
+                                <text>
+                                    Entrega Inmediata
+                                </text>
+                            }else if(@detalle.despachoProducto.Equals(1)){
+                                <text>
+                                    Despacho Domicilio
+                                </text>
+                            }                            
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+        <br />        
+    </div>
+
+
+
+
+
+

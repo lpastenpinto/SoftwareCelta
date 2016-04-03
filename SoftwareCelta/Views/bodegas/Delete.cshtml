@@ -1,0 +1,32 @@
+﻿@model SoftwareCelta.Models.bodega
+
+@{
+    ViewBag.Title = "Eliminar";
+}
+
+<h2>Eliminar</h2>
+
+<h3>¿Esta seguro que quiere eliminar esta bodega?</h3>
+<div>
+    <h4>Bodega</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            Nombre
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.nombre)
+        </dd>
+
+    </dl>
+
+    @using (Html.BeginForm()) {
+        @Html.AntiForgeryToken()
+
+        <div class="form-actions no-color">
+            <input type="submit" value="Eliminar" class="btn btn-primary" /> <br /><br />
+            @Html.ActionLink("Volver a la Lista", "Index")
+        </div>
+    }
+</div>

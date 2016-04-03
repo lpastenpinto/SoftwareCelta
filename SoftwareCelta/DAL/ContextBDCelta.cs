@@ -16,6 +16,7 @@ namespace SoftwareCelta.DAL
         }
 
         public DbSet<user> Users { set; get; }
+        public DbSet<bodega> Bodegas { set; get; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {

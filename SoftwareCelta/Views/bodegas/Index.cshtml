@@ -1,0 +1,35 @@
+﻿@model IEnumerable<SoftwareCelta.Models.bodega>
+
+@{
+    ViewBag.Title = "Bodegas";
+}
+
+<h2>Bodegas</h2>
+
+<p>
+    @Html.ActionLink("Crear Nueva", "Create",null,null, new { @class = "btn btn-primary" })
+</p>
+<div class="table-responsive">
+<table class="table">
+    <tr>
+        <th>
+            Nombre Bodega
+        </th>
+        <th></th>
+    </tr>
+
+@foreach (var item in Model) {
+    <tr>
+        <td>
+            @Html.DisplayFor(modelItem => item.nombre)
+        </td>
+        <td>
+            @Html.ActionLink("Editar", "Edit", new { id=item.bodegaID }) |
+            @Html.ActionLink("Mostrar", "Details", new { id=item.bodegaID }) |
+            @Html.ActionLink("Eliminar", "Delete", new { id=item.bodegaID })
+        </td>
+    </tr>
+}
+
+</table>
+</div>

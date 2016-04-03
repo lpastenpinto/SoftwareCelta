@@ -117,6 +117,8 @@
     <Compile Include="App_Start\BundleConfig.cs" />
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
+    <Compile Include="Controllers\bodegasController.cs" />
+    <Compile Include="Controllers\documentosController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\UsersController.cs" />
     <Compile Include="DAL\ContextBDCelta.cs" />
@@ -124,6 +126,10 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Models\bodega.cs" />
+    <Compile Include="Models\datosEnvio.cs" />
+    <Compile Include="Models\detalleDocumento.cs" />
+    <Compile Include="Models\documento.cs" />
     <Compile Include="Models\user.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -133,7 +139,7 @@
     <Content Include="favicon.ico" />
     <Content Include="Global.asax" />
     <Content Include="Content\Site.css" />
-    <Content Include="Images\logo.png" />
+    <Content Include="Views\documentos\Images\logo.png" />
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
@@ -166,6 +172,15 @@
     <Content Include="Views\Home\Index.cshtml" />
     <Content Include="Scripts\jquery-1.10.2.min.map" />
     <Content Include="Views\Users\Login.cshtml" />
+    <Content Include="Views\bodegas\Create.cshtml" />
+    <Content Include="Views\bodegas\Delete.cshtml" />
+    <Content Include="Views\bodegas\Details.cshtml" />
+    <Content Include="Views\bodegas\Edit.cshtml" />
+    <Content Include="Views\bodegas\Index.cshtml" />
+    <Content Include="Views\documentos\Index.cshtml" />
+    <Content Include="Views\documentos\Documento.cshtml" />
+    <Content Include="Views\documentos\DocumentoRegistrado.cshtml" />
+    <Content Include="Views\documentos\Editar.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

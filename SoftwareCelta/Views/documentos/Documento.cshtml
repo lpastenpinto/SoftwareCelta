@@ -1,0 +1,90 @@
+﻿@model SoftwareCelta.Models.documento
+@{
+    ViewBag.Title = "Documento";
+    int contadorProductos = 1;
+    string despacho = "despacho";    
+}
+
+<h2>Documento @Model.numeroDocumento</h2>
+<br />
+
+<div class="row">
+    <div class="col-md-12">
+        <label>Direccion</label>
+        <br />
+        <textarea style="max-width: 100% !important; width:100%;" class="form-control" name="direccion"></textarea>        
+    </div>
+    <div class="col-md-12">
+        <label>Referencia</label>
+        <br />
+        <textarea style="max-width: 100% !important; width:100%;" class="form-control" name="referencia"></textarea>
+    </div>
+</div>
+<br />
+<br />
+<form role="form" method="post" action="@Url.Action("registrarNuevoDocumento", "documentos" )">
+    <div class="table-responsive">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>
+                        Codigo Producto
+                    </th>
+                    <th>
+                        Descripcion Producto
+                    </th>
+                    <th>
+                        Cantidad Producto
+                    </th>
+                    <th>
+                        Area Interna /Bodega
+                    </th>
+                    <th>Entrega Inmediata</th>
+                    <th>Despacho a Domicilio</th>
+                </tr>
+            </thead>
+            <tbody>
+
+                @foreach (SoftwareCelta.Models.detalleDocumento detalle in (List<SoftwareCelta.Models.detalleDocumento>)ViewData["detalleDocumento"])
+                {
+                    string nameDespacho = despacho + contadorProductos;
+                    <tr>
+                        <td>
+                            @detalle.codigoProducto
+                        </td>
+                        <td>
+                            @detalle.descripcionProducto
+                        </td>
+                        <td>
+                            @detalle.cantidadProducto
+                        </td>
+                        <td>
+                            <select class="form-control" name="bodega">
+                                @foreach (SoftwareCelta.Models.bodega bodega in (List<SoftwareCelta.Models.bodega>)ViewData["bodegas"]) { 
+                                    <option value="@bodega.bodegaID">@bodega.nombre</option>
+                                }
+                            </select>
+                        </td>
+                        <td>
+                            
+                            <input type="radio" name="@nameDespacho" value="0" checked>
+                        </td>
+                        <td>
+                            <input type="radio" name="@nameDespacho" value="1">
+                        </td>
+                    </tr>
+                    contadorProductos++;
+                }                
+            </tbody>
+        </table>
+        <br />
+        <div class="clearfix"></div>
+        <div class="modal-footer">
+            <input type="submit" value="Guardar" class="btn btn-success btn-lg btn-default" />
+        </div>
+    </div>
+</form>
+<br />
+
+
+
