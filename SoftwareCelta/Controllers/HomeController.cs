@@ -4,6 +4,8 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using SoftwareCelta.DAL;
+using SoftwareCelta.Models;
+
 namespace SoftwareCelta.Controllers
 {
     public class HomeController : Controller
@@ -11,13 +13,33 @@ namespace SoftwareCelta.Controllers
         private ContextBDCelta db = new ContextBDCelta();
         public ActionResult Index()
         {
-            return View();
+            if (Session["userID"] == null)
+            {                
+                return RedirectToAction("Login", "Users");
+            }
+            else {
+                return View();
+            }
+
+            /*List<int> listaPermiso = new List<int>();
+            listaPermiso.Add(10);
+            listaPermiso.Add(8);
+            Session["permisosUser"] = listaPermiso;
+            */
+            //return View();
         }
 
         public ActionResult About()
         {
-                  
-            ViewBag.Message = "Your application description page.";
+            List<int> lista = (List<int>)Session["permisosUser"];
+            if (lista.Contains(1))
+            {
+                ViewBag.Message = "Your application description page.";
+            }
+            else {
+                ViewBag.Message = "NO LO TIENE";
+            }
+            
 
             return View();
         }

@@ -120,6 +120,7 @@
     <Compile Include="Controllers\bodegasController.cs" />
     <Compile Include="Controllers\documentosController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
+    <Compile Include="Controllers\listadoDespachoController.cs" />
     <Compile Include="Controllers\UsersController.cs" />
     <Compile Include="DAL\ContextBDCelta.cs" />
     <Compile Include="DAL\ContextBDSoftland.cs" />
@@ -128,21 +129,30 @@
     </Compile>
     <Compile Include="Models\bodega.cs" />
     <Compile Include="Models\datosEnvio.cs" />
+    <Compile Include="Models\datosTransporte.cs" />
     <Compile Include="Models\detalleDocumento.cs" />
     <Compile Include="Models\documento.cs" />
+    <Compile Include="Models\encriptacion.cs" />
+    <Compile Include="Models\roles.cs" />
     <Compile Include="Models\user.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Content\bootstrap-datetimepicker.css" />
     <Content Include="Content\bootstrap.css" />
     <Content Include="Content\bootstrap.min.css" />
     <Content Include="favicon.ico" />
     <Content Include="Global.asax" />
     <Content Include="Content\Site.css" />
-    <Content Include="Views\documentos\Images\logo.png" />
+    <Content Include="Images\logo.png" />
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
+    <Content Include="Scripts\datetimepicker\desktop.ini" />
+    <None Include="Properties\PublishProfiles\celtprueba - FTP.pubxml" />
+    <None Include="Properties\PublishProfiles\celtprueba - Web Deploy.pubxml" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
+    <Content Include="Scripts\datetimepicker\bootstrap-datetimepicker.js" />
+    <Content Include="Scripts\datetimepicker\moment.js" />
     <Content Include="Scripts\jquery-1.10.2.js" />
     <Content Include="Scripts\jquery-1.10.2.min.js" />
     <None Include="Scripts\jquery.validate-vsdoc.js" />
@@ -181,6 +191,14 @@
     <Content Include="Views\documentos\Documento.cshtml" />
     <Content Include="Views\documentos\DocumentoRegistrado.cshtml" />
     <Content Include="Views\documentos\Editar.cshtml" />
+    <Content Include="Views\listadoDespacho\porDespachar.cshtml" />
+    <Content Include="Views\listadoDespacho\Despachar.cshtml" />
+    <Content Include="Views\documentos\Buscador.cshtml" />
+    <Content Include="Views\listadoDespacho\Despachados.cshtml" />
+    <Content Include="Views\listadoDespacho\noDespachados.cshtml" />
+    <Content Include="Views\Users\Create.cshtml" />
+    <Content Include="Views\Users\Index.cshtml" />
+    <Content Include="Views\Users\AsignarPermisos.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

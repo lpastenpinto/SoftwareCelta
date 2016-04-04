@@ -6,6 +6,12 @@
     <title>Celta Software</title>
     @Styles.Render("~/Content/css")
     @Scripts.Render("~/bundles/modernizr")
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/bootstrap")
+    @RenderSection("scripts", required: false)
+    <link href="//cdnjs.cloudflare.com/ajax/libs/select2/4.0.0/css/select2.min.css" rel="stylesheet" />
+    <script src="//cdnjs.cloudflare.com/ajax/libs/select2/4.0.0/js/select2.min.js"></script>
+    <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular.min.js"></script>
 </head>
 <body>
     <div class="navbar navbar-inverse navbar-fixed-top">
@@ -23,9 +29,29 @@
             {
                 <div class="navbar-collapse collapse">
                     <ul class="nav navbar-nav">
-                        <li>@Html.ActionLink("Home", "Index", "Home")</li>
-                        <li>@Html.ActionLink("About", "About", "Home")</li>
-                        <li>@Html.ActionLink("Contact", "Contact", "Home")</li>
+                        <li class="dropdown">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                                Documentos<b class="caret"></b>
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li>@Html.ActionLink("Ingresar Documento/Boleta", "Index", "documentos")</li>
+                                <li>@Html.ActionLink("Buscar Documento/Boleta", "Buscador", "documentos")</li>
+                                <li class="divider"></li>                                
+                            </ul>
+                        </li>
+                        <li class="dropdown">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                                Despacho<b class="caret"></b>
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li>@Html.ActionLink("Despachados", "Despachados", "listadoDespacho")</li>
+                                <li>@Html.ActionLink("No Despachados", "noDespachados", "listadoDespacho")</li>                                
+                                <li>@Html.ActionLink("Por Despachar", "porDespachar", "listadoDespacho")</li>
+                                <li class="divider"></li>                               
+                            </ul>
+                        </li>
+                        <li>@Html.ActionLink("Bodegas/Areas Internas", "Index", "bodegas") </li>
+                        <li>@Html.ActionLink("Usuarios", "Index", "Users")</li>
                     </ul>
                     <ul class="nav navbar-nav navbar-right">
                         <li><a href="@Url.Action("Logout", "Users")">Cerrar Sesión</a></li>
@@ -45,8 +71,6 @@
         </div>
     </div>
 
-    @Scripts.Render("~/bundles/jquery")
-    @Scripts.Render("~/bundles/bootstrap")
-    @RenderSection("scripts", required: false)
+    
 </body>
 </html>

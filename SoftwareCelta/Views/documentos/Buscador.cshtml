@@ -1,0 +1,96 @@
+﻿@model IEnumerable<SoftwareCelta.Models.documento>
+@{
+    ViewBag.Title = "Buscar Documento";
+    string fechaInicial = "", fechaFinal = "";
+    DateTime fecha1 = (DateTime)ViewBag.fechaInicial, fecha2 = (DateTime)ViewBag.fechaFinal;
+    fechaInicial = fecha1.Day + "/" + fecha1.Month + "/" + fecha1.Year;
+    fechaFinal = fecha2.Day + "/" + fecha2.Month + "/" + fecha2.Year;
+
+}
+<br /><br /><br />
+<div class="row">
+        <div class="col-md-12">
+            <h4>Filtros:</h4>
+        </div>
+        <div class="col-md-3">
+            <label class="control-label">Inicio:</label>
+            <input class="form-control fecha" id="fechaInicial" name="fechaInicial" data-val-date="Ingrese por favor una fecha." data-val-required="El campo fecha es obligatorio."
+               data-date-format="DD/MM/YYYY" pattern="[0-9][0-9]/[0-9][0-9]/[0-9][0-9][0-9][0-9]"
+               type="text" value="@fechaInicial">
+
+        </div>
+        <div class="col-md-3">
+            <label class="control-label">Término:</label>
+            <input class="form-control fecha" id="fechaFinal" name="fechaFinal" data-val-date="Ingrese por favor una fecha." data-val-required="El campo fecha es obligatorio."
+               data-date-format="DD/MM/YYYY" pattern="[0-9][0-9]/[0-9][0-9]/[0-9][0-9][0-9][0-9]"
+               type="text" value="@fechaFinal">
+        </div>
+        <div class="col-md-4">
+            <label class="control-label">Area/Bodega</label>
+            <select class="form-control" name="bodega">
+                <option value="todos">TODOS</option>
+                @foreach (SoftwareCelta.Models.bodega bodega in (List<SoftwareCelta.Models.bodega>)ViewData["bodegas"])
+                {
+                    <option value="@bodega.bodegaID">@bodega.nombre</option>
+                }
+            </select>
+        </div>
+        <div class="col-md-4">
+            <br />
+            <input class="btn btn-primary btn-block" id="Boton" value="Filtrar" type="button" />
+        </div>
+</div>
+<br />
+<br />
+<h2>Documentos Registrados</h2>
+<br />
+<div class="table-responsive">
+    <table class="table">
+        <thead>
+            <tr>
+                <th>
+                    Numero Boleta
+                </th>                
+                <th>
+                    Fecha Emision
+                </th>
+                <th>
+                    Estado de Despacho
+                </th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.numeroDocumento)
+                    </td>                    
+                    <td>
+                        @Html.DisplayFor(modelItem => item.fechaEmisionDocumento)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.estadoDespacho)
+                    </td>
+                    <td>                       
+                        @Html.ActionLink("Mostrar", "DocumentoRegistrado", new { documentoID = item.documentoID }) |
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+@section Scripts {
+    @Styles.Render("~/Content/bootstrap-datetimepicker.css")
+    @Scripts.Render("~/Scripts/datetimepicker/moment.js")
+    @Scripts.Render("~/Scripts/datetimepicker/bootstrap-datetimepicker.js")
+    <script>
+        $(document).ready(function () {
+            $(".fecha").datetimepicker({
+                viewMode: 'days',
+                format: 'DD/MM/YYYY'
+            });
+        });
+    </script>
+}

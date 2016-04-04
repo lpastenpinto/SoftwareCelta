@@ -1,0 +1,90 @@
+﻿@model IEnumerable<SoftwareCelta.Models.documento>
+
+@{
+    ViewBag.Title = "Despachados";
+    int i = 0;
+    List<System.Text.StringBuilder> listaTextProductos = (List<System.Text.StringBuilder>)ViewData["textoProductosDespachar"];
+    List<int> cantidadProductosPorDespachar = (List<int>)ViewData["cantidadProductosPorDespachar"];  
+}
+<div class="col-md-12">
+    <div class="col-md-12">
+        <h4>Filtros:</h4>
+    </div>
+
+    <div class="col-md-4">
+        <label class="control-label">Area/Bodega</label>
+        <select class="form-control" name="bodega">
+            <option value="todos">TODOS</option>
+            @foreach (SoftwareCelta.Models.bodega bodega in (List<SoftwareCelta.Models.bodega>)ViewData["bodegas"])
+            {
+                <option value="@bodega.bodegaID">@bodega.nombre</option>
+            }
+        </select>
+    </div>
+    <div class="col-md-4">
+        <br />
+        <input class="btn btn-primary btn-block" id="Boton" value="Filtrar" type="button" />
+    </div>
+</div>
+
+<br /><br /><br />
+<h2>Boletas para despachar Mañana @DateTime.Today.AddDays(1)</h2>
+<br />
+
+<div class="table-responsive">
+    <table class="table">
+        <thead>
+            <tr>
+                <th>
+                    Numero Boleta
+                </th>
+                <th>
+                    Fecha Despacho
+                </th>
+                <th>
+                    Cantidad Productos por despachar
+                </th>
+                <th>Productos a Despachar</th>
+                <th></th>
+
+            </tr>
+        </thead>
+        <tbody>
+
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.numeroDocumento)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.fechaDespacho)
+                    </td>
+                    <td>
+                        @cantidadProductosPorDespachar[i]
+                    </td>
+                    <td>
+                        @listaTextProductos[i]
+                    </td>
+                    <td>
+                        @Html.ActionLink("Marcar Productos a Despachar", "Despachar", new { documentoID = item.documentoID }, new { target = "_blank" })
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+@section Scripts {
+    @Styles.Render("~/Content/bootstrap-datetimepicker.css")
+    @Scripts.Render("~/Scripts/datetimepicker/moment.js")
+    @Scripts.Render("~/Scripts/datetimepicker/bootstrap-datetimepicker.js")
+    <script>
+        $(document).ready(function () {
+            $(".fecha").datetimepicker({
+                viewMode: 'days',
+                format: 'DD/MM/YYYY'
+            });
+        });
+    </script>
+}
+

@@ -27,8 +27,21 @@ namespace SoftwareCelta.Controllers
             doc2.numeroVenta = 12234233;
             doc2.fechaEmisionDocumento = DateTime.Now;
             documentoList.Add(doc2);
-            
+            ViewData["bodegas"] = db.Bodegas.ToList();
             return View(documentoList);
+        }
+
+        public ActionResult Buscador() {
+            List<documento> listDocumentos = new List<documento>();
+            documento doc = new documento();
+            doc.documentoID = 1;
+            doc.fechaEmisionDocumento = DateTime.Today.AddDays(-3);
+            doc.estadoDespacho = 2;
+            listDocumentos.Add(doc);
+            ViewBag.fechaInicial = DateTime.Today;
+            ViewBag.fechaFinal = DateTime.Today.AddDays(-7);
+            ViewData["bodegas"] = db.Bodegas.ToList();
+            return View(listDocumentos);
         }
 
         [HttpPost]

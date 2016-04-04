@@ -1,0 +1,110 @@
+﻿@model SoftwareCelta.Models.user
+
+@{
+    ViewBag.Title = "Crear";
+}
+
+<h2>Crear nuevo usuario</h2>
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+
+    <div class="form-horizontal">
+        <h4>Usuario</h4>
+        <hr />
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+        <div id="divNombreNombre" class="form-group">
+            <label class="control-label col-md-2">Nombre de Usuario</label>
+            <div class="col-md-10">
+                <input type="text" name="userName" id="userName" class="form-control" required />
+                <div id="mensajeErrorNombre" class="alert alert-danger hidden">
+                    <strong>Error: </strong> ya existe un usuario con este nombre
+                </div>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="control-label col-md-2">Nombre Completo</label>
+            <div class="col-md-10">
+                <input type="text" name="nombreCompleto" id="nombreCompleto" class="form-control" required />                
+            </div>
+        </div>        
+
+        <div class="form-group">
+            <label class="control-label col-md-2">Contraseña</label>
+            <div class="col-md-10">
+                <input type="password" class="form-control" name="password" id="password" placeholder="Ingrese la contraseña del usuario" required />
+            </div>
+        </div>
+
+        <div id="divNombre" class="form-group">
+            <label class="control-label col-md-2">Confirmación de Contraseña</label>
+            <div class="col-md-10">
+                <input class="form-control" placeholder="Repita la contraseña"
+                       name="password2" id="password2" type="password" value="" required>
+                <div id="mensajeError" class="alert alert-danger hidden">
+                    <strong>Error: </strong> el password no coincide con su repetición
+                </div>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="submit" value="Crear" id="boton" class="btn btn-default" disabled />
+            </div>
+        </div>
+    </div>
+}
+
+
+@section Scripts {     
+    <script>
+            $(document).ready(function () {
+                function verificarDatos()
+                {
+                    habilitarBoton = true;
+                    var nueva = $("#password").val();
+                    var nueva2 = $("#password2").val();                    
+
+                    if (nueva == "" || nueva2 == "") {
+                        habilitarBoton = false;
+                    }
+                    else {
+                        if (nueva == nueva2) {
+                            $("#divNombre").removeClass(" has-error");
+                            $("#divNombre").addClass(" has-feedback");
+                            $("#divNombre").addClass(" has-success");
+                            $("#mensajeError").addClass("hidden");
+                        }
+                        else {
+                            habilitarBoton = false;
+                            $("#divNombre").addClass(" has-error");
+                            $("#divNombre").addClass(" has-feedback");
+                            $("#divNombre").removeClass(" has-success");
+                            $("#mensajeError").removeClass("hidden");
+                        }
+                    }
+                    if (habilitarBoton) {
+                        $("#boton").removeAttr("disabled");
+                    }
+                    else {
+                        $("#boton").attr("disabled", "disabled");
+                    }
+                }
+
+                $("#password").change(function () {
+                    verificarDatos();
+                });
+
+                $("#password2").change(function () {
+                    verificarDatos();
+                });
+              
+            });
+    </script>
+}
+
+
+
+

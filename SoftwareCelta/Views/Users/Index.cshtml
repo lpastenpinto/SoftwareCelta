@@ -1,0 +1,41 @@
+﻿@model IEnumerable<SoftwareCelta.Models.user>
+
+@{
+    ViewBag.Title = "Usuarios";
+}
+<br /><br />
+<h2>Usuarios</h2>
+
+<p>
+    @Html.ActionLink("Nuevo Usuario", "Create", null, new  {@class="btn btn-primary" })
+</p>
+<div class="table-responsive">
+<table class="table">
+    <tr>
+        <th>
+            Nombre Usuario
+        </th>
+        <th>
+            Nombre Completo
+        </th>
+        <th></th>
+    </tr>
+
+@foreach (var item in Model) {
+    <tr>
+        <td>
+            @Html.DisplayFor(modelItem => item.userName)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.nombreCompleto)
+        </td>
+        <td>
+            @Html.ActionLink("Asignar Permisos", "AsignarPermisos", new { userID = item.userID }) |            
+            @Html.ActionLink("Eliminar", "Delete", new { userID = item.userID })
+        </td>
+    </tr>
+}
+
+</table>
+
+</div>

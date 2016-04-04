@@ -1,0 +1,104 @@
+﻿@model IEnumerable<SoftwareCelta.Models.documento>
+
+@{
+    ViewBag.Title = "Despachados";
+    int i = 0;
+    List<System.Text.StringBuilder> listaTextProductos = (List<System.Text.StringBuilder>)ViewData["textoProductosDespachar"];
+    List<int> cantidadProductosPorDespachar = (List<int>)ViewData["cantidadProductosPorDespachar"];
+
+    string fechaInicial = "", fechaFinal = "";
+    DateTime fechaActual = DateTime.Today;
+    DateTime fechaAnterior = DateTime.Today.AddDays(-1);
+    fechaInicial = fechaActual.Day + "/" + fechaActual.Month + "/" + fechaActual.Year;
+    fechaFinal = fechaActual.Day + "/" + fechaActual.Month + "/" + fechaActual.Year;
+}
+<br /><br />
+<h2>Documentos Despachados</h2>
+<br /><br />
+<div class="col-md-12">
+    <div class="col-md-12">
+        <h4>Filtros:</h4>
+    </div>    
+    <div class="col-md-3">
+            <label class="control-label">Inicio:</label>
+            <input class="form-control fecha" id="fecha1" name="fecha1" data-val-date="Ingrese por favor una fecha." data-val-required="El campo fecha es obligatorio."
+                   data-date-format="DD/MM/YYYY" pattern="[0-9][0-9]/[0-9][0-9]/[0-9][0-9][0-9][0-9]"
+                   type="text" value="@fechaInicial">
+
+    </div>
+    <div class="col-md-3">
+            <label class="control-label">Término:</label>
+            <input class="form-control fecha" id="fecha2" name="fecha2" data-val-date="Ingrese por favor una fecha." data-val-required="El campo fecha es obligatorio."
+                   data-date-format="DD/MM/YYYY" pattern="[0-9][0-9]/[0-9][0-9]/[0-9][0-9][0-9][0-9]"
+                   type="text" value="@fechaFinal">
+    </div>        
+    <div class="col-md-3">
+        <label class="control-label">Numero Documento</label>
+        <input class="form-control" name="numeroDocumento"/>
+    </div>
+    <div class="col-md-3">
+        <br />
+        <input class="btn btn-primary btn-block" id="Boton" value="Buscar" type="button" />
+    </div>
+</div>
+<br /><br />
+<div class="table-responsive">
+    <table class="table">
+        <thead>
+            <tr>
+                <th>
+                    Numero Boleta
+                </th>
+                <th>
+                    Fecha Despacho
+                </th>
+                <th>
+                    Cantidad Productos por despachar
+                </th>
+                <th>Productos a Despachar</th>
+                <th></th>
+                <th></th>
+                
+            </tr>
+        </thead>
+        <tbody>
+
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.numeroDocumento)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.fechaDespacho)
+                    </td>
+                    <td>
+                        @cantidadProductosPorDespachar[i]
+                    </td>
+                    <td>
+                        @listaTextProductos[i]
+                    </td>
+                    <td>
+                        <a href="@Url.Action("DocumentoRegistrado", "documentos", new { documentoID = item.documentoID })">Mostrar</a>                        
+                    </td>
+                    <td>
+                        @Html.ActionLink("Pedido Devuelto", "", new { documentoID = item.documentoID })
+                    </td>                   
+                </tr>               
+            }
+        </tbody>
+    </table>
+</div>
+@section Scripts {
+    @Styles.Render("~/Content/bootstrap-datetimepicker.css")
+    @Scripts.Render("~/Scripts/datetimepicker/moment.js")
+    @Scripts.Render("~/Scripts/datetimepicker/bootstrap-datetimepicker.js")
+    <script>
+        $(document).ready(function () {
+            $(".fecha").datetimepicker({
+                viewMode: 'days',
+                format: 'DD/MM/YYYY'
+            });
+        });
+    </script>
+}

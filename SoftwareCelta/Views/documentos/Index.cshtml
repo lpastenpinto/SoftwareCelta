@@ -1,18 +1,21 @@
 ﻿@model IEnumerable<SoftwareCelta.Models.documento>
 @{
     ViewBag.Title = "Buscar Documento";
+    
 }
 <br /><br /><br />
 <div class="row">
     
         <h2>Buscar Documento</h2>
         <form role="form" method="post" action="@Url.Action("Documento", "documentos" )">
-            <div class="col-md-6">
-                <input type="text" class="form-control" name="numeroDocumento" required/>
-            </div>
-            <div class="col-md-6">
-                <input type="submit" value="Buscar" class="btn btn-lg btn-primary btn-block" />
-            </div>
+            
+                <div class="col-md-6">
+                    <input type="text" class="form-control" name="numeroDocumento" required />
+                </div>
+                <div class="col-md-6">
+                    <input type="submit" value="Buscar" class="btn btn-lg btn-primary btn-block" />
+                </div>
+            
         </form>
 </div>
 <br />
@@ -57,3 +60,16 @@
         </tbody>
     </table>
 </div>
+@section Scripts {
+    @Styles.Render("~/Content/bootstrap-datetimepicker.css")
+    @Scripts.Render("~/Scripts/datetimepicker/moment.js")
+    @Scripts.Render("~/Scripts/datetimepicker/bootstrap-datetimepicker.js")
+    <script>
+        $(document).ready(function () {
+            $(".fecha").datetimepicker({
+                viewMode: 'days',
+                format: 'DD/MM/YYYY'
+            });
+        });
+    </script>
+}

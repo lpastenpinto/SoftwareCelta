@@ -1,0 +1,88 @@
+﻿@model SoftwareCelta.Models.documento
+@{
+    ViewBag.Title = "Despachar";  
+    SoftwareCelta.DAL.ContextBDCelta db = new SoftwareCelta.DAL.ContextBDCelta();
+    SoftwareCelta.Models.datosEnvio datosEnvio = (SoftwareCelta.Models.datosEnvio)ViewData["datosEnvio"];
+    int i = 0;
+}
+
+<h2>Documento @Model.numeroDocumento</h2>
+<br />
+
+<div class="row">
+    <div class="col-md-12">
+        <label>Direccion</label>
+        <br />
+        <textarea style="max-width: 100% !important; width:100%;" class="form-control" name="direccion" readonly>@datosEnvio.direccion</textarea>
+    </div>
+    <div class="col-md-12">
+        <label>Referencia</label>
+        <br />
+        <textarea style="max-width: 100% !important; width:100%;" class="form-control" name="referencia" readonly>@datosEnvio.referencia</textarea>
+    </div>    
+</div>
+<br />
+<br />
+<form role="form" method="post" action="@Url.Action("Despachar", "listadoDespacho" )">
+    <input value="@Model.documentoID" name="documentoID" class="hidden" /> 
+    <div class="table-responsive">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>
+                        Codigo Producto
+                    </th>
+                    <th>
+                        Descripcion Producto
+                    </th>
+                    <th>
+                        Cantidad Producto
+                    </th>
+                    <th>
+                        Area Interna /Bodega
+                    </th>                    
+                    <th>Despacho</th>
+                </tr>
+            </thead>
+            <tbody>
+
+                @foreach (SoftwareCelta.Models.detalleDocumento detalle in (List<SoftwareCelta.Models.detalleDocumento>)ViewData["detalleDocumento"])
+                {
+                    i++;
+                    <input value="@detalle.detalleDocumentoID" name="detalleDocumentoID" class="hidden"/>                
+                    <tr>
+                        <td>
+                            @detalle.codigoProducto
+                        </td>
+                        <td>
+                            @detalle.descripcionProducto
+                        </td>
+                        <td>
+                            @detalle.cantidadProducto
+                        </td>
+                        <td>
+                            @{
+                                string nombreBodega = db.Bodegas.Find(@detalle.bodegaID).nombre;
+                            }
+                            @nombreBodega
+                        </td>                       
+                        <td>
+                            <input type="checkbox" value="true" name="estadoDespacho">                          
+                        </td>
+                    </tr>                                
+                }
+                
+            </tbody>
+        </table>
+        <input class="hidden" value="@i" name="cantidadProductos" />
+        <br />
+        <div class="clearfix"></div>
+        <div class="modal-footer">
+            <input type="submit" value="Despachar" class="btn btn-success btn-lg btn-default" />
+        </div>
+    </div>
+</form>
+<br />
+
+
+
