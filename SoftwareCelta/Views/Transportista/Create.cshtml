@@ -1,0 +1,99 @@
+﻿@model SoftwareCelta.Models.dw_datosTransportista
+
+@{
+    ViewBag.Title = "Crear";
+}
+
+<h2>Nuevos Datos Transportista</h2>
+
+@using (Html.BeginForm()) 
+{
+    @Html.AntiForgeryToken()
+    
+    <div class="form-horizontal">
+        <h4>Transportista</h4>
+        <hr />
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })        
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.rut, "Rut", htmlAttributes: new { @class = "control-label col-md-2", @style = "text-align:left !important;" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.rut, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.rut, "", new { @class = "text-danger" })
+            </div>
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(model => model.nombreCompleto, "Nombre Completo", htmlAttributes: new { @class = "control-label col-md-2", @style = "text-align:left !important;" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.nombreCompleto, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.nombreCompleto, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.razonSocial, "Razon Social", htmlAttributes: new { @class = "control-label col-md-2", @style = "text-align:left !important;" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.razonSocial, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.razonSocial, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.direccion, "Direccion", htmlAttributes: new { @class = "control-label col-md-2", @style = "text-align:left !important;" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.direccion, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.direccion, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.telefono, "Telefono", htmlAttributes: new { @class = "control-label col-md-2", @style = "text-align:left !important;" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.telefono, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.telefono, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.mail, "Mail", htmlAttributes: new { @class = "control-label col-md-2", @style = "text-align:left !important;" })
+            <div class="col-md-10">
+                <input type="email" name="mail" class="form-control"/>                
+                @Html.ValidationMessageFor(model => model.mail, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.contacto, "Contacto", htmlAttributes: new { @class = "control-label col-md-2", @style = "text-align:left !important;" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.contacto, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.contacto, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.ciudad, "Ciudad", htmlAttributes: new { @class = "control-label col-md-2", @style = "text-align:left !important;" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.ciudad, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.ciudad, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.giro, "Giro", htmlAttributes: new { @class = "control-label col-md-2", @style = "text-align:left !important;" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.giro, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.giro, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="submit" value="Crear" class="btn btn-lg btn-success" />
+            </div>
+        </div>
+    </div>
+}
+
+<div>
+    @Html.ActionLink("Volver a la Lista", "Index")
+</div>

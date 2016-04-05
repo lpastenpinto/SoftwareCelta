@@ -123,10 +123,18 @@ namespace SoftwareCelta.Controllers
         }
 
         public ActionResult registrarNuevoDocumento(FormCollection form) {
-            string[] bodega = Request.Form.GetValues("bodega");
+            string[] bodega = Request.Form.GetValues("areaInterna");
+            string tot = "";
             for (int i = 0; i<bodega.Length; i++) {
-                string despacho = (string)form["despacho" + (i + 1)];
+
+
+
+
+                string despacho = (string)form["estadoDespacho" + (i + 1)];
+                tot = tot + "|" + despacho;
+
             }
+            
             return RedirectToAction("Index");
         }
     }

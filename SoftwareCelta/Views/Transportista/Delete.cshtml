@@ -1,0 +1,71 @@
+﻿@model SoftwareCelta.Models.dw_datosTransportista
+
+@{
+    ViewBag.Title = "Eliminar";
+}
+
+<h2>Eliminar</h2>
+
+<h3>¿Esta Seguro que desea eliminar a este transportista?</h3>
+<div>
+    <h4>Transportista</h4>
+    <hr />
+    <dl class="dl-horizontal">        
+        <dt>
+            Rut
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.rut)
+        </dd>
+        <dt>
+            Nombre Completo
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.nombreCompleto)
+        </dd>
+        <dt>
+            Razon Social
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.razonSocial)
+        </dd>
+
+        <dt>
+           Direccion
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.direccion)
+        </dd>
+
+        <dt>
+            Telefono
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.telefono)
+        </dd>             
+
+        <dt>
+            Ciudad
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.ciudad)
+        </dd>
+        
+
+    </dl>
+
+    @using (Html.BeginForm()) {
+        @Html.AntiForgeryToken()
+
+        <div class="form-actions no-color">
+            <input type="submit" value="Delete" class="btn btn-danger btn-lg" /> |
+            @Html.ActionLink("Volver a la Lista", "Index")
+        </div>
+    }
+</div>

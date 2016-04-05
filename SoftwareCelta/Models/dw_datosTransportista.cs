@@ -9,6 +9,7 @@ namespace SoftwareCelta.Models
     {
         public int dw_datosTransportistaID { set; get; }
         public string codigo { set; get; }
+        public string nombreCompleto { set; get; }
         public string rut { set; get; }
         public string razonSocial { set; get; }
         public string direccion { set; get; }

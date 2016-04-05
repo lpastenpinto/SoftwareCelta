@@ -2,40 +2,41 @@
 @{
     ViewBag.Title = "Documento";
     int contadorProductos = 1;
-    string despacho = "estadoDespacho";
-
-    string fechaDespacho = "";
-    DateTime fechaDespachoDT = DateTime.Now.AddDays(2);
-    fechaDespacho = fechaDespachoDT.Day + "/" + fechaDespachoDT.Month + "/" + fechaDespachoDT.Year;        
+    string despacho = "estadoDespacho";    
+    string fechaDespacho=SoftwareCelta.Models.Formateador.fechaCompletaToStringS0(DateTime.Now.AddDays(2));           
 }
-
+<br />
 <h2>Documento @Model.numeroDocumento</h2>
 <br />
 
 <div class="row">
     <div class="col-md-12">
-        <label>Direccion</label>
-        <br />
-        <textarea style="max-width: 100% !important; width:100%;" class="form-control" name="direccion"></textarea>        
+        <label class="control-label">Nombre Cliente</label>
+        <input class="form-control" name="nombreCliente" type="text" />
     </div>
     <div class="col-md-12">
-        <label>Referencia</label>
-        <br />
-        <textarea style="max-width: 100% !important; width:100%;" class="form-control" name="referencia"></textarea>
+        <label class="control-label">Rut</label>
+        <input class="form-control" name="rutCliente" type="text" />
     </div>
-    <div class="col-md-6">
-        
-        <label>Referencia</label>
-        <br />
-        <select class="form-control" name="perimetroDespacho">
-            <option>Dentro Perimetro</option>
-            <option>Fuera Perimetro</option>
-        </select>
+    <div class="col-md-12">
+        <label class="control-label">Ciudad</label>
+        <input class="form-control" name="ciudad" type="text" />
     </div>
+    <div class="col-md-12">
+        <label class="control-label">Telefono</label>
+        <input class="form-control" name="telefono" type="text" />
+    </div>
+    <div class="col-md-12">
+        <label class="control-label">Direccion</label>
+        <input class="form-control" name="direccion" type="text" />
+    </div>
+    <div class="col-md-12">
+        <label>Observacion</label>        
+        <textarea style="max-width: 100% !important; width:100%;" class="form-control" name="observacion"></textarea>
+    </div>    
+    <br />
     <div class="col-md-6">
-
-        <label>Fecha Despacho</label>
-        <br />
+        <label class="control-label">Fecha Despacho</label>        
         <input class="form-control fecha" id="fechaDespacho" name="fechaDespacho" data-val-date="Ingrese por favor una fecha." data-val-required="El campo fecha es obligatorio."
                data-date-format="DD/MM/YYYY" pattern="[0-9][0-9]/[0-9][0-9]/[0-9][0-9][0-9][0-9]"
                type="text" value="@fechaDespacho">
@@ -43,6 +44,8 @@
 </div>
 <br />
 <br />
+<br />
+<br /><br />
 <form role="form" method="post" action="@Url.Action("registrarNuevoDocumento", "documentos" )">
     <div class="table-responsive">
         <table class="table">
@@ -80,19 +83,19 @@
                             @detalle.cantidadProducto
                         </td>
                         <td>
-                            <select class="form-control" name="bodega">
+                            <select class="form-control areaInterna" name="areaInterna">
                                 @foreach (SoftwareCelta.Models.dw_areaInterna bodega in (List<SoftwareCelta.Models.dw_areaInterna>)ViewData["bodegas"])
-                                { 
+                                {
                                     <option value="@bodega.dw_areaInternaID">@bodega.nombre</option>
                                 }
                             </select>
                         </td>
                         <td>
                             
-                            <input type="radio" name="@nameDespacho" value="0" checked>
+                            <input type="radio" name="@nameDespacho" value="0" class="entregaInmediata">
                         </td>
                         <td>
-                            <input type="radio" name="@nameDespacho" value="1">
+                            <input type="radio" name="@nameDespacho" value="1" class="despachoDomicilio" checked>
                         </td>
                     </tr>
                     contadorProductos++;
@@ -117,6 +120,17 @@
                 viewMode: 'days',
                 format: 'DD/MM/YYYY'
             });
+
+            $(".entregaInmediata").click(function () {                                                
+                var selectAreaInterna = $(this).closest('tr').find('.areaInterna');                
+                selectAreaInterna.addClass("hidden");
+            });
+
+            $(".despachoDomicilio").click(function () {
+                var selectAreaInterna = $(this).closest('tr').find('.areaInterna');
+                selectAreaInterna.removeClass("hidden");
+            });
+
         });
     </script>
 }

@@ -28,12 +28,15 @@
         <tr>
             <th>
                 Numero Boleta
-            </th>    
-            <th>
-                Numero Venta
-            </th>        
+            </th>
             <th>
                 Fecha Emision
+            </th>    
+            <th>
+                Tipo documento
+            </th>        
+            <th>
+                Numero de Vale
             </th>
             <th></th>
         </tr>
@@ -46,11 +49,15 @@
                     @Html.DisplayFor(modelItem => item.numeroDocumento)
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.numeroVale)
+                    @SoftwareCelta.Models.Formateador.fechaCompletaToString(item.fechaEmision)
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.fechaEmision)
+                    @Html.DisplayFor(modelItem => item.tipoDocumento)
                 </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.numeroVale)
+                </td>
+               
                 <td>
                     @Html.ActionLink("Editar", "Editar", new { documentoID = item.dw_movinID }) |
                     @Html.ActionLink("Mostrar", "DocumentoRegistrado", new { documentoID = item.dw_movinID }) |
