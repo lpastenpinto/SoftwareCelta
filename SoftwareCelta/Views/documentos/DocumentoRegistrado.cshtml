@@ -9,20 +9,41 @@
 
 <h2>Documento @Model.numeroDocumento</h2>
 <br />
-@Model.fechaEmision
-<br />
-<div class="row">
-    <div class="col-md-12">
-        <label>Direccion</label>
-        <br />
-        <textarea style="max-width: 100% !important; width:100%;" class="form-control" name="direccion">@datosEnvio.direccion</textarea>
+Fecha: @SoftwareCelta.Models.Formateador.fechaCompletaToString(Model.fechaEmision)
+<br /><div class="row">
+    <div class="col-md-4">
+        <label class="control-label">Nombre Cliente</label>
+        @datosEnvio.nombreCliente
     </div>
+    <div class="col-md-4">
+        <label class="control-label">Rut</label>
+        @datosEnvio.rutCliente
+    </div>
+    <div class="col-md-4">
+        <label class="control-label">Ciudad</label>
+        @datosEnvio.ciudad
+    </div>
+    <br />
+    <div class="col-md-4">
+        <label class="control-label">Telefono</label>
+        @datosEnvio.telefono
+    </div>
+    <div class="col-md-8">
+        <label class="control-label">Direccion</label>
+        @datosEnvio.direccion
+    </div>
+    <br />
     <div class="col-md-12">
-        <label>Referencia</label>
-        <br />
-        <textarea style="max-width: 100% !important; width:100%;" class="form-control" name="referencia">@datosEnvio.observacion</textarea>
+        <label>Observacion</label>
+        @datosEnvio.observacion
+    </div>
+    <br />
+    <div class="col-md-6">
+        <label class="control-label">Fecha Despacho</label>
+        @datosEnvio.fechaDespacho
     </div>
 </div>
+<br />
 <br />
     <div class="table-responsive">
         <table class="table">

@@ -9,44 +9,54 @@
 <h2>Documento @Model.numeroDocumento</h2>
 <br />
 
-<div class="row">
-    <div class="col-md-12">
-        <label class="control-label">Nombre Cliente</label>
-        <input class="form-control" name="nombreCliente" type="text" />
-    </div>
-    <div class="col-md-12">
-        <label class="control-label">Rut</label>
-        <input class="form-control" name="rutCliente" type="text" />
-    </div>
-    <div class="col-md-12">
-        <label class="control-label">Ciudad</label>
-        <input class="form-control" name="ciudad" type="text" />
-    </div>
-    <div class="col-md-12">
-        <label class="control-label">Telefono</label>
-        <input class="form-control" name="telefono" type="text" />
-    </div>
-    <div class="col-md-12">
-        <label class="control-label">Direccion</label>
-        <input class="form-control" name="direccion" type="text" />
-    </div>
-    <div class="col-md-12">
-        <label>Observacion</label>        
-        <textarea style="max-width: 100% !important; width:100%;" class="form-control" name="observacion"></textarea>
-    </div>    
-    <br />
-    <div class="col-md-6">
-        <label class="control-label">Fecha Despacho</label>        
-        <input class="form-control fecha" id="fechaDespacho" name="fechaDespacho" data-val-date="Ingrese por favor una fecha." data-val-required="El campo fecha es obligatorio."
-               data-date-format="DD/MM/YYYY" pattern="[0-9][0-9]/[0-9][0-9]/[0-9][0-9][0-9][0-9]"
-               type="text" value="@fechaDespacho">
-    </div>
-</div>
-<br />
-<br />
-<br />
-<br /><br />
+
 <form role="form" method="post" action="@Url.Action("registrarNuevoDocumento", "documentos" )">
+    <input type="text" class="hidden" value="@Model.dw_movinID" name="dw_movinID" />
+    <div class="row">
+        <div class="col-md-4">
+            <label class="control-label">Nombre Cliente</label>
+            <input class="form-control" name="nombreCliente" type="text" />
+        </div>
+        <div class="col-md-4">
+            <label class="control-label">Rut</label>
+            <input class="form-control" name="rutCliente" type="text" />
+        </div>
+        <div class="col-md-4">
+            <label class="control-label">Ciudad</label>
+            <select name="ciudad" class="form-control">
+                <option value="LA SERENA">LA SERENA</option>    
+                <option value="COQUIMBO">COQUIMBO</option>
+                <option value="PAN DE AZUCAR">PAN DE AZUCAR</option>
+            </select>
+            
+        </div>
+        <br /><br /><br /><br />
+        <div class="col-md-4">
+            <label class="control-label">Telefono</label>
+            <input class="form-control" name="telefono" type="text" />
+        </div>
+        <div class="col-md-8">
+            <label class="control-label">Direccion</label>
+            <input class="form-control" name="direccion" type="text" style="max-width: 20000px;" />
+        </div>
+        <br /><br /><br />
+        <div class="col-md-12">
+            <label>Observacion</label>
+            <textarea style="max-width: 100% !important; width:100%;" class="form-control" name="observacion"></textarea>
+        </div>
+        <br />
+        <div class="col-md-6">
+            <label class="control-label">Fecha Despacho</label>
+            <input class="form-control fecha" id="fechaDespacho" name="fechaDespacho" data-val-date="Ingrese por favor una fecha." data-val-required="El campo fecha es obligatorio."
+                   data-date-format="DD/MM/YYYY" pattern="[0-9][0-9]/[0-9][0-9]/[0-9][0-9][0-9][0-9]"
+                   type="text" value="@fechaDespacho">
+        </div>
+    </div>
+    <br />
+    <br />
+    
+    <h3>Productos Comprados</h3>
+    <br />
     <div class="table-responsive">
         <table class="table">
             <thead>
@@ -91,15 +101,15 @@
                             </select>
                         </td>
                         <td>
-                            
+
                             <input type="radio" name="@nameDespacho" value="0" class="entregaInmediata">
                         </td>
                         <td>
                             <input type="radio" name="@nameDespacho" value="1" class="despachoDomicilio" checked>
                         </td>
                     </tr>
-                    contadorProductos++;
-                }                
+                                contadorProductos++;
+                }
             </tbody>
         </table>
         <br />
