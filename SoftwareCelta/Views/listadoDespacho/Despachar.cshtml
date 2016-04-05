@@ -1,8 +1,8 @@
-﻿@model SoftwareCelta.Models.documento
+﻿@model SoftwareCelta.Models.dw_movin
 @{
     ViewBag.Title = "Despachar";  
     SoftwareCelta.DAL.ContextBDCelta db = new SoftwareCelta.DAL.ContextBDCelta();
-    SoftwareCelta.Models.datosEnvio datosEnvio = (SoftwareCelta.Models.datosEnvio)ViewData["datosEnvio"];
+    SoftwareCelta.Models.dw_envio datosEnvio = (SoftwareCelta.Models.dw_envio)ViewData["datosEnvio"];
     int i = 0;
 }
 
@@ -18,13 +18,13 @@
     <div class="col-md-12">
         <label>Referencia</label>
         <br />
-        <textarea style="max-width: 100% !important; width:100%;" class="form-control" name="referencia" readonly>@datosEnvio.referencia</textarea>
+        <textarea style="max-width: 100% !important; width:100%;" class="form-control" name="referencia" readonly>@datosEnvio.observacion</textarea>
     </div>    
 </div>
 <br />
 <br />
 <form role="form" method="post" action="@Url.Action("Despachar", "listadoDespacho" )">
-    <input value="@Model.documentoID" name="documentoID" class="hidden" /> 
+    <input value="@Model.dw_movinID" name="documentoID" class="hidden" /> 
     <div class="table-responsive">
         <table class="table">
             <thead>
@@ -46,10 +46,10 @@
             </thead>
             <tbody>
 
-                @foreach (SoftwareCelta.Models.detalleDocumento detalle in (List<SoftwareCelta.Models.detalleDocumento>)ViewData["detalleDocumento"])
+                @foreach (SoftwareCelta.Models.dw_detalle detalle in (List<SoftwareCelta.Models.dw_detalle>)ViewData["detalleDocumento"])
                 {
                     i++;
-                    <input value="@detalle.detalleDocumentoID" name="detalleDocumentoID" class="hidden"/>                
+                    <input value="@detalle.dw_movinID" name="detalleDocumentoID" class="hidden"/>                
                     <tr>
                         <td>
                             @detalle.codigoProducto
@@ -62,7 +62,7 @@
                         </td>
                         <td>
                             @{
-                                string nombreBodega = db.Bodegas.Find(@detalle.bodegaID).nombre;
+                                string nombreBodega = db.Bodegas.Find(@detalle.dw_areaInternaID).nombre;
                             }
                             @nombreBodega
                         </td>                       

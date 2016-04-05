@@ -18,7 +18,7 @@ namespace SoftwareCelta.DAL
         public DbSet<user> Users { set; get; }
         public DbSet<permisoUser> PermisosUser { set; get; }
         public DbSet<roles> Roles { set; get; }
-        public DbSet<bodega> Bodegas { set; get; }
+        public DbSet<dw_areaInterna> Bodegas { set; get; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {

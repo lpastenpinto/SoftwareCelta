@@ -1,4 +1,4 @@
-﻿@model IEnumerable<SoftwareCelta.Models.documento>
+﻿@model IEnumerable<SoftwareCelta.Models.dw_movin>
 
 @{
     ViewBag.Title = "Por Despachar";
@@ -23,9 +23,9 @@
         <label class="control-label">Area/Bodega</label>
         <select class="form-control" name="bodega">      
             <option value="todos">TODOS</option>     
-            @foreach (SoftwareCelta.Models.bodega bodega in (List<SoftwareCelta.Models.bodega>)ViewData["bodegas"])
+            @foreach (SoftwareCelta.Models.dw_areaInterna bodega in (List<SoftwareCelta.Models.dw_areaInterna>)ViewData["bodegas"])
             {
-                <option value="@bodega.bodegaID">@bodega.nombre</option>
+                <option value="@bodega.dw_areaInternaID">@bodega.nombre</option>
             }
         </select>
     </div>
@@ -68,7 +68,7 @@
                         @listaTextProductos[i]
                     </td>   
                     <td>         
-                        @Html.ActionLink("Ver detalle y Despachar", "Despachar", new { documentoID = item.documentoID }, new { target = "_blank" })
+                        @Html.ActionLink("Ver detalle y Despachar", "Despachar", new { documentoID = item.dw_movinID }, new { target = "_blank" })
                         
                     </td>
                     <td>

@@ -1,4 +1,4 @@
-﻿@model SoftwareCelta.Models.bodega
+﻿@model SoftwareCelta.Models.dw_areaInterna
 
 @{
     ViewBag.Title = "Editar";
@@ -14,7 +14,7 @@
         <h4>bodega</h4>
         <hr />
         @Html.ValidationSummary(true, "", new { @class = "text-danger" })
-        @Html.HiddenFor(model => model.bodegaID)
+        @Html.HiddenFor(model => model.dw_areaInternaID)
 
         <div class="form-group">
             @Html.LabelFor(model => model.nombre, htmlAttributes: new { @class = "control-label col-md-2", @style = "text-align:left !important;" })
@@ -33,5 +33,5 @@
 }
 
 <div>
-    @Html.ActionLink("Back to List", "Index")
+    @Html.ActionLink("Volver a la Lista", "Index")
 </div>

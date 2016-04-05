@@ -1,7 +1,7 @@
-﻿@model IEnumerable<SoftwareCelta.Models.bodega>
+﻿@model IEnumerable<SoftwareCelta.Models.dw_areaInterna>
 
 @{
-    ViewBag.Title = "Bodegas";
+    ViewBag.Title = "Bodegas/Areas Internas";
 }
 
 <h2>Bodegas</h2>
@@ -13,7 +13,7 @@
 <table class="table">
     <tr>
         <th>
-            Nombre Bodega
+            Nombre Bodega/Area Interna
         </th>
         <th></th>
     </tr>
@@ -24,9 +24,9 @@
             @Html.DisplayFor(modelItem => item.nombre)
         </td>
         <td>
-            @Html.ActionLink("Editar", "Edit", new { id=item.bodegaID }) |
-            @Html.ActionLink("Mostrar", "Details", new { id=item.bodegaID }) |
-            @Html.ActionLink("Eliminar", "Delete", new { id=item.bodegaID })
+            @Html.ActionLink("Editar", "Edit", new { id = item.dw_areaInternaID }) |
+            @Html.ActionLink("Mostrar", "Details", new { id = item.dw_areaInternaID }) |
+            @Html.ActionLink("Eliminar", "Delete", new { id = item.dw_areaInternaID })
         </td>
     </tr>
 }

@@ -1,4 +1,4 @@
-﻿@model IEnumerable<SoftwareCelta.Models.documento>
+﻿@model IEnumerable<SoftwareCelta.Models.dw_movin>
 @{
     ViewBag.Title = "Buscar Documento";
     string fechaInicial = "", fechaFinal = "";
@@ -27,11 +27,11 @@
         </div>
         <div class="col-md-4">
             <label class="control-label">Area/Bodega</label>
-            <select class="form-control" name="bodega">
+            <select class="form-control" name="areaInterna">
                 <option value="todos">TODOS</option>
-                @foreach (SoftwareCelta.Models.bodega bodega in (List<SoftwareCelta.Models.bodega>)ViewData["bodegas"])
+                @foreach (SoftwareCelta.Models.dw_areaInterna bodega in (List<SoftwareCelta.Models.dw_areaInterna>)ViewData["bodegas"])
                 {
-                    <option value="@bodega.bodegaID">@bodega.nombre</option>
+                    <option value="@bodega.dw_areaInternaID">@bodega.nombre</option>
                 }
             </select>
         </div>
@@ -55,7 +55,7 @@
                     Fecha Emision
                 </th>
                 <th>
-                    Estado de Despacho
+                    Tipo Documento
                 </th>
                 <th></th>
             </tr>
@@ -68,13 +68,13 @@
                         @Html.DisplayFor(modelItem => item.numeroDocumento)
                     </td>                    
                     <td>
-                        @Html.DisplayFor(modelItem => item.fechaEmisionDocumento)
+                        @Html.DisplayFor(modelItem => item.fechaEmision)
                     </td>
                     <td>
-                        @Html.DisplayFor(modelItem => item.estadoDespacho)
+                        @Html.DisplayFor(modelItem => item.tipoDocumento)
                     </td>
                     <td>                       
-                        @Html.ActionLink("Mostrar", "DocumentoRegistrado", new { documentoID = item.documentoID }) |
+                        @Html.ActionLink("Mostrar", "DocumentoRegistrado", new { documentoID = item.dw_movinID }) |
                     </td>
                 </tr>
             }

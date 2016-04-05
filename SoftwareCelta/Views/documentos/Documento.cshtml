@@ -1,8 +1,8 @@
-﻿@model SoftwareCelta.Models.documento
+﻿@model SoftwareCelta.Models.dw_movin
 @{
     ViewBag.Title = "Documento";
     int contadorProductos = 1;
-    string despacho = "despacho";
+    string despacho = "estadoDespacho";
 
     string fechaDespacho = "";
     DateTime fechaDespachoDT = DateTime.Now.AddDays(2);
@@ -66,7 +66,7 @@
             </thead>
             <tbody>
 
-                @foreach (SoftwareCelta.Models.detalleDocumento detalle in (List<SoftwareCelta.Models.detalleDocumento>)ViewData["detalleDocumento"])
+                @foreach (SoftwareCelta.Models.dw_detalle detalle in (List<SoftwareCelta.Models.dw_detalle>)ViewData["detalleDocumento"])
                 {
                     string nameDespacho = despacho + contadorProductos;
                     <tr>
@@ -81,8 +81,9 @@
                         </td>
                         <td>
                             <select class="form-control" name="bodega">
-                                @foreach (SoftwareCelta.Models.bodega bodega in (List<SoftwareCelta.Models.bodega>)ViewData["bodegas"]) { 
-                                    <option value="@bodega.bodegaID">@bodega.nombre</option>
+                                @foreach (SoftwareCelta.Models.dw_areaInterna bodega in (List<SoftwareCelta.Models.dw_areaInterna>)ViewData["bodegas"])
+                                { 
+                                    <option value="@bodega.dw_areaInternaID">@bodega.nombre</option>
                                 }
                             </select>
                         </td>

@@ -1,15 +1,15 @@
-﻿@model SoftwareCelta.Models.documento
+﻿@model SoftwareCelta.Models.dw_movin
 @{
     ViewBag.Title = "Documento Registrado";
     int contadorProductos = 1;
     string despacho = "despacho";
     SoftwareCelta.DAL.ContextBDCelta db = new SoftwareCelta.DAL.ContextBDCelta();
-    SoftwareCelta.Models.datosEnvio datosEnvio = (SoftwareCelta.Models.datosEnvio)ViewData["datosEnvio"];
+    SoftwareCelta.Models.dw_envio datosEnvio = (SoftwareCelta.Models.dw_envio)ViewData["datosEnvio"];
 }
 
 <h2>Documento @Model.numeroDocumento</h2>
 <br />
-@Model.fechaEmisionDocumento
+@Model.fechaEmision
 <br />
 <div class="row">
     <div class="col-md-12">
@@ -20,7 +20,7 @@
     <div class="col-md-12">
         <label>Referencia</label>
         <br />
-        <textarea style="max-width: 100% !important; width:100%;" class="form-control" name="referencia">@datosEnvio.referencia</textarea>
+        <textarea style="max-width: 100% !important; width:100%;" class="form-control" name="referencia">@datosEnvio.observacion</textarea>
     </div>
 </div>
 <br />
@@ -45,7 +45,7 @@
             </thead>
             <tbody>
 
-                @foreach (SoftwareCelta.Models.detalleDocumento detalle in (List<SoftwareCelta.Models.detalleDocumento>)ViewData["detalleDocumento"])
+                @foreach (SoftwareCelta.Models.dw_detalle detalle in (List<SoftwareCelta.Models.dw_detalle>)ViewData["detalleDocumento"])
                 {
                     string nameDespacho = despacho + contadorProductos;
                     <tr>
@@ -60,16 +60,16 @@
                         </td>
                         <td>                                                            
                             @{                                
-                                string nombreBodega = db.Bodegas.Find(@detalle.bodegaID).nombre;                                        
+                                string nombreBodega = db.Bodegas.Find(@detalle.dw_areaInternaID).nombre;                                        
                             }
                             @nombreBodega
                         </td>
                         <td>
-                            @if (@detalle.despachoProducto.Equals(0)) { 
+                            @if (@detalle.estadoDespacho.Equals(0)) { 
                                 <text>
                                     Entrega Inmediata
                                 </text>
-                            }else if(@detalle.despachoProducto.Equals(1)){
+                            }else if(@detalle.estadoDespacho.Equals(1)){
                                 <text>
                                     Despacho Domicilio
                                 </text>

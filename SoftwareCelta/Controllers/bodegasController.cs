@@ -28,7 +28,7 @@ namespace SoftwareCelta.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            bodega bodega = db.Bodegas.Find(id);
+            dw_areaInterna bodega = db.Bodegas.Find(id);
             if (bodega == null)
             {
                 return HttpNotFound();
@@ -47,7 +47,7 @@ namespace SoftwareCelta.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "bodegaID,nombre")] bodega bodega)
+        public ActionResult Create([Bind(Include = "dw_areaInternaID,nombre")] dw_areaInterna bodega)
         {
             if (ModelState.IsValid)
             {
@@ -66,7 +66,7 @@ namespace SoftwareCelta.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            bodega bodega = db.Bodegas.Find(id);
+            dw_areaInterna bodega = db.Bodegas.Find(id);
             if (bodega == null)
             {
                 return HttpNotFound();
@@ -79,7 +79,7 @@ namespace SoftwareCelta.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "bodegaID,nombre")] bodega bodega)
+        public ActionResult Edit([Bind(Include = "dw_areaInternaID,nombre")] dw_areaInterna bodega)
         {
             if (ModelState.IsValid)
             {
@@ -97,7 +97,7 @@ namespace SoftwareCelta.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            bodega bodega = db.Bodegas.Find(id);
+            dw_areaInterna bodega = db.Bodegas.Find(id);
             if (bodega == null)
             {
                 return HttpNotFound();
@@ -110,7 +110,7 @@ namespace SoftwareCelta.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(int id)
         {
-            bodega bodega = db.Bodegas.Find(id);
+            dw_areaInterna bodega = db.Bodegas.Find(id);
             db.Bodegas.Remove(bodega);
             db.SaveChanges();
             return RedirectToAction("Index");

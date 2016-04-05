@@ -13,30 +13,29 @@ namespace SoftwareCelta.Controllers
         // GET: documentos
         public ActionResult Index()
         {
-            List<documento> documentoList = new List<documento>();
-            documento doc1 = new documento();
-            doc1.documentoID = 1;
+            List<dw_movin> documentoList = new List<dw_movin>();
+            dw_movin doc1 = new dw_movin();
+            doc1.dw_movinID = 1;
             doc1.numeroDocumento = 100;
-            doc1.numeroVenta = 123;
-            doc1.fechaEmisionDocumento = DateTime.Now;
+            doc1.numeroVale = 123;
+            doc1.fechaEmision = DateTime.Now;
             documentoList.Add(doc1);
 
-            documento doc2 = new documento();
-            doc2.documentoID = 2;
+            dw_movin doc2 = new dw_movin();
+            doc2.dw_movinID = 2;
             doc2.numeroDocumento = 1002;
-            doc2.numeroVenta = 12234233;
-            doc2.fechaEmisionDocumento = DateTime.Now;
+            doc2.numeroVale = 12234233;
+            doc2.fechaEmision = DateTime.Now;
             documentoList.Add(doc2);
             ViewData["bodegas"] = db.Bodegas.ToList();
             return View(documentoList);
         }
 
         public ActionResult Buscador() {
-            List<documento> listDocumentos = new List<documento>();
-            documento doc = new documento();
-            doc.documentoID = 1;
-            doc.fechaEmisionDocumento = DateTime.Today.AddDays(-3);
-            doc.estadoDespacho = 2;
+            List<dw_movin> listDocumentos = new List<dw_movin>();
+            dw_movin doc = new dw_movin();
+            doc.dw_movinID = 1;
+            doc.fechaEmision = DateTime.Today.AddDays(-3);            
             listDocumentos.Add(doc);
             ViewBag.fechaInicial = DateTime.Today;
             ViewBag.fechaFinal = DateTime.Today.AddDays(-7);
@@ -48,28 +47,28 @@ namespace SoftwareCelta.Controllers
         public ActionResult Documento(FormCollection form) {
             //int numeroDocumento = Convert.ToInt32((string)form["numeroDocumento"]);
 
-            List<bodega> bodegas = db.Bodegas.ToList();
+            List<dw_areaInterna> bodegas = db.Bodegas.ToList();
 
-            documento documento = new documento();
-            documento.documentoID = 1;
+            dw_movin documento = new dw_movin();
+            documento.dw_movinID = 1;
             documento.numeroDocumento = 100;
-            documento.numeroVenta = 123;
-            documento.fechaEmisionDocumento = DateTime.Now;
+            documento.numeroVale = 123;
+            documento.fechaEmision = DateTime.Now;
 
-            List<detalleDocumento> listDetalleDocumento = new List<detalleDocumento>();
+            List<dw_detalle> listDetalleDocumento = new List<dw_detalle>();
             
-            detalleDocumento detalleDocumento_1 = new detalleDocumento();
-            detalleDocumento_1.detalleDocumentoID = 1;
-            detalleDocumento_1.documentoID = 1;
+            dw_detalle detalleDocumento_1 = new dw_detalle();
+            detalleDocumento_1.dw_detalleID = 1;
+            detalleDocumento_1.dw_movinID = 1;
             detalleDocumento_1.codigoProducto = "AS1111";
             detalleDocumento_1.descripcionProducto = "CAMA";
             detalleDocumento_1.cantidadProducto = 1;            
 
             listDetalleDocumento.Add(detalleDocumento_1);
 
-            detalleDocumento detalleDocumento_2 = new detalleDocumento();
-            detalleDocumento_2.detalleDocumentoID = 2;
-            detalleDocumento_2.documentoID = 1;
+            dw_detalle detalleDocumento_2 = new dw_detalle();
+            detalleDocumento_2.dw_detalleID = 2;
+            detalleDocumento_2.dw_movinID = 1;
             detalleDocumento_2.codigoProducto = "AS1122";
             detalleDocumento_2.descripcionProducto = "Colchon";
             detalleDocumento_2.cantidadProducto = 1;
@@ -81,38 +80,38 @@ namespace SoftwareCelta.Controllers
 
         public ActionResult DocumentoRegistrado(int documentoID) {
 
-            documento documento = new documento();
-            documento.documentoID = 1;
+            dw_movin documento = new dw_movin();
+            documento.dw_movinID = 1;
             documento.numeroDocumento = 100;
-            documento.numeroVenta = 123;
-            documento.fechaEmisionDocumento = DateTime.Now;
+            documento.numeroVale = 123;
+            documento.fechaEmision = DateTime.Now;
 
-            List<detalleDocumento> listDetalleDocumento = new List<detalleDocumento>();
+            List<dw_detalle> listDetalleDocumento = new List<dw_detalle>();
 
-            detalleDocumento detalleDocumento_1 = new detalleDocumento();
-            detalleDocumento_1.bodegaID = 3;
-            detalleDocumento_1.despachoProducto = 1;
-            detalleDocumento_1.detalleDocumentoID = 1;
-            detalleDocumento_1.documentoID = 1;
+            dw_detalle detalleDocumento_1 = new dw_detalle();
+            detalleDocumento_1.dw_areaInternaID = 3;
+            detalleDocumento_1.estadoDespacho = 1;
+            detalleDocumento_1.dw_detalleID = 1;
+            detalleDocumento_1.dw_movinID = 1;
             detalleDocumento_1.codigoProducto = "AS1111";
             detalleDocumento_1.descripcionProducto = "CAMA";
             detalleDocumento_1.cantidadProducto = 1;
 
             listDetalleDocumento.Add(detalleDocumento_1);
 
-            detalleDocumento detalleDocumento_2 = new detalleDocumento();
-            detalleDocumento_2.bodegaID = 3;
-            detalleDocumento_2.despachoProducto = 0;
-            detalleDocumento_2.detalleDocumentoID = 2;
-            detalleDocumento_2.documentoID = 1;
+            dw_detalle detalleDocumento_2 = new dw_detalle();
+            detalleDocumento_2.dw_areaInternaID = 3;
+            detalleDocumento_2.estadoDespacho = 0;
+            detalleDocumento_2.dw_detalleID = 2;
+            detalleDocumento_2.dw_movinID = 1;
             detalleDocumento_2.codigoProducto = "AS1122";
             detalleDocumento_2.descripcionProducto = "Colchon";
             detalleDocumento_2.cantidadProducto = 1;
             listDetalleDocumento.Add(detalleDocumento_2);
 
-            datosEnvio datosEnvio = new datosEnvio();
+            dw_envio datosEnvio = new dw_envio();
             datosEnvio.direccion = "Las Azaleas 854";
-            datosEnvio.referencia = "Ir despues de las 6pm";
+            datosEnvio.observacion = "Ir despues de las 6pm";
             ViewData["datosEnvio"] = datosEnvio;
             ViewData["detalleDocumento"] = listDetalleDocumento;
 

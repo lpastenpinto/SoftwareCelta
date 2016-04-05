@@ -1,4 +1,4 @@
-﻿@model IEnumerable<SoftwareCelta.Models.documento>
+﻿@model IEnumerable<SoftwareCelta.Models.dw_movin>
 @{
     ViewBag.Title = "Buscar Documento";
     
@@ -46,14 +46,14 @@
                     @Html.DisplayFor(modelItem => item.numeroDocumento)
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.numeroVenta)
+                    @Html.DisplayFor(modelItem => item.numeroVale)
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.fechaEmisionDocumento)
+                    @Html.DisplayFor(modelItem => item.fechaEmision)
                 </td>
                 <td>
-                    @Html.ActionLink("Editar", "Editar", new { documentoID = item.documentoID }) |
-                    @Html.ActionLink("Mostrar", "DocumentoRegistrado", new { documentoID = item.documentoID }) |
+                    @Html.ActionLink("Editar", "Editar", new { documentoID = item.dw_movinID }) |
+                    @Html.ActionLink("Mostrar", "DocumentoRegistrado", new { documentoID = item.dw_movinID }) |
                 </td>
             </tr>
         }

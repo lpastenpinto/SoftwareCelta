@@ -5,9 +5,9 @@ using System.Web;
 
 namespace SoftwareCelta.Models
 {
-    public class bodega
+    public class dw_areaInterna
     {
-        public int bodegaID { set; get; }
+        public int dw_areaInternaID { set; get; }
         public string nombre { set; get; }
     }
 }

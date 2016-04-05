@@ -141,11 +141,11 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
-    <Compile Include="Models\bodega.cs" />
+    <Compile Include="Models\dw_areaInterna.cs" />
     <Compile Include="Models\datosEnvio.cs" />
     <Compile Include="Models\datosTransporte.cs" />
-    <Compile Include="Models\detalleDocumento.cs" />
-    <Compile Include="Models\documento.cs" />
+    <Compile Include="Models\dw_detalle.cs" />
+    <Compile Include="Models\dw_movin.cs" />
     <Compile Include="Models\encriptacion.cs" />
     <Compile Include="Models\roles.cs" />
     <Compile Include="Models\user.cs" />
