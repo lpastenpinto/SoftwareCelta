@@ -6,6 +6,7 @@ using System.Web.Mvc;
 using SoftwareCelta.Models;
 using System.Text;
 using SoftwareCelta.DAL;
+using System.Data.Entity;
 
 namespace SoftwareCelta.Controllers
 {
@@ -87,89 +88,106 @@ namespace SoftwareCelta.Controllers
             return View(documentoList);                      
         }
 
-        public ActionResult porDespachar() {
+        public ActionResult porDespachar(string arInt) {
 
-            List<StringBuilder> listText = new List<StringBuilder>();           
-            List<dw_movin> documentoList = new List<dw_movin>();
-            dw_movin doc1 = new dw_movin();
-            doc1.dw_movinID = 1;
-            doc1.numeroDocumento = 100;
-            doc1.numeroVale = 123;
-            doc1.fechaEmision= DateTime.Now;
-            documentoList.Add(doc1);
-            StringBuilder textoProductos1 = new StringBuilder();
-            textoProductos1.Append("Cama.");
-            listText.Add(textoProductos1);
+            int areaInternaID=Convert.ToInt32(arInt);
+            DateTime fechaActual = DateTime.Today;
 
-            dw_movin doc2 = new dw_movin();
-            doc2.dw_movinID = 2;
-            doc2.numeroDocumento = 1002;
-            doc2.numeroVale = 12234233;
-            doc2.fechaEmision= DateTime.Now;
-            documentoList.Add(doc2);
-
-            StringBuilder textoProductos2 = new StringBuilder();
-            textoProductos2.Append("Muchas camas1.|");
-            textoProductos2.Append("Muchas camas2.|");
-            textoProductos2.Append("Muchas camas3.|");
-            textoProductos2.Append("Muchas camas4.|");
-            textoProductos2.Append("Muchas camas5.|");
-            listText.Add(textoProductos2);            
-
+            List<dw_movin> dw_movinList = new List<dw_movin>();
             List<int> cantidadProductosPorDespachar = new List<int>();
-            cantidadProductosPorDespachar.Add(1);
-            cantidadProductosPorDespachar.Add(4);
+            List<List<dw_detalle>> listaDeListaDetalle = new List<List<dw_detalle>>();
+            List<dw_envio> datosEnvio = db.DatosEnvio.Where(s=>s.fechaDespacho==fechaActual & s.dw_datosTransportistaID==0).ToList();
+
+            foreach (var datoEnvio in datosEnvio)
+            {
+                dw_movin dw_movin = db.Movins.Find(datoEnvio.dw_movinID);
+                List<dw_detalle> dw_detalleList = db.DetalleMovin.Where(s => s.dw_movinID == dw_movin.dw_movinID &s.estadoDespacho==1).ToList();
+                int cantidadProductosMovin = dw_detalleList.Count;
+                cantidadProductosPorDespachar.Add(cantidadProductosMovin);
+                                
+                dw_movinList.Add(dw_movin);
+                listaDeListaDetalle.Add(dw_detalleList);
+            }  
+
+
+            /*if (areaInternaID == 0)
+            {
+                foreach (var datoEnvio in datosEnvio) {
+                    dw_movin dw_movin = db.Movins.Find(datoEnvio.dw_movinID);
+                    List<dw_detalle> dw_detalleList = db.DetalleMovin.Where(s => s.dw_movinID==dw_movin.dw_movinID).ToList();
+                    int cantidadProductosMovin = dw_detalleList.Count;
+                    cantidadProductosPorDespachar.Add(cantidadProductosMovin);
+                    StringBuilder strText = new StringBuilder();
+                    foreach (var detalle in dw_detalleList) {
+                        strText.Append(detalle.descripcionProducto);
+                        strText.Append("    |   ");
+                    }
+                    listText.Add(strText);
+                    dw_movinList.Add(dw_movin);
+                }        
+            }
+            else {
+                foreach (var datoEnvio in datosEnvio)
+                {
+                    dw_movin dw_movin = db.Movins.Find(datoEnvio.dw_movinID);
+                    List<dw_detalle> dw_detalleList = db.DetalleMovin.Where(s => s.dw_movinID == dw_movin.dw_movinID & s.dw_areaInternaID==areaInternaID).ToList();
+                    int cantidadProductosMovin = dw_detalleList.Count;
+                    cantidadProductosPorDespachar.Add(cantidadProductosMovin);
+                    StringBuilder strText = new StringBuilder();
+                    foreach (var detalle in dw_detalleList)
+                    {
+                        strText.Append(detalle.descripcionProducto);
+                        strText.Append("    |   ");
+                    }
+                    listText.Add(strText);
+                    dw_movinList.Add(dw_movin);
+                }    
+            }*/
+                           
+            
             ViewData["cantidadProductosPorDespachar"] = cantidadProductosPorDespachar;
-            ViewData["textoProductosDespachar"] = listText;
+            ViewData["listaDeListaDetalle"] = listaDeListaDetalle;
             ViewData["bodegas"] = db.Bodegas.ToList();
-            return View(documentoList);
+
+            return View(dw_movinList);
         }
 
         public ActionResult Despachar(int documentoID)
         {
-            dw_movin documento = new dw_movin();
-            documento.dw_movinID = 1;
-            documento.numeroDocumento = 100;
-            documento.numeroVale = 123;
-            documento.fechaEmision= DateTime.Now;
-
-            List<dw_detalle> listDetalleDocumento = new List<dw_detalle>();
-
-            dw_detalle detalleDocumento_1 = new dw_detalle();
-            detalleDocumento_1.dw_areaInternaID = 3;
-            detalleDocumento_1.estadoDespacho = 1;
-            detalleDocumento_1.dw_detalleID = 1;
-            detalleDocumento_1.dw_movinID = 1;
-            detalleDocumento_1.codigoProducto = "AS1111";
-            detalleDocumento_1.descripcionProducto = "CAMA";
-            detalleDocumento_1.cantidadProducto = 1;
-
-            listDetalleDocumento.Add(detalleDocumento_1);
-
-            dw_detalle detalleDocumento_2 = new dw_detalle();
-            detalleDocumento_2.dw_areaInternaID = 3;
-            detalleDocumento_2.estadoDespacho = 0;
-            detalleDocumento_2.dw_detalleID = 2;
-            detalleDocumento_2.dw_movinID = 1;
-            detalleDocumento_2.codigoProducto = "AS1122";
-            detalleDocumento_2.descripcionProducto = "Colchon";
-            detalleDocumento_2.cantidadProducto = 1;
-            listDetalleDocumento.Add(detalleDocumento_2);
-
-            dw_envio datosEnvio = new dw_envio();
-            datosEnvio.direccion = "Las Azaleas 854";
-            datosEnvio.observacion = "Ir despues de las 6pm";
-            ViewData["datosEnvio"] = datosEnvio;
+            dw_movin dw_movin = db.Movins.Find(documentoID);
+            List<dw_datosTransportista> datosTransportistas = db.Transportistas.ToList();
+            dw_envio datosEnvio = db.DatosEnvio.SingleOrDefault(s => s.dw_movinID == documentoID);
+            List<dw_detalle> listDetalleDocumento = db.DetalleMovin.Where(s => s.dw_movinID == documentoID).ToList();
             ViewData["detalleDocumento"] = listDetalleDocumento;
-            return View(documento);
+            ViewData["datosEnvio"] = datosEnvio;
+            ViewData["bodegas"] = db.Bodegas.ToList();
+            ViewData["dw_movin"] = dw_movin;
+            ViewData["datosTransportistas"] = datosTransportistas;
+            return View(dw_movin);
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public ActionResult Despachar(FormCollection form) {
+            
+            DateTime fechaDespacho = Formateador.fechaStringToDateTime((string)form["fechaDespacho"]);
+            int dw_movinID= Convert.ToInt32((string)form["dw_movinID"]);
+                        
+            dw_envio dw_envio = db.DatosEnvio.SingleOrDefault(s => s.dw_movinID == dw_movinID);
+            dw_envio.fechaDespacho = fechaDespacho;
+            dw_envio.cantidadVisitasDespacho = dw_envio.cantidadVisitasDespacho + 1;
+            dw_envio.dw_datosTransportistaID = Convert.ToInt32((string)form["datosTransportista"]);
+            db.Entry(dw_envio).State = EntityState.Modified;
+            db.SaveChanges();
 
             string[] checkeoDespacho = Request.Form.GetValues("estadoDespacho");
-            int cantidadProductosCheck = checkeoDespacho.Length;
-            int totalProductos = Convert.ToInt32((string)form["cantidadProductos"]);
+            for (int i = 0; i < checkeoDespacho.Length; i++) {
+                dw_detalle detalle = db.DetalleMovin.Find(Convert.ToInt32(checkeoDespacho[i]));
+                detalle.estadoDespacho = 2;
+
+                db.Entry(detalle).State = EntityState.Modified;                
+                db.SaveChanges();
+            }
             return RedirectToAction("porDespachar");
         }
     }

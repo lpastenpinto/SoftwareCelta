@@ -1,10 +1,6 @@
 ﻿@model IEnumerable<SoftwareCelta.Models.dw_movin>
 @{
-    ViewBag.Title = "Buscar Documento";
-    string fechaInicial = "", fechaFinal = "";
-    DateTime fecha1 = (DateTime)ViewBag.fechaInicial, fecha2 = (DateTime)ViewBag.fechaFinal;
-    fechaInicial = fecha1.Day + "/" + fecha1.Month + "/" + fecha1.Year;
-    fechaFinal = fecha2.Day + "/" + fecha2.Month + "/" + fecha2.Year;
+    ViewBag.Title = "Buscar Documento Registrado";   
 
 }
 <br /><br /><br />
@@ -16,28 +12,18 @@
             <label class="control-label">Inicio:</label>
             <input class="form-control fecha" id="fechaInicial" name="fechaInicial" data-val-date="Ingrese por favor una fecha." data-val-required="El campo fecha es obligatorio."
                data-date-format="DD/MM/YYYY" pattern="[0-9][0-9]/[0-9][0-9]/[0-9][0-9][0-9][0-9]"
-               type="text" value="@fechaInicial">
+               type="text" value="@ViewBag.fechaInicial">
 
         </div>
         <div class="col-md-3">
             <label class="control-label">Término:</label>
             <input class="form-control fecha" id="fechaFinal" name="fechaFinal" data-val-date="Ingrese por favor una fecha." data-val-required="El campo fecha es obligatorio."
                data-date-format="DD/MM/YYYY" pattern="[0-9][0-9]/[0-9][0-9]/[0-9][0-9][0-9][0-9]"
-               type="text" value="@fechaFinal">
-        </div>
-        <div class="col-md-4">
-            <label class="control-label">Area/Bodega</label>
-            <select class="form-control" name="areaInterna">
-                <option value="todos">TODOS</option>
-                @foreach (SoftwareCelta.Models.dw_areaInterna bodega in (List<SoftwareCelta.Models.dw_areaInterna>)ViewData["bodegas"])
-                {
-                    <option value="@bodega.dw_areaInternaID">@bodega.nombre</option>
-                }
-            </select>
-        </div>
+               type="text" value="@ViewBag.fechaFinal">
+        </div>        
         <div class="col-md-4">
             <br />
-            <input class="btn btn-primary btn-block" id="Boton" value="Filtrar" type="button" />
+            <input class="btn btn-primary btn-block" id="Boton" value="Buscar" type="button" />
         </div>
 </div>
 <br />
@@ -68,13 +54,13 @@
                         @Html.DisplayFor(modelItem => item.numeroDocumento)
                     </td>                    
                     <td>
-                        @Html.DisplayFor(modelItem => item.fechaEmision)
+                        @SoftwareCelta.Models.Formateador.fechaCompletaToString(item.fechaEmision)                        
                     </td>
                     <td>
                         @Html.DisplayFor(modelItem => item.tipoDocumento)
                     </td>
                     <td>                       
-                        @Html.ActionLink("Mostrar", "DocumentoRegistrado", new { documentoID = item.dw_movinID }) |
+                        @Html.ActionLink("Mostrar", "DocumentoRegistrado", new { documentoID = item.dw_movinID }) 
                     </td>
                 </tr>
             }
@@ -90,6 +76,20 @@
             $(".fecha").datetimepicker({
                 viewMode: 'days',
                 format: 'DD/MM/YYYY'
+            });
+
+            $("#Boton").click(function () {
+                var fechaInicial = $("#fechaInicial").val();
+                var fechaFinal = $("#fechaFinal").val();
+                fechaInicial = fechaInicial.replace("/", "-").replace("/", "-");
+                fechaFinal = fechaFinal.replace("/", "-").replace("/", "-");
+                if (fechaInicial == "" || fechaFinal == "") {
+                    alert("Debe ingresar ambas fechas");
+                }
+                else {                    
+                    ruta = "/documentos/Buscador?strFechaInicial=" + fechaInicial + "&strFechaFinal=" + fechaFinal;
+                    window.location.href = ruta
+                }
             });
         });
     </script>

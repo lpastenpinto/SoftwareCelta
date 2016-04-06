@@ -47,7 +47,7 @@ namespace SoftwareCelta.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "dw_datosTransportistaID,nombreCompleto,rut,razonSocial,direccion,telefono,mail,contacto,ciudad,giro")] dw_datosTransportista dw_datosTransportista)
+        public ActionResult Create([Bind(Include = "dw_datosTransportistaID,nombreCompleto,rut,razonSocial,patente,direccion,telefono,mail,contacto,ciudad,giro")] dw_datosTransportista dw_datosTransportista)
         {
             if (ModelState.IsValid)
             {
@@ -79,7 +79,7 @@ namespace SoftwareCelta.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "dw_datosTransportistaID,nombreCompleto,rut,razonSocial,direccion,telefono,mail,contacto,ciudad,giro")] dw_datosTransportista dw_datosTransportista)
+        public ActionResult Edit([Bind(Include = "dw_datosTransportistaID,nombreCompleto,rut,razonSocial,patente,direccion,telefono,mail,contacto,ciudad,giro")] dw_datosTransportista dw_datosTransportista)
         {
             if (ModelState.IsValid)
             {

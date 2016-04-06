@@ -12,5 +12,6 @@ namespace SoftwareCelta.Models
         public int numeroVale { set; get; }
         public DateTime fechaEmision { set; get; }
         public string tipoDocumento { set; get; }
+        public string nombreVendedor { set; get; }
     }
 }

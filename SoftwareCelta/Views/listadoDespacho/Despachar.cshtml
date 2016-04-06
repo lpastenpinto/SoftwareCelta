@@ -1,30 +1,76 @@
 ﻿@model SoftwareCelta.Models.dw_movin
 @{
-    ViewBag.Title = "Despachar";  
-    SoftwareCelta.DAL.ContextBDCelta db = new SoftwareCelta.DAL.ContextBDCelta();
+    ViewBag.Title = "Documento";
+    int contadorProductos = 1;
+    string despacho = "estadoDespacho";
+    string nombreBodega = "";
+    string fechaDespacho = SoftwareCelta.Models.Formateador.fechaCompletaToStringS0(DateTime.Now.AddDays(2));
     SoftwareCelta.Models.dw_envio datosEnvio = (SoftwareCelta.Models.dw_envio)ViewData["datosEnvio"];
-    int i = 0;
+    SoftwareCelta.DAL.ContextBDCelta db = new SoftwareCelta.DAL.ContextBDCelta();
+
 }
-
-<h2>Documento @Model.numeroDocumento</h2>
+<br />
+<h2>Documento @Model.numeroDocumento  | @SoftwareCelta.Models.Formateador.fechaCompletaToString(Model.fechaEmision)</h2>
 <br />
 
-<div class="row">
-    <div class="col-md-12">
-        <label>Direccion</label>
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+    @Html.HiddenFor(model => model.dw_movinID)
+    <div class="row">
+        <div class="col-md-4">
+            <label class="control-label">Nombre Cliente</label>
+            @datosEnvio.nombreCliente
+        </div>
+        <div class="col-md-4">
+            <label class="control-label">Rut</label>
+            @datosEnvio.rutCliente
+        </div>
+        <div class="col-md-4">
+            <label class="control-label">Ciudad</label>
+            @datosEnvio.ciudad
+
+        </div>
+        <br /><br /><br /><br />
+        <div class="col-md-4">
+            <label class="control-label">Telefono</label>
+            @datosEnvio.telefono
+        </div>
+        <div class="col-md-8">
+            <label class="control-label">Direccion</label>
+            @datosEnvio.direccion
+        </div>
+        <br /><br /><br />
+        <div class="col-md-12">
+            <label>Observacion</label>
+            @datosEnvio.observacion
+        </div>
         <br />
-        <textarea style="max-width: 100% !important; width:100%;" class="form-control" name="direccion" readonly>@datosEnvio.direccion</textarea>
+        <div class="col-md-6">
+            <label class="control-label">Fecha Despacho</label>
+            <input class="form-control fecha" id="fechaDespacho" name="fechaDespacho" data-val-date="Ingrese por favor una fecha." data-val-required="El campo fecha es obligatorio."
+                   data-date-format="DD/MM/YYYY" pattern="[0-9][0-9]/[0-9][0-9]/[0-9][0-9][0-9][0-9]"
+                   type="text" value="@SoftwareCelta.Models.Formateador.fechaCompletaToStringS0(datosEnvio.fechaDespacho)">
+        </div>
     </div>
-    <div class="col-md-12">
-        <label>Referencia</label>
-        <br />
-        <textarea style="max-width: 100% !important; width:100%;" class="form-control" name="referencia" readonly>@datosEnvio.observacion</textarea>
-    </div>    
-</div>
-<br />
-<br />
-<form role="form" method="post" action="@Url.Action("Despachar", "listadoDespacho" )">
-    <input value="@Model.dw_movinID" name="documentoID" class="hidden" /> 
+    <br />
+    <br />
+
+    <div class="col-md-6">
+        <label class="control-label">Transportista</label>
+        <select class="form-control areaInterna" name="datosTransportista">
+            @foreach (SoftwareCelta.Models.dw_datosTransportista transportista in (List<SoftwareCelta.Models.dw_datosTransportista>)ViewData["datosTransportistas"])
+            {
+                <option value="@transportista.dw_datosTransportistaID">@transportista.nombreCompleto|@transportista.patente</option>
+            }
+        </select>
+
+    </div>
+    <br />
+    <h3>Productos Comprados</h3>
+    <br />
     <div class="table-responsive">
         <table class="table">
             <thead>
@@ -40,18 +86,19 @@
                     </th>
                     <th>
                         Area Interna /Bodega
-                    </th>                    
+                    </th>
                     <th>Despacho</th>
+                                        
                 </tr>
             </thead>
             <tbody>
 
                 @foreach (SoftwareCelta.Models.dw_detalle detalle in (List<SoftwareCelta.Models.dw_detalle>)ViewData["detalleDocumento"])
                 {
-                    i++;
-                    <input value="@detalle.dw_movinID" name="detalleDocumentoID" class="hidden"/>                
+                    string nameDespacho = despacho + contadorProductos;
                     <tr>
                         <td>
+                            <input class="hidden" name="dw_detalleID" value="@detalle.dw_detalleID" />
                             @detalle.codigoProducto
                         </td>
                         <td>
@@ -61,28 +108,57 @@
                             @detalle.cantidadProducto
                         </td>
                         <td>
-                            @{
-                                string nombreBodega = db.Bodegas.Find(@detalle.dw_areaInternaID).nombre;
+                            @if (!detalle.estadoDespacho.Equals(0))
+                            {
+
+                                nombreBodega = db.Bodegas.Find(@detalle.dw_areaInternaID).nombre;
+
+                            }
+                            else
+                            {
+                                nombreBodega = "";
                             }
                             @nombreBodega
-                        </td>                       
+                        </td>                        
                         <td>
-                            <input type="checkbox" value="true" name="estadoDespacho">                          
+                            @if (detalle.estadoDespacho.Equals(0))
+                            { 
+                                <text> 
+                                    Entregado en tienda
+                                </text> 
+                            }
+                            else { 
+                                <text>
+                                    <input type="checkbox" name="estadoDespacho" class="form-control" value="@detalle.dw_detalleID"/>
+                                    
+                                </text>
+                            }
                         </td>
-                    </tr>                                
+                    </tr>
+                    contadorProductos++;
                 }
-                
             </tbody>
         </table>
-        <input class="hidden" value="@i" name="cantidadProductos" />
         <br />
         <div class="clearfix"></div>
         <div class="modal-footer">
             <input type="submit" value="Despachar" class="btn btn-success btn-lg btn-default" />
         </div>
     </div>
-</form>
+}
 <br />
-
+@section Scripts {
+    @Styles.Render("~/Content/bootstrap-datetimepicker.css")
+    @Scripts.Render("~/Scripts/datetimepicker/moment.js")
+    @Scripts.Render("~/Scripts/datetimepicker/bootstrap-datetimepicker.js")
+    <script>
+        $(document).ready(function () {
+            $(".fecha").datetimepicker({
+                viewMode: 'days',
+                format: 'DD/MM/YYYY'
+            });
+        });
+    </script>
+}
 
 

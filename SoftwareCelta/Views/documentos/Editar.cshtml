@@ -1,7 +1,154 @@
-﻿
+﻿@model SoftwareCelta.Models.dw_movin
 @{
-    ViewBag.Title = "Editar";
+    ViewBag.Title = "Documento";
+    int contadorProductos = 1;
+    string despacho = "estadoDespacho";
+    string fechaDespacho = SoftwareCelta.Models.Formateador.fechaCompletaToStringS0(DateTime.Now.AddDays(2));
+    SoftwareCelta.Models.dw_envio datosEnvio = (SoftwareCelta.Models.dw_envio)ViewData["datosEnvio"];   
+    
+}
+<br />
+<h2>Documento @Model.numeroDocumento  | @SoftwareCelta.Models.Formateador.fechaCompletaToString(Model.fechaEmision)</h2>
+<br />
+
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+    @Html.HiddenFor(model => model.dw_movinID) 
+    <div class="row">
+        <div class="col-md-4">
+            <label class="control-label">Nombre Cliente</label>
+            <input class="form-control" name="nombreCliente" value="@datosEnvio.nombreCliente" type="text" />
+        </div>
+        <div class="col-md-4">
+            <label class="control-label">Rut</label>
+            <input class="form-control" name="rutCliente" type="text"  value="@datosEnvio.rutCliente"/>
+        </div>
+        <div class="col-md-4">
+            <label class="control-label">Ciudad</label>
+            <select name="ciudad" class="form-control">
+                <option value="LA SERENA" @if(@datosEnvio.ciudad.Equals("LA SERENA")){<text>selected</text>}>LA SERENA</option>
+                <option value="COQUIMBO" @if (@datosEnvio.ciudad.Equals("COQUIMBO")) { <text> selected</text>}>COQUIMBO</option>
+                <option value="PAN DE AZUCAR" @if (@datosEnvio.ciudad.Equals("PAN DE AZUCAR")) { <text> selected</text>}>PAN DE AZUCAR</option>
+            </select>
+
+        </div>
+        <br /><br /><br /><br />
+        <div class="col-md-4">
+            <label class="control-label">Telefono</label>
+            <input class="form-control" name="telefono" type="text" value="@datosEnvio.telefono"/>
+        </div>
+        <div class="col-md-8">
+            <label class="control-label">Direccion</label>
+            <input class="form-control" name="direccion" type="text" style="max-width: 20000px;" value="@datosEnvio.direccion"/>
+        </div>
+        <br /><br /><br />
+        <div class="col-md-12">
+            <label>Observacion</label>
+            <textarea style="max-width: 100% !important; width:100%;" class="form-control" name="observacion">@datosEnvio.observacion</textarea>
+        </div>
+        <br />
+        <div class="col-md-6">
+            <label class="control-label">Fecha Despacho</label>
+            <input class="form-control fecha" id="fechaDespacho" name="fechaDespacho" data-val-date="Ingrese por favor una fecha." data-val-required="El campo fecha es obligatorio."
+                   data-date-format="DD/MM/YYYY" pattern="[0-9][0-9]/[0-9][0-9]/[0-9][0-9][0-9][0-9]"
+                   type="text" value="@SoftwareCelta.Models.Formateador.fechaCompletaToStringS0(datosEnvio.fechaDespacho)">
+        </div>
+    </div>
+    <br />
+    <br />
+
+    <h3>Productos Comprados</h3>
+    <br />
+    <div class="table-responsive">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>
+                        Codigo Producto
+                    </th>
+                    <th>
+                        Descripcion Producto
+                    </th>
+                    <th>
+                        Cantidad Producto
+                    </th>
+                    <th>
+                        Area Interna /Bodega
+                    </th>
+                    <th>Entrega Inmediata</th>
+                    <th>Despacho a Domicilio</th>
+                </tr>
+            </thead>
+            <tbody>
+
+                @foreach (SoftwareCelta.Models.dw_detalle detalle in (List<SoftwareCelta.Models.dw_detalle>)ViewData["detalleDocumento"])
+                {
+                    string nameDespacho = despacho + contadorProductos;                   
+                    <tr>                        
+                        <td>
+                            <input class="hidden" name="dw_detalleID" value="@detalle.dw_detalleID" />
+                            @detalle.codigoProducto
+                        </td>
+                        <td>
+                            @detalle.descripcionProducto
+                        </td>
+                        <td>
+                            @detalle.cantidadProducto
+                        </td>
+                        <td>
+                            <select class="form-control areaInterna @if(detalle.estadoDespacho.Equals(0)){<text>hidden</text>}" name="areaInterna">
+                                @foreach (SoftwareCelta.Models.dw_areaInterna bodega in (List<SoftwareCelta.Models.dw_areaInterna>)ViewData["bodegas"])
+                                {                                    
+                                    <option value="@bodega.dw_areaInternaID" @if (bodega.dw_areaInternaID.Equals(detalle.dw_areaInternaID)){<text>selected</text> }>@bodega.nombre</option>
+                                }
+                            </select>
+                        </td>
+                        <td>
+
+                            <input type="radio" name="@nameDespacho" value="0" class="entregaInmediata" @if (detalle.estadoDespacho.Equals(0)) { <text>checked</text> }>
+                        </td>
+                        <td>
+                            <input type="radio" name="@nameDespacho" value="1" class="despachoDomicilio" @if (detalle.estadoDespacho.Equals(1)) { <text>checked</text> }>
+                        </td>
+                    </tr>
+                                contadorProductos++;
+                }
+            </tbody>
+        </table>
+        <br />
+        <div class="clearfix"></div>
+        <div class="modal-footer">
+            <input type="submit" value="Guardar" class="btn btn-success btn-lg btn-default" />
+        </div>
+    </div>
+}
+<br />
+@section Scripts {
+    @Styles.Render("~/Content/bootstrap-datetimepicker.css")
+    @Scripts.Render("~/Scripts/datetimepicker/moment.js")
+    @Scripts.Render("~/Scripts/datetimepicker/bootstrap-datetimepicker.js")
+    <script>
+        $(document).ready(function () {
+            $(".fecha").datetimepicker({
+                viewMode: 'days',
+                format: 'DD/MM/YYYY'
+            });
+
+            $(".entregaInmediata").click(function () {
+                var selectAreaInterna = $(this).closest('tr').find('.areaInterna');
+                selectAreaInterna.addClass("hidden");
+            });
+
+            $(".despachoDomicilio").click(function () {
+                var selectAreaInterna = $(this).closest('tr').find('.areaInterna');
+                selectAreaInterna.removeClass("hidden");
+            });
+
+        });
+    </script>
 }
 
-<h2>Editar</h2>
 

@@ -3,26 +3,21 @@
 @{
     ViewBag.Title = "Por Despachar";
     int i=0;
-    List<System.Text.StringBuilder> listaTextProductos = (List<System.Text.StringBuilder>)ViewData["textoProductosDespachar"];
+    
+    List<List<SoftwareCelta.Models.dw_detalle>> listaDeListaDetalle = (List<List<SoftwareCelta.Models.dw_detalle>>)ViewData["listaDeListaDetalle"];
     List<int> cantidadProductosPorDespachar = (List<int>)ViewData["cantidadProductosPorDespachar"];
-
-    string fechaInicial = "", fechaFinal = "";
-    DateTime fechaActual = DateTime.Today;
-    DateTime fechaAnterior = DateTime.Today.AddDays(-1);
-    fechaInicial = fechaActual.Day + "/" + fechaActual.Month + "/" + fechaActual.Year;
-    fechaFinal = fechaActual.Day + "/" + fechaActual.Month + "/" + fechaActual.Year;       
+       
 }
 
 <br /><br />
-<div class="col-md-12">
+<div class="col-md-12 hidden">
     <div class="col-md-12">
         <h4>Filtros:</h4>
-    </div>
-      
+    </div>      
     <div class="col-md-4">
         <label class="control-label">Area/Bodega</label>
-        <select class="form-control" name="bodega">      
-            <option value="todos">TODOS</option>     
+        <select class="form-control" name="bodega" id="bodega">      
+            <option value="0">TODOS</option>     
             @foreach (SoftwareCelta.Models.dw_areaInterna bodega in (List<SoftwareCelta.Models.dw_areaInterna>)ViewData["bodegas"])
             {
                 <option value="@bodega.dw_areaInternaID">@bodega.nombre</option>
@@ -36,7 +31,7 @@
 </div>
 
 <br /><br /><br />
-<h2>Boletas para despachar Hoy @DateTime.Today</h2>
+<h2>Boletas para despachar Hoy @SoftwareCelta.Models.Formateador.fechaCompletaToString(DateTime.Today)</h2>
 <br />
 <div class="table-responsive">
     <table class="table">
@@ -57,15 +52,24 @@
             
             @foreach (var item in Model)
             {
+                string nameDiv = "divProd" + @i;
                 <tr>
                     <td>
                         @Html.DisplayFor(modelItem => item.numeroDocumento)
                     </td>
-                    <td>
+                    <td class="col-xs-2">
                         @cantidadProductosPorDespachar[i]
                     </td>                
-                    <td>
-                        @listaTextProductos[i]
+                    <td class="col-xs-4">
+                        <button data-toggle="collapse" data-target="#@nameDiv" class="btn btn-success">+</button>
+
+                        <div class="collapse col-xs-12" id="@nameDiv">
+                            @foreach (var detalle in listaDeListaDetalle[i])
+                            {
+                                <text><div class="col-xs-4">@detalle.codigoProducto</div><div class="col-xs-4">@detalle.descripcionProducto</div><div class="col-xs-2">@detalle.cantidadProducto</div></text>
+                                <text><br /></text>
+                            }
+                        </div>
                     </td>   
                     <td>         
                         @Html.ActionLink("Ver detalle y Despachar", "Despachar", new { documentoID = item.dw_movinID }, new { target = "_blank" })
@@ -90,6 +94,17 @@
                 viewMode: 'days',
                 format: 'DD/MM/YYYY'
             });
+
+            $("#Boton").click(function () {
+                var bodega = $("#bodega").val();               
+                var ruta = "/listadoDespacho/porDespachar?arInt=" + bodega;
+                window.location.href = ruta
+                
+            });
         });
+
+
+
+
     </script>
 }

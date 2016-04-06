@@ -1,50 +1,54 @@
 ﻿@model SoftwareCelta.Models.dw_movin
 @{
     ViewBag.Title = "Documento Registrado";
-    int contadorProductos = 1;
-    string despacho = "despacho";
-    SoftwareCelta.DAL.ContextBDCelta db = new SoftwareCelta.DAL.ContextBDCelta();
     SoftwareCelta.Models.dw_envio datosEnvio = (SoftwareCelta.Models.dw_envio)ViewData["datosEnvio"];
-}
+    SoftwareCelta.DAL.ContextBDCelta db = new SoftwareCelta.DAL.ContextBDCelta();
+    string nombreBodega = "";
 
-<h2>Documento @Model.numeroDocumento</h2>
+}
 <br />
-Fecha: @SoftwareCelta.Models.Formateador.fechaCompletaToString(Model.fechaEmision)
-<br /><div class="row">
-    <div class="col-md-4">
-        <label class="control-label">Nombre Cliente</label>
-        @datosEnvio.nombreCliente
-    </div>
-    <div class="col-md-4">
-        <label class="control-label">Rut</label>
-        @datosEnvio.rutCliente
-    </div>
-    <div class="col-md-4">
-        <label class="control-label">Ciudad</label>
-        @datosEnvio.ciudad
+<h2>Documento @Model.numeroDocumento  | @SoftwareCelta.Models.Formateador.fechaCompletaToString(Model.fechaEmision)</h2>
+<br />
+
+    <div class="row">
+        <div class="col-md-4">
+            <label class="control-label">Nombre Cliente</label>
+            @datosEnvio.nombreCliente
+        </div>
+        <div class="col-md-4">
+            <label class="control-label">Rut</label>
+            @datosEnvio.rutCliente
+        </div>
+        <div class="col-md-4">
+            <label class="control-label">Ciudad</label>
+            @datosEnvio.ciudad
+
+        </div>
+        <br /><br /><br /><br />
+        <div class="col-md-4">
+            <label class="control-label">Telefono</label>
+            @datosEnvio.telefono
+        </div>
+        <div class="col-md-8">
+            <label class="control-label">Direccion</label>
+            @datosEnvio.direccion
+        </div>
+        <br /><br /><br />
+        <div class="col-md-12">
+            <label>Observacion</label>
+            @datosEnvio.observacion
+        </div>
+        <br />
+        <div class="col-md-6">
+            <label class="control-label">Fecha Despacho</label>
+            @SoftwareCelta.Models.Formateador.fechaCompletaToStringS0(datosEnvio.fechaDespacho)
+        </div>
     </div>
     <br />
-    <div class="col-md-4">
-        <label class="control-label">Telefono</label>
-        @datosEnvio.telefono
-    </div>
-    <div class="col-md-8">
-        <label class="control-label">Direccion</label>
-        @datosEnvio.direccion
-    </div>
     <br />
-    <div class="col-md-12">
-        <label>Observacion</label>
-        @datosEnvio.observacion
-    </div>
+
+    <h3>Productos Comprados</h3>
     <br />
-    <div class="col-md-6">
-        <label class="control-label">Fecha Despacho</label>
-        @datosEnvio.fechaDespacho
-    </div>
-</div>
-<br />
-<br />
     <div class="table-responsive">
         <table class="table">
             <thead>
@@ -61,16 +65,17 @@ Fecha: @SoftwareCelta.Models.Formateador.fechaCompletaToString(Model.fechaEmisio
                     <th>
                         Area Interna /Bodega
                     </th>
-                    <th>Entrega</th>                    
+                    <th>Entrega/Despacho</th>                    
                 </tr>
             </thead>
             <tbody>
 
                 @foreach (SoftwareCelta.Models.dw_detalle detalle in (List<SoftwareCelta.Models.dw_detalle>)ViewData["detalleDocumento"])
                 {
-                    string nameDespacho = despacho + contadorProductos;
+                    
                     <tr>
                         <td>
+                            
                             @detalle.codigoProducto
                         </td>
                         <td>
@@ -79,32 +84,46 @@ Fecha: @SoftwareCelta.Models.Formateador.fechaCompletaToString(Model.fechaEmisio
                         <td>
                             @detalle.cantidadProducto
                         </td>
-                        <td>                                                            
-                            @{                                
-                                string nombreBodega = db.Bodegas.Find(@detalle.dw_areaInternaID).nombre;                                        
+                        <td>
+                            @if (!detalle.estadoDespacho.Equals(0))
+                            {
+                              
+                                nombreBodega = db.Bodegas.Find(@detalle.dw_areaInternaID).nombre;
+                                                        
+                            }
+                            else
+                            {
+                                nombreBodega = "";
                             }
                             @nombreBodega
+                           
                         </td>
                         <td>
-                            @if (@detalle.estadoDespacho.Equals(0)) { 
+                            @if (detalle.estadoDespacho.Equals(0))
+                            { 
+                                <text>Retirado en tienda</text>
+                            }
+                            else if (detalle.estadoDespacho.Equals(1))
+                            {
                                 <text>
-                                    Entrega Inmediata
+                                   Despacho a domicilio (Aun no se despacha)
                                 </text>
-                            }else if(@detalle.estadoDespacho.Equals(1)){
+                            }
+                            else if (detalle.estadoDespacho.Equals(2))
+                            {
                                 <text>
-                                    Despacho Domicilio
+                                    Despachado a domicilio
                                 </text>
-                            }                            
-                        </td>
+                            }
+                        </td>                        
                     </tr>
                 }
             </tbody>
         </table>
-        <br />        
+        <br />
+        <div class="clearfix"></div>
+        <div class="modal-footer">
+            <input type="submit" value="Guardar" class="btn btn-success btn-lg btn-default" />
+        </div>
     </div>
-
-
-
-
-
 

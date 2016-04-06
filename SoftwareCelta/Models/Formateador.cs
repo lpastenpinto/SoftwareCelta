@@ -86,6 +86,7 @@ namespace SoftwareCelta.Models
         }
         public static DateTime formatearFechaCompleta(string fechaCompleta)
         {
+            fechaCompleta = fechaCompleta.Replace("-", "/");
             string[] fecha_1 = fechaCompleta.Split('/');
             int dia1 = Convert.ToInt32(fecha_1[0]);
             int mes1 = Convert.ToInt32(fecha_1[1]);
@@ -151,14 +152,9 @@ namespace SoftwareCelta.Models
 
         public static DateTime fechaFormatoGuardar(string fechaString)
         {
-            if (fechaString.Equals(""))
-            {
-                DateTime nueva = new DateTime(2000, 1, 1);
-
-                return nueva;
-            }
-            DateTime fecha = new DateTime(int.Parse(fechaString.Split('/')[2]),
-           int.Parse(fechaString.Split('/')[1]), int.Parse(fechaString.Split('/')[0]));
+            fechaString = fechaString.Replace("/", "-");
+            DateTime fecha = new DateTime(int.Parse(fechaString.Split('-')[2]),
+           int.Parse(fechaString.Split('-')[1]), int.Parse(fechaString.Split('-')[0]));
             return fecha;
         }
     }

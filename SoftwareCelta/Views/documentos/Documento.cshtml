@@ -6,12 +6,15 @@
     string fechaDespacho=SoftwareCelta.Models.Formateador.fechaCompletaToStringS0(DateTime.Now.AddDays(2));           
 }
 <br />
-<h2>Documento @Model.numeroDocumento</h2>
+<h2>Documento @Model.numeroDocumento / @SoftwareCelta.Models.Formateador.fechaCompletaToString(Model.fechaEmision)</h2>
 <br />
 
 
 <form role="form" method="post" action="@Url.Action("registrarNuevoDocumento", "documentos" )">
-    <input type="text" class="hidden" value="@Model.dw_movinID" name="dw_movinID" />
+    <input type="text" class="hidden" value="@Model.numeroDocumento" name="numeroDocumento" />
+    <input type="text" class="hidden" value="@Model.numeroVale" name="numeroVale" />
+    <input type="text" class="hidden" value="@SoftwareCelta.Models.Formateador.fechaCompletaToString(Model.fechaEmision)" name="fechaEmision" /> 
+    <input type="text" class="hidden" value="@Model.tipoDocumento" name="tipoDocumento" /> 
     <div class="row">
         <div class="col-md-4">
             <label class="control-label">Nombre Cliente</label>
@@ -85,12 +88,16 @@
                     <tr>
                         <td>
                             @detalle.codigoProducto
+                            <input class="hidden" value="@detalle.codigoProducto" name="codigoProducto" />
                         </td>
                         <td>
                             @detalle.descripcionProducto
+                            <input class="hidden" value="@detalle.descripcionProducto" name="descripcionProducto" />
+                            <input class="hidden" value="@detalle.valorProducto" name="valorProducto" />
                         </td>
                         <td>
                             @detalle.cantidadProducto
+                            <input class="form-control hidden" type="number" value="@detalle.cantidadProducto" name="cantidadProducto"/>
                         </td>
                         <td>
                             <select class="form-control areaInterna" name="areaInterna">
