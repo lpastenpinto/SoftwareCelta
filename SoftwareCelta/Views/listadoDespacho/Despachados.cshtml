@@ -2,39 +2,78 @@
 
 @{
     ViewBag.Title = "Despachados";
+    List<SoftwareCelta.Models.dw_envio> datosEnvio = (List<SoftwareCelta.Models.dw_envio>)ViewData["datosEnvio"];
+    List<List<SoftwareCelta.Models.dw_detalle>> listaDeListaDetalle = (List<List<SoftwareCelta.Models.dw_detalle>>)ViewData["listaDeListaDetalle"];
     int i = 0;
-    List<System.Text.StringBuilder> listaTextProductos = (List<System.Text.StringBuilder>)ViewData["textoProductosDespachar"];
-    List<int> cantidadProductosPorDespachar = (List<int>)ViewData["cantidadProductosPorDespachar"];
-
-    string fechaInicial = "", fechaFinal = "";
-    DateTime fechaActual = DateTime.Today;
-    DateTime fechaAnterior = DateTime.Today.AddDays(-1);
-    fechaInicial = fechaActual.Day + "/" + fechaActual.Month + "/" + fechaActual.Year;
-    fechaFinal = fechaActual.Day + "/" + fechaActual.Month + "/" + fechaActual.Year;
 }
+@if (TempData["Success"] != null)
+{   <br /><br /><br />  
+    <div class="col-md-12">
+        <div class="alert alert-success">
+            <button type="button" class="close" data-dismiss="alert"
+                aria-hidden="true">
+                &times;
+            </button>
+            @TempData["Success"]
+        </div>
+    </div>
+}
+
 <br /><br />
 <h2>Documentos Despachados</h2>
 <br /><br />
-<div class="col-md-12">
-    <div class="col-md-12">
-        <h4>Filtros:</h4>
-    </div>    
-    <div class="col-md-3">
-            <label class="control-label">Inicio:</label>
-            <input class="form-control fecha" id="fecha1" name="fechaInicial" data-val-date="Ingrese por favor una fecha." data-val-required="El campo fecha es obligatorio."
-                   data-date-format="DD/MM/YYYY" pattern="[0-9][0-9]/[0-9][0-9]/[0-9][0-9][0-9][0-9]"
-                   type="text" value="@fechaInicial">
 
+
+<div class="col-md-12">
+    <h4>Filtrar Por:</h4>
+    <div class="col-md-5">
+        <label class="control-label">Fechas Despacho/Transportista/Area Interna</label>        
+        <input type="radio" class="tipoFiltro" name="tipoFiltro" value="0" @if(ViewBag.filtroFecha.Equals("")){<text>checked</text>}/>
     </div>
     <div class="col-md-3">
-            <label class="control-label">Término:</label>
-            <input class="form-control fecha" id="fecha2" name="fechaFinal" data-val-date="Ingrese por favor una fecha." data-val-required="El campo fecha es obligatorio."
+        <label class="control-label">Numero Boleta</label>
+        <input type="radio" class="tipoFiltro" name="tipoFiltro" value="1" @if (ViewBag.filtroDoc.Equals("")) { <text> checked</text>} />
+    </div>
+</div>
+<br />
+<br />
+<div class="col-md-12"> 
+    <div class="col-md-3 fechaInicio @ViewBag.filtroFecha">
+            <label class="control-label">Desde:</label>
+            <input class="form-control fecha" id="fechaInicial" name="fechaInicial" data-val-date="Ingrese por favor una fecha." data-val-required="El campo fecha es obligatorio."
                    data-date-format="DD/MM/YYYY" pattern="[0-9][0-9]/[0-9][0-9]/[0-9][0-9][0-9][0-9]"
-                   type="text" value="@fechaFinal">
+                   type="text" value="@ViewBag.fechaInicial">
+
+    </div>
+    <div class="col-md-3 fechaFinal @ViewBag.filtroFecha">
+            <label class="control-label">Hasta:</label>
+            <input class="form-control fecha" id="fechaFinal" name="fechaFinal" data-val-date="Ingrese por favor una fecha." data-val-required="El campo fecha es obligatorio."
+                   data-date-format="DD/MM/YYYY" pattern="[0-9][0-9]/[0-9][0-9]/[0-9][0-9][0-9][0-9]"
+                   type="text" value="@ViewBag.fechaFinal">
     </div>        
-    <div class="col-md-3">
+    <div class="col-md-3 divTransportista @ViewBag.filtroFecha">
+        <label class="control-label">Transportista</label>
+        <select class="form-control idTransportista">
+            <option value="0">Todos</option>
+            @foreach (var transp in (List<SoftwareCelta.Models.dw_datosTransportista>)ViewData["transportistas"])
+            {
+                <option value="@transp.dw_datosTransportistaID">@transp.nombreCompleto | @transp.patente</option>
+            }
+        </select>
+    </div>
+    <div class="col-md-3 divBodega @ViewBag.filtroFecha">
+        <label class="control-label">Area Interna/Bodega</label>
+        <select class="form-control idBodega">
+            <option value="0">Todas</option>
+            @foreach (var bodega in (List<SoftwareCelta.Models.dw_areaInterna>)ViewData["bodegas"])
+            {
+                <option value="@bodega.dw_areaInternaID">@bodega.nombre</option>
+            }
+        </select>
+    </div>
+    <div class="col-md-6 numeroDocumento @ViewBag.filtroDoc">
         <label class="control-label">Numero Documento</label>
-        <input class="form-control" name="numeroDocumento"/>
+        <input class="form-control docNum"/>
     </div>
     <div class="col-md-3">
         <br />
@@ -42,6 +81,7 @@
     </div>
 </div>
 <br /><br />
+<br />
 <div class="table-responsive">
     <table class="table">
         <thead>
@@ -51,10 +91,10 @@
                 </th>
                 <th>
                     Fecha Emision
-                </th>
+                </th>                
                 <th>
-                    Cantidad Productos por despachar
-                </th>
+                    Fecha Despacho
+                </th>                
                 <th>Productos a Despachar</th>
                 <th></th>
                 <th></th>
@@ -65,24 +105,40 @@
 
             @foreach (var item in Model)
             {
+                string nameDiv = "divProd" + @i;
                 <tr>
                     <td>
                         @Html.DisplayFor(modelItem => item.numeroDocumento)
                     </td>
                     <td>
-                        @Html.DisplayFor(modelItem => item.fechaEmision)
+                        @SoftwareCelta.Models.Formateador.fechaCompletaToString(item.fechaEmision)
                     </td>
                     <td>
-                        @cantidadProductosPorDespachar[i]
+                        @SoftwareCelta.Models.Formateador.fechaCompletaToString(datosEnvio[i].fechaDespacho)
                     </td>
-                    <td>
-                        @listaTextProductos[i]
+                    <td col-xs-4>
+                        <div class="col-xs-2">
+                            <button data-toggle="collapse" data-target="#@nameDiv" class="btn btn-success">+</button>
+                        </div>
+                        <div class="col-xs-10 divTextAjax">
+
+                        </div>
+                        <br /><br />
+
+                        <div class="collapse col-xs-12" id="@nameDiv">
+                            <input class="hidden idDetalleLista" name="idDetalleLista" value="@listaDeListaDetalle[i]" />
+                            @foreach (var detalle in listaDeListaDetalle[i])
+                            {
+                                <text><div class="col-xs-4">@detalle.codigoProducto</div><div class="col-xs-4">@detalle.descripcionProducto</div><div class="col-xs-2">@detalle.cantidadProducto</div></text>
+                                <text><br /></text>
+                            }
+                        </div>
                     </td>
                     <td>
                         <a href="@Url.Action("DocumentoRegistrado", "documentos", new { documentoID = item.dw_movinID })">Mostrar</a>                        
                     </td>
                     <td>
-                        @Html.ActionLink("Pedido Devuelto", "", new { documentoID = item.dw_movinID })
+                        @Html.ActionLink("Despacho Devuelto|Cambiar Fecha Despacho", "despachoDevuelto", new { documentoID = item.dw_movinID })
                     </td>                   
                 </tr>               
             }
@@ -99,6 +155,61 @@
                 viewMode: 'days',
                 format: 'DD/MM/YYYY'
             });
+            $('.tipoFiltro').change(function () {
+                var valor = $(this).val();
+                if (valor == 0) {
+                    $('.numeroDocumento').addClass("hidden");
+                    $('.divBodega').removeClass("hidden");
+                    $('.divTransportista').removeClass("hidden");
+                    $('.fechaFinal').removeClass("hidden");
+                    $('.fechaInicio').removeClass("hidden");
+
+                } else {
+                    $('.numeroDocumento').removeClass("hidden");
+                    $('.divBodega').addClass("hidden");
+                    $('.divTransportista').addClass("hidden");
+                    $('.fechaFinal').addClass("hidden");
+                    $('.fechaInicio').addClass("hidden");
+
+                }
+            });
+
+
+            $("#Boton").click(function () {                
+                var tipoFiltro=$("input[name='tipoFiltro']:checked").val()                
+                if (tipoFiltro == "1") {                    
+                    var numeroDoc = $(".docNum").val();
+                    ruta = "/listadoDespacho/Despachados?numDoc=" + numeroDoc;
+                    window.location.href = ruta;
+
+                } else {
+                    
+                    var fechaInicial = $("#fechaInicial").val();
+                    var fechaFinal = $("#fechaFinal").val();
+                    var ruta;
+                    fechaInicial = fechaInicial.replace("/", "-").replace("/", "-");
+                    fechaFinal = fechaFinal.replace("/", "-").replace("/", "-");
+                    var idTransportista = $(".idTransportista").val();
+                    var idBodega = $('.idBodega').val();
+                    ruta = "/listadoDespacho/Despachados?fInicial=" + fechaInicial + "&fFinal=" + fechaFinal + "&idTransport=" + idTransportista + "&idBodega=" + idBodega;
+                    if (idTransportista == "0") {
+                        ruta = "/listadoDespacho/Despachados?fInicial=" + fechaInicial + "&fFinal=" + fechaFinal + "&idBodega=" + idBodega;
+                    }                    
+                    if (idBodega == "0") {
+                        ruta = "/listadoDespacho/Despachados?fInicial=" + fechaInicial + "&fFinal=" + fechaFinal + "&idTransport=" + idTransportista ;
+                    }
+                    if (idBodega == "0" && idTransportista == "0") {
+                        ruta = "/listadoDespacho/Despachados?fInicial=" + fechaInicial + "&fFinal=" + fechaFinal;
+                    }
+
+                    
+                    window.location.href = ruta;
+
+                }
+                                                  
+                
+            });
+            
         });
     </script>
 }

@@ -1,15 +1,21 @@
 ﻿@model SoftwareCelta.Models.dw_movin
 @{
-    ViewBag.Title = "Documento Registrado";
+    ViewBag.Title = "Despacho De vuelto";        
     SoftwareCelta.Models.dw_envio datosEnvio = (SoftwareCelta.Models.dw_envio)ViewData["datosEnvio"];
     SoftwareCelta.DAL.ContextBDCelta db = new SoftwareCelta.DAL.ContextBDCelta();
     string nombreBodega = "";
-
 }
 <br />
-<h2>Documento @Model.numeroDocumento  | @SoftwareCelta.Models.Formateador.fechaCompletaToString(Model.fechaEmision)</h2>
+<h2>Documento @Model.numeroDocumento</h2>
 <br />
 
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+    @Html.HiddenFor(model => model.dw_movinID)
+    <input class="hidden" name="numeroBoleta" value="@Model.numeroDocumento"/>
     <div class="row">
         <div class="col-md-4">
             <label class="control-label">Nombre Cliente</label>
@@ -22,7 +28,6 @@
         <div class="col-md-4">
             <label class="control-label">Ciudad</label>
             @datosEnvio.ciudad
-
         </div>
         <br /><br /><br /><br />
         <div class="col-md-4">
@@ -39,12 +44,20 @@
             @datosEnvio.observacion
         </div>
         <br />
+        <div class="col-md-12">
+            <label class="control-label">Cantidad de Despachos hasta el momento</label>
+            @datosEnvio.cantidadVisitasDespacho
+        </div><br />
         <div class="col-md-6">
-            <label class="control-label">Fecha Despacho</label>
-            @SoftwareCelta.Models.Formateador.fechaCompletaToStringS0(datosEnvio.fechaDespacho)
+            <label class="control-label">ESCOGER NUEVA FECHA DE DESPACHO</label>
+            <input class="form-control fecha" id="fechaDespacho" name="fechaDespacho" data-val-date="Ingrese por favor una fecha." data-val-required="El campo fecha es obligatorio."
+                   data-date-format="DD/MM/YYYY" pattern="[0-9][0-9]/[0-9][0-9]/[0-9][0-9][0-9][0-9]"
+                   type="text" value="@SoftwareCelta.Models.Formateador.fechaCompletaToStringS0(datosEnvio.fechaDespacho)">
         </div>
+      
     </div>
     <br />
+    
     <br />
 
     <h3>Productos Comprados</h3>
@@ -65,7 +78,8 @@
                     <th>
                         Area Interna /Bodega
                     </th>
-                    <th>Entrega/Despacho</th>                    
+                    <th>Entrega Inmediata</th>
+                    <th>Despacho a Domicilio</th>
                 </tr>
             </thead>
             <tbody>
@@ -74,8 +88,7 @@
                 {
                     
                     <tr>
-                        <td>
-                            
+                        <td>                            
                             @detalle.codigoProducto
                         </td>
                         <td>
@@ -87,38 +100,46 @@
                         <td>
                             @if (!detalle.dw_areaInternaID.Equals(0))
                             {
-                              
+
                                 nombreBodega = db.Bodegas.Find(@detalle.dw_areaInternaID).nombre;
-                                                        
+
                             }
                             else
                             {
                                 nombreBodega = "";
                             }
                             @nombreBodega
-                           
                         </td>
                         <td>
-                            @if (detalle.estadoDespacho.Equals(0))
-                            { 
-                                <text>Retirado en tienda</text>
-                            }
-                            else if (detalle.estadoDespacho.Equals(1))
-                            {
-                                <text>
-                                   Despacho a domicilio (Aun no se despacha)
-                                </text>
-                            }
-                            else if (detalle.estadoDespacho.Equals(2))
-                            {
-                                <text>
-                                    Despachado a domicilio
-                                </text>
-                            }
-                        </td>                        
+
+                            <input type="checkbox" class="entregaInmediata" @if (detalle.estadoDespacho.Equals(0)) { <text> checked</text> } readonly="readonly" onclick="javascript: return false;">
+                        </td>
+                        <td>
+                            <input type="checkbox" class="despachoDomicilio" @if (detalle.estadoDespacho.Equals(2)) { <text> checked</text> } readonly="readonly" onclick="javascript: return false;">
+                        </td>
                     </tr>
                 }
             </tbody>
-        </table>      
+        </table>
+        <br />
+        <div class="clearfix"></div>
+        <div class="modal-footer">
+            <input type="submit" value="Guardar Cambio de Fecha" class="btn btn-success btn-lg btn-default" />
+        </div>
     </div>
+}
+<br />
+@section Scripts {
+    @Styles.Render("~/Content/bootstrap-datetimepicker.css")
+    @Scripts.Render("~/Scripts/datetimepicker/moment.js")
+    @Scripts.Render("~/Scripts/datetimepicker/bootstrap-datetimepicker.js")
+    <script>
+        $(document).ready(function () {
+            $(".fecha").datetimepicker({
+                viewMode: 'days',
+                format: 'DD/MM/YYYY'
+            });         
+        });
+    </script>
+}
 

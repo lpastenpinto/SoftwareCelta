@@ -222,6 +222,7 @@
     <Content Include="Views\Transportista\Details.cshtml" />
     <Content Include="Views\Transportista\Edit.cshtml" />
     <Content Include="Views\Transportista\Index.cshtml" />
+    <Content Include="Views\listadoDespacho\despachoDevuelto.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

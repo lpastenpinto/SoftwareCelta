@@ -99,7 +99,7 @@
                             @detalle.cantidadProducto
                         </td>
                         <td>
-                            <select class="form-control areaInterna @if(detalle.estadoDespacho.Equals(0)){<text>hidden</text>}" name="areaInterna">
+                            <select class="form-control areaInterna @if(detalle.dw_areaInternaID.Equals(0)){<text>hidden</text>}" name="areaInterna">
                                 @foreach (SoftwareCelta.Models.dw_areaInterna bodega in (List<SoftwareCelta.Models.dw_areaInterna>)ViewData["bodegas"])
                                 {                                    
                                     <option value="@bodega.dw_areaInternaID" @if (bodega.dw_areaInternaID.Equals(detalle.dw_areaInternaID)){<text>selected</text> }>@bodega.nombre</option>

@@ -108,7 +108,7 @@
                             @detalle.cantidadProducto
                         </td>
                         <td>
-                            @if (!detalle.estadoDespacho.Equals(0))
+                            @if (!detalle.dw_areaInternaID.Equals(0))
                             {
 
                                 nombreBodega = db.Bodegas.Find(@detalle.dw_areaInternaID).nombre;
