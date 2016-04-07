@@ -16,6 +16,14 @@ namespace SoftwareCelta.Controllers
         {
             DateTime fechaActual = DateTime.Today;
             List<dw_movin> documetosRegistrados = db.Movins.Where(s => s.fechaEmision == fechaActual).ToList();
+            List<List<dw_detalle>> listaDeListaDetalle = new List<List<dw_detalle>>();
+            foreach (var dw_movin in documetosRegistrados)
+            {
+                List<dw_detalle> listDetalle = db.DetalleMovin.Where(s => s.dw_movinID == dw_movin.dw_movinID & s.estadoDespacho == 1).ToList();
+                listaDeListaDetalle.Add(listDetalle);
+            }
+            ViewData["listaDeListaDetalle"] = listaDeListaDetalle;
+            ViewData["bodegas"] = db.Bodegas.ToList();
             return View(documetosRegistrados);
         }
 
@@ -232,6 +240,28 @@ namespace SoftwareCelta.Controllers
 
             db.SaveChanges();
             return RedirectToAction("Index");
+        }
+         
+        [HttpPost]
+        public string guardarAreaInteraMovin(List<string> idsDetalles, List<string> areasInternas)
+        {
+            try
+            {                
+                int i = 0;
+                foreach (var idDetalle in idsDetalles)
+                {
+                        int idDet = Convert.ToInt32(idDetalle);
+                        dw_detalle detalle = db.DetalleMovin.Find(idDet);
+                        detalle.dw_areaInternaID = Convert.ToInt32(areasInternas[i]);
+                        db.Entry(detalle).State = EntityState.Modified;
+                        db.SaveChanges();
+                        i++;
+                }
+                return "GUARDADO CORRECTAMENTE";
+            }
+            catch (Exception e) {
+                return "ERROR";
+            }
         }
     }
 }

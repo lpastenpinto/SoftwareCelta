@@ -5,7 +5,7 @@
     int i=0;
     
     List<List<SoftwareCelta.Models.dw_detalle>> listaDeListaDetalle = (List<List<SoftwareCelta.Models.dw_detalle>>)ViewData["listaDeListaDetalle"];
-    List<int> cantidadProductosPorDespachar = (List<int>)ViewData["cantidadProductosPorDespachar"];
+    List<int> cantidadProductosPorDespachar = (List<int>)ViewData["cantidadProductosPorDespachar"];   
        
 }
 
@@ -43,43 +43,45 @@
                 <th>
                     Cantidad Productos por despachar
                 </th>
-                <th>Productos a Despachar</th>                                                
+                <th>Productos a Despachar</th>
                 <th></th>
                 <th></th>
             </tr>
         </thead>
         <tbody>
-            
+
             @foreach (var item in Model)
             {
                 string nameDiv = "divProd" + @i;
                 <tr>
                     <td>
                         @Html.DisplayFor(modelItem => item.numeroDocumento)
+                        <input class="hidden idDetalle" name="idDetalle" value="@item.dw_movinID" />
                     </td>
                     <td class="col-xs-2">
                         @cantidadProductosPorDespachar[i]
-                    </td>                
+                    </td>
                     <td class="col-xs-4">
                         <button data-toggle="collapse" data-target="#@nameDiv" class="btn btn-success">+</button>
 
                         <div class="collapse col-xs-12" id="@nameDiv">
+                            <input class="hidden idDetalleLista" name="idDetalleLista" value="@listaDeListaDetalle[i]" />
                             @foreach (var detalle in listaDeListaDetalle[i])
                             {
                                 <text><div class="col-xs-4">@detalle.codigoProducto</div><div class="col-xs-4">@detalle.descripcionProducto</div><div class="col-xs-2">@detalle.cantidadProducto</div></text>
                                 <text><br /></text>
                             }
                         </div>
-                    </td>   
-                    <td>         
-                        @Html.ActionLink("Ver detalle y Despachar", "Despachar", new { documentoID = item.dw_movinID }, new { target = "_blank" })
-                        
                     </td>
                     <td>
-                        <a href="#" class="btn btn-block btn-success despachar"> Despachar</a>
+                        @Html.ActionLink("Ver detalle y Despachar", "Despachar", new { documentoID = item.dw_movinID }, new { target = "_blank" })
+
+                    </td>
+                    <td>
+                        <a href="#" class="btn btn-block btn-success btnDespachar"> Despachar</a>
                     </td>
                 </tr>
-                i++;
+                            i++;
             }
         </tbody>
     </table>
@@ -101,9 +103,14 @@
                 window.location.href = ruta
                 
             });
+
+            $(".btnDespachar").click(function () {
+                var idDetalle = $(this).closest('tr').find('.idDetalle').val();
+                var idDetalleLista = $(this).closest('tr').find('.idDetalleLista').val();
+                
+
+            });
         });
-
-
 
 
     </script>
