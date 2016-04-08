@@ -53,6 +53,7 @@ namespace SoftwareCelta.Controllers
             {
                 db.Bodegas.Add(bodega);
                 db.SaveChanges();
+                dw_log.registrarLog(Convert.ToInt32(Session["userID"]), Session["userName"].ToString(), "Se crea Area Interna. Nombre:"+bodega.nombre);           
                 return RedirectToAction("Index");
             }
 
@@ -85,6 +86,8 @@ namespace SoftwareCelta.Controllers
             {
                 db.Entry(bodega).State = EntityState.Modified;
                 db.SaveChanges();
+                dw_log.registrarLog(Convert.ToInt32(Session["userID"]), Session["userName"].ToString(), "Se edito area Interna ahora con nombre "+bodega.nombre);
+           
                 return RedirectToAction("Index");
             }
             return View(bodega);
@@ -113,6 +116,7 @@ namespace SoftwareCelta.Controllers
             dw_areaInterna bodega = db.Bodegas.Find(id);
             db.Bodegas.Remove(bodega);
             db.SaveChanges();
+            dw_log.registrarLog(Convert.ToInt32(Session["userID"]), Session["userName"].ToString(), "Se elimina area interna de nombre "+bodega.nombre);           
             return RedirectToAction("Index");
         }
 
@@ -124,5 +128,7 @@ namespace SoftwareCelta.Controllers
             }
             base.Dispose(disposing);
         }
+
+        
     }
 }

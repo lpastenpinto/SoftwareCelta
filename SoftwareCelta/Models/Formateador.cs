@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
+using System.Collections;
 
 namespace SoftwareCelta.Models
 {
@@ -156,6 +157,14 @@ namespace SoftwareCelta.Models
             DateTime fecha = new DateTime(int.Parse(fechaString.Split('-')[2]),
            int.Parse(fechaString.Split('-')[1]), int.Parse(fechaString.Split('-')[0]));
             return fecha;
+        }
+
+        public static Hashtable listToHash(List<dw_areaInterna> listaBodegas) {
+            Hashtable hash = new Hashtable();
+            foreach (var areaInt in listaBodegas) {
+                hash.Add(areaInt.dw_areaInternaID, areaInt.nombre);
+            }
+            return hash;
         }
     }
 }

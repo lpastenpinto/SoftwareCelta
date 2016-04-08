@@ -7,7 +7,7 @@
     int i = 0;
 }
 @if (TempData["Success"] != null)
-{   <br /><br /><br />  
+{   <br /><br /><br /> 
     <div class="col-md-12">
         <div class="alert alert-success">
             <button type="button" class="close" data-dismiss="alert"
@@ -18,8 +18,17 @@
         </div>
     </div>
 }
-
 <br /><br />
+<div class="col-md-12 hidden" id="divError">
+    <div class="alert alert-danger">
+        <button type="button" class="close" data-dismiss="alert"
+                aria-hidden="true">
+            &times;
+        </button>
+        Este documento no existe en nuestros registros como documento Despachado
+    </div>
+</div>
+<br />
 <h2>Documentos Despachados</h2>
 <br /><br />
 
@@ -73,7 +82,7 @@
     </div>
     <div class="col-md-6 numeroDocumento @ViewBag.filtroDoc">
         <label class="control-label">Numero Documento</label>
-        <input class="form-control docNum"/>
+        <input class="form-control docNum" type="number"/>
     </div>
     <div class="col-md-3">
         <br />
@@ -83,7 +92,7 @@
 <br /><br />
 <br />
 <div class="table-responsive">
-    <table class="table">
+    <table class="table table-hover">
         <thead>
             <tr>
                 <th>
@@ -91,14 +100,14 @@
                 </th>
                 <th>
                     Fecha Emision
-                </th>                
+                </th>
                 <th>
                     Fecha Despacho
-                </th>                
+                </th>
                 <th>Productos a Despachar</th>
                 <th></th>
                 <th></th>
-                
+
             </tr>
         </thead>
         <tbody>
@@ -135,12 +144,12 @@
                         </div>
                     </td>
                     <td>
-                        <a href="@Url.Action("DocumentoRegistrado", "documentos", new { documentoID = item.dw_movinID })">Mostrar</a>                        
+                        <a href="@Url.Action("DocumentoRegistrado", "documentos", new { documentoID = item.dw_movinID })">Mostrar</a>
                     </td>
                     <td>
-                        @Html.ActionLink("Despacho Devuelto|Cambiar Fecha Despacho", "despachoDevuelto", new { documentoID = item.dw_movinID })
-                    </td>                   
-                </tr>               
+                        @Html.ActionLink("Despacho Devuelto|Cambiar Fecha Despacho", "despachoDevuelto", null, new { documentoID = item.dw_movinID }, new { @class = "btn btn-danger" })
+                    </td>
+                </tr>
             }
         </tbody>
     </table>
@@ -179,8 +188,18 @@
                 var tipoFiltro=$("input[name='tipoFiltro']:checked").val()                
                 if (tipoFiltro == "1") {                    
                     var numeroDoc = $(".docNum").val();
-                    ruta = "/listadoDespacho/Despachados?numDoc=" + numeroDoc;
-                    window.location.href = ruta;
+                    $.ajax({
+                        method: "POST",
+                        url: "/listadoDespacho/BuscarDocumentoPorNumero", data: { "numDoc": numeroDoc, "tipo": "1" },
+                        success: function (retorno) {
+                            if (retorno == "true") {
+                                ruta = "/listadoDespacho/Despachados?numDoc=" + numeroDoc;
+                                window.location.href = ruta;
+                            } else {
+                                $("#divError").removeClass("hidden");
+                            }
+                        }
+                    });
 
                 } else {
                     

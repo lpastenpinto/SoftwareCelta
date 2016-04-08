@@ -27,7 +27,7 @@ namespace SoftwareCelta.Controllers
             return View(documetosRegistrados);
         }
 
-        public ActionResult Buscador(string strFechaInicial, string strFechaFinal) {
+        public ActionResult Buscador(string strFechaInicial, string strFechaFinal, string numDoc) {
             DateTime fechaInicial= new DateTime();
             DateTime fechaFinal = new DateTime();
             if(strFechaFinal==null || strFechaInicial==null){
@@ -38,7 +38,17 @@ namespace SoftwareCelta.Controllers
                 fechaFinal=Formateador.formatearFechaCompleta(strFechaFinal);
             }
 
-            List<dw_movin> listDocumentos = db.Movins.Where(s => s.fechaEmision >= fechaInicial & s.fechaEmision <= fechaFinal).ToList();
+            List<dw_movin> listDocumentos = new List<dw_movin>();
+            if (numDoc != null)
+            {
+                int nDoc= Convert.ToInt32(numDoc);
+                dw_movin dw_movin = db.Movins.SingleOrDefault(s => s.numeroDocumento == nDoc);
+                listDocumentos.Add(dw_movin);
+            }
+            else
+            {
+                listDocumentos = db.Movins.Where(s => s.fechaEmision >= fechaInicial & s.fechaEmision <= fechaFinal).ToList();
+            }
 
             ViewBag.fechaInicial = Formateador.fechaCompletaToString(fechaInicial);
             ViewBag.fechaFinal = Formateador.fechaCompletaToString(fechaFinal);
@@ -118,8 +128,8 @@ namespace SoftwareCelta.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Editar(FormCollection form)
         {
-            int dw_movinID = Convert.ToInt32((string)form["dw_movinID"]);                     
-
+            int dw_movinID = Convert.ToInt32((string)form["dw_movinID"]);
+            dw_movin dw_movin = db.Movins.Find(dw_movinID);
             string nombreCliente = (string)form["nombreCliente"];
             string rutCliente = (string)form["rutCliente"];
             string ciudad = (string)form["ciudad"];
@@ -161,6 +171,7 @@ namespace SoftwareCelta.Controllers
                 db.Entry(detalle).State = EntityState.Modified;
                 try {
                     db.SaveChanges();
+                    dw_log.registrarLog(Convert.ToInt32(Session["userID"]), Session["userName"].ToString(), "Edicion de documento numero:" + dw_movin.numeroDocumento);
                 }
                 catch (Exception e) {
                     bool error = true; 
@@ -239,6 +250,7 @@ namespace SoftwareCelta.Controllers
             }
 
             db.SaveChanges();
+            dw_log.registrarLog(Convert.ToInt32(Session["userID"]), Session["userName"].ToString(), "Registro nuevo documento numero:" + numeroDocumento);
             return RedirectToAction("Index");
         }
          
@@ -248,6 +260,8 @@ namespace SoftwareCelta.Controllers
             try
             {                
                 int i = 0;
+                int idMov = Convert.ToInt32(idsDetalles[0]);
+                dw_movin dw_movin = db.Movins.Find(idMov);
                 foreach (var idDetalle in idsDetalles)
                 {
                         int idDet = Convert.ToInt32(idDetalle);
@@ -257,11 +271,33 @@ namespace SoftwareCelta.Controllers
                         db.SaveChanges();
                         i++;
                 }
+                dw_log.registrarLog(Convert.ToInt32(Session["userID"]), Session["userName"].ToString(), "Se guardan areas internas de documento :" + dw_movin.numeroDocumento);
                 return "GUARDADO CORRECTAMENTE";
             }
             catch (Exception e) {
                 return "ERROR";
             }
+        }
+
+        [HttpPost]
+        public string BuscarDocumentoPorNumero(string numDoc) {
+            try
+            {
+                int numD = Convert.ToInt32(numDoc);
+                dw_movin dw_movin = db.Movins.SingleOrDefault(s => s.numeroDocumento == numD);
+                if (dw_movin != null)
+                {
+                    return "true";
+                }
+                else
+                {
+                    return "false";
+                }
+            }
+            catch (Exception e) {
+                return "false";
+            }
+            
         }
     }
 }

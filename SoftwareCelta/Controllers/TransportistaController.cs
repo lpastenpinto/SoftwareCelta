@@ -53,6 +53,7 @@ namespace SoftwareCelta.Controllers
             {
                 db.Transportistas.Add(dw_datosTransportista);
                 db.SaveChanges();
+                dw_log.registrarLog(Convert.ToInt32(Session["userID"]), Session["userName"].ToString(), "Se crea transportista nuevo. Nombre:"+dw_datosTransportista.nombreCompleto+" | patente:"+dw_datosTransportista.patente);           
                 return RedirectToAction("Index");
             }
 
@@ -85,6 +86,7 @@ namespace SoftwareCelta.Controllers
             {
                 db.Entry(dw_datosTransportista).State = EntityState.Modified;
                 db.SaveChanges();
+                dw_log.registrarLog(Convert.ToInt32(Session["userID"]), Session["userName"].ToString(), "Se Edito informacion de transportista ahora con nombre: "+dw_datosTransportista.nombreCompleto);           
                 return RedirectToAction("Index");
             }
             return View(dw_datosTransportista);
@@ -113,6 +115,7 @@ namespace SoftwareCelta.Controllers
             dw_datosTransportista dw_datosTransportista = db.Transportistas.Find(id);
             db.Transportistas.Remove(dw_datosTransportista);
             db.SaveChanges();
+            dw_log.registrarLog(Convert.ToInt32(Session["userID"]), Session["userName"].ToString(), "Se elimino transportista"+dw_datosTransportista.nombreCompleto);           
             return RedirectToAction("Index");
         }
 

@@ -115,7 +115,7 @@
                             <input type="checkbox" class="entregaInmediata" @if (detalle.estadoDespacho.Equals(0)) { <text> checked</text> } readonly="readonly" onclick="javascript: return false;">
                         </td>
                         <td>
-                            <input type="checkbox" class="despachoDomicilio" @if (detalle.estadoDespacho.Equals(2)) { <text> checked</text> } readonly="readonly" onclick="javascript: return false;">
+                            <input type="checkbox" class="despachoDomicilio" @if (detalle.estadoDespacho.Equals(2) || detalle.estadoDespacho.Equals(1)) { <text> checked</text> } readonly="readonly" onclick="javascript: return false;">
                         </td>
                     </tr>
                 }

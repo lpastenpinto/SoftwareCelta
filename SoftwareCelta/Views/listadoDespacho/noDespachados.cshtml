@@ -1,38 +1,67 @@
 ﻿@model IEnumerable<SoftwareCelta.Models.dw_movin>
 
 @{
-    ViewBag.Title = "Despachados";
+    ViewBag.Title = "Para despachar Mañana";    
+    List<List<SoftwareCelta.Models.dw_detalle>> listaDeListaDetalle = (List<List<SoftwareCelta.Models.dw_detalle>>)ViewData["listaDeListaDetalle"];
+    System.Collections.Hashtable hashAreaInterna = (System.Collections.Hashtable)ViewData["hashBodegas"];
+    
     int i = 0;
-    List<System.Text.StringBuilder> listaTextProductos = (List<System.Text.StringBuilder>)ViewData["textoProductosDespachar"];
-    List<int> cantidadProductosPorDespachar = (List<int>)ViewData["cantidadProductosPorDespachar"];  
 }
-<div class="col-md-12">
-    <div class="col-md-12">
-        <h4>Filtros:</h4>
-    </div>
+<br /><br />
 
-    <div class="col-md-4">
-        <label class="control-label">Area/Bodega</label>
-        <select class="form-control" name="bodega">
-            <option value="todos">TODOS</option>
-            @foreach (SoftwareCelta.Models.dw_areaInterna bodega in (List<SoftwareCelta.Models.dw_areaInterna>)ViewData["bodegas"])
+<div class="col-md-12 hidden" id="divError">
+    <div class="alert alert-danger">
+        <button type="button" class="close" data-dismiss="alert"
+                aria-hidden="true">
+            &times;
+        </button>
+        Este documento no existe en nuestros registros como documento para despachar el dia de mañana
+    </div>
+</div>
+<br /><br />
+<h2>Boletas para despachar el dia de Mañana @SoftwareCelta.Models.Formateador.fechaCompletaToString(DateTime.Now.AddDays(1))</h2>
+<br /><br />
+<div class="col-md-12">
+    <h4>Filtrar Por:</h4>
+    <div class="col-md-3">
+        <label class="control-label">Area Interna</label>
+        <input type="radio" class="tipoFiltro" name="tipoFiltro" value="0" @if (ViewBag.filtroDoc.Equals("hidden") && ViewBag.filtroAreaInterna.Equals("")) { <text> checked</text>} />
+    </div>
+    <div class="col-md-3">
+        <label class="control-label">Numero Boleta</label>
+        <input type="radio" class="tipoFiltro" name="tipoFiltro" value="1" @if (ViewBag.filtroDoc.Equals("") && ViewBag.filtroAreaInterna.Equals("hidden")) { <text> checked</text>} />
+    </div>
+    <div class="col-md-3">
+        <label class="control-label">Todos</label>
+        <input type="radio" class="tipoFiltro" name="tipoFiltro" value="2" @if (ViewBag.filtroDoc.Equals("hidden") && ViewBag.filtroAreaInterna.Equals("hidden")) { <text> checked</text>} />
+    </div>
+</div>
+<br />
+<br />
+<div class="col-md-12">   
+    <div class="col-md-3 divBodega @ViewBag.filtroAreaInterna">
+        <label class="control-label">Area Interna/Bodega</label>
+        <select class="form-control idBodega">
+            <option value="0">Todas</option>
+            @foreach (var bodega in (List<SoftwareCelta.Models.dw_areaInterna>)ViewData["bodegas"])
             {
                 <option value="@bodega.dw_areaInternaID">@bodega.nombre</option>
             }
         </select>
     </div>
-    <div class="col-md-4">
+    <div class="col-md-3 divNumeroDocumento @ViewBag.filtroDoc">
+        <label class="control-label">Numero Documento</label>
+        <input class="form-control docNum" type="number" />
+    </div>
+    <div class="col-md-3">
         <br />
-        <input class="btn btn-primary btn-block" id="Boton" value="Filtrar" type="button" />
+        <input class="btn btn-primary btn-block" id="Boton" value="Buscar" type="button" />
     </div>
 </div>
-
-<br /><br /><br />
-<h2>Boletas para despachar Mañana @DateTime.Today.AddDays(1)</h2>
+<br /><br />
 <br />
-
 <div class="table-responsive">
-    <table class="table">
+    <table class="table table-hover">
         <thead>
             <tr>
                 <th>
@@ -42,9 +71,21 @@
                     Fecha Emision
                 </th>
                 <th>
-                    Cantidad Productos por despachar
+                    Productos a Despachar<br />
+                    <div class="col-xs-3">
+                        Cod.Prod
+                    </div>
+                    <div class="col-xs-4">
+                        Descripcion
+                    </div>
+                    <div class="col-xs-1">
+                        Cant.
+                    </div>
+                    <div class="col-xs-4">
+                        Area Interna
+                    </div>
                 </th>
-                <th>Productos a Despachar</th>
+                <th></th>
                 <th></th>
 
             </tr>
@@ -53,21 +94,33 @@
 
             @foreach (var item in Model)
             {
-                <tr>
+                string nameDiv = "divProd" + @i;
+                <tr class="clickable-row">
                     <td>
                         @Html.DisplayFor(modelItem => item.numeroDocumento)
                     </td>
                     <td>
-                        @Html.DisplayFor(modelItem => item.fechaEmision)
+                        @SoftwareCelta.Models.Formateador.fechaCompletaToString(item.fechaEmision)
+                    </td>
+                    <td class="col-xs-6">
+                        <div class="col-xs-2">
+                            <button data-toggle="collapse" data-target="#@nameDiv" class="btn btn-success">+</button>
+                        </div>
+                        <br /><br />
+                        <div class="collapse col-xs-12" id="@nameDiv">
+                            <input class="hidden idDetalleLista" name="idDetalleLista" value="@listaDeListaDetalle[i]" />
+                            @foreach (var detalle in listaDeListaDetalle[i])
+                            {
+                                <text><div class="col-xs-3">@detalle.codigoProducto</div><div class="col-xs-4">@detalle.descripcionProducto</div><div class="col-xs-1">@detalle.cantidadProducto</div><div class="col-xs-4">@hashAreaInterna[detalle.dw_areaInternaID]</div></text>
+                                <text><br /></text>
+                            }
+                        </div>
                     </td>
                     <td>
-                        @cantidadProductosPorDespachar[i]
+                        <a href="@Url.Action("DocumentoRegistrado", "documentos", new { documentoID = item.dw_movinID })">Mostrar</a>
                     </td>
                     <td>
-                        @listaTextProductos[i]
-                    </td>
-                    <td>
-                        @Html.ActionLink("Marcar Productos a Despachar", "Despachar", new { documentoID = item.dw_movinID }, new { target = "_blank" })
+                        @Html.ActionLink("Cambiar Fecha Despacho", "despachoDevuelto", null, new { documentoID = item.dw_movinID }, new { @class = "btn btn-danger" })
                     </td>
                 </tr>
             }
@@ -84,7 +137,55 @@
                 viewMode: 'days',
                 format: 'DD/MM/YYYY'
             });
+            $('.tipoFiltro').change(function () {
+                var valor = $(this).val();
+                if (valor == 0) {
+                    $('.divNumeroDocumento').addClass("hidden");
+                    $('.divBodega').removeClass("hidden");                    
+
+                } else if (valor == 1) {
+                    $('.divNumeroDocumento').removeClass("hidden");
+                    $('.divBodega').addClass("hidden");
+                } else {
+                    $('.divNumeroDocumento').addClass("hidden");
+                    $('.divBodega').addClass("hidden");
+                }
+            });
+
+
+            $("#Boton").click(function () {
+                var tipoFiltro = $("input[name='tipoFiltro']:checked").val()
+                if (tipoFiltro == "1") {
+                    var numeroDoc = $(".docNum").val();
+                    $.ajax({
+                        method: "POST",
+                        url: "/listadoDespacho/BuscarDocumentoPorNumero", data: { "numDoc": numeroDoc,"tipo":"2" },
+                        success: function (retorno) {
+                            if (retorno == "true") {
+                                ruta = "/listadoDespacho/noDespachados?numDoc=" + numeroDoc;
+                                window.location.href = ruta;
+                            } else {
+                                $("#divError").removeClass("hidden");
+                            }
+                        }
+                    });                                        
+                } else if (tipoFiltro == "0") {
+                    var idBodega = $('.idBodega').val();
+                    ruta = "/listadoDespacho/noDespachados?idAreaInt=" + idBodega;
+                    window.location.href = ruta;
+                } else {
+                    ruta = "/listadoDespacho/noDespachados";
+                    window.location.href = ruta;
+                }
+            });
+
+            $(".clickable-row").click(function () {
+                if ($(this).hasClass("highlight"))
+                    $(this).removeClass('highlight');
+                else
+                    $(this).addClass('highlight').siblings().removeClass('highlight');
+            })
+
         });
     </script>
 }
-

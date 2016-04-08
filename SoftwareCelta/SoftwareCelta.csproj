@@ -135,6 +135,7 @@
     <Compile Include="Controllers\documentosController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\listadoDespachoController.cs" />
+    <Compile Include="Controllers\logController.cs" />
     <Compile Include="Controllers\TransportistaController.cs" />
     <Compile Include="Controllers\UsersController.cs" />
     <Compile Include="DAL\ContextBDCelta.cs" />
@@ -146,6 +147,7 @@
     <Compile Include="Models\dw_envio.cs" />
     <Compile Include="Models\dw_datosTransportista.cs" />
     <Compile Include="Models\dw_detalle.cs" />
+    <Compile Include="Models\dw_log.cs" />
     <Compile Include="Models\dw_movin.cs" />
     <Compile Include="Models\encriptacion.cs" />
     <Compile Include="Models\Formateador.cs" />
@@ -223,6 +225,7 @@
     <Content Include="Views\Transportista\Edit.cshtml" />
     <Content Include="Views\Transportista\Index.cshtml" />
     <Content Include="Views\listadoDespacho\despachoDevuelto.cshtml" />
+    <Content Include="Views\log\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

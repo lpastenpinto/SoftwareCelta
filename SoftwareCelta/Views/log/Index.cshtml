@@ -1,0 +1,86 @@
+﻿@model IEnumerable<SoftwareCelta.Models.dw_log>
+
+@{
+    ViewBag.Title = "Registro de Acciones";
+}
+<br /><br />
+<h2>Registro de Acciones</h2>
+<br />
+<div class="col-md-12">
+    <div class="col-md-4">
+        <label class="control-label">Desde:</label>
+        <input class="form-control fecha" id="fechaInicial" name="fechaInicial" data-val-date="Ingrese por favor una fecha." data-val-required="El campo fecha es obligatorio."
+               data-date-format="DD/MM/YYYY" pattern="[0-9][0-9]/[0-9][0-9]/[0-9][0-9][0-9][0-9]"
+               type="text" value="@ViewBag.fechaInicial">
+
+    </div>
+    <div class="col-md-4">
+        <label class="control-label">Hasta:</label>
+        <input class="form-control fecha" id="fechaFinal" name="fechaFinal" data-val-date="Ingrese por favor una fecha." data-val-required="El campo fecha es obligatorio."
+               data-date-format="DD/MM/YYYY" pattern="[0-9][0-9]/[0-9][0-9]/[0-9][0-9][0-9][0-9]"
+               type="text" value="@ViewBag.fechaFinal">
+    </div>   
+    <div class="col-md-4">
+        <br />
+        <input class="btn btn-primary btn-block" id="Boton" value="Buscar" type="button" />
+    </div>
+</div>
+<br /><br /><br /><br />
+<div class="table-responsive">
+<table class="table table-hover">
+    <tr>
+        <th>
+            Nombre Usuario
+        </th>
+        <th>
+            Fecha
+        </th>
+        <th>
+            Accion
+        </th>        
+    </tr>
+
+@foreach (var item in Model) {
+    <tr>      
+        <td>
+            @Html.DisplayFor(modelItem => item.nameUser)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.fecha)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.accion)
+        </td>   
+    </tr>
+}
+
+</table>
+</div>
+@section Scripts {
+    @Styles.Render("~/Content/bootstrap-datetimepicker.css")
+    @Scripts.Render("~/Scripts/datetimepicker/moment.js")
+    @Scripts.Render("~/Scripts/datetimepicker/bootstrap-datetimepicker.js")
+    <script>
+        $(document).ready(function () {
+            $(".fecha").datetimepicker({
+                viewMode: 'days',
+                format: 'DD/MM/YYYY'
+            });
+
+            $("#Boton").click(function () {
+                var fechaInicial = $("#fechaInicial").val();
+                var fechaFinal = $("#fechaFinal").val();
+                
+                if (fechaInicial == "" || fechaFinal == "") {
+                    alert("Debe ingresar ambas fechas");
+                } else {
+                    fechaInicial = fechaInicial.replace("/", "-").replace("/", "-");
+                    fechaFinal = fechaFinal.replace("/", "-").replace("/", "-");
+                    var ruta = "/log/Index?fInicial=" + fechaInicial + "&fFinal=" + fechaFinal;
+                    window.location.href = ruta;
+                }
+                                
+            });
+        });
+    </script>
+}

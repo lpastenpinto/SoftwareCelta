@@ -4,39 +4,55 @@
 
 }
 <br /><br /><br />
+<div class="col-md-12 hidden" id="divError">
+    <div class="alert alert-danger">
+        <button type="button" class="close" data-dismiss="alert"
+                aria-hidden="true">
+            &times;
+        </button>
+        Este documento no existe en nuestros registros
+    </div>
+</div>
+<br /><br />
 <div class="row">
         <div class="col-md-12">
             <h4>Filtros:</h4>
         </div>
         <div class="col-md-3">
-            <label class="control-label">Inicio:</label>
+            <label class="control-label">Desde:</label>
             <input class="form-control fecha" id="fechaInicial" name="fechaInicial" data-val-date="Ingrese por favor una fecha." data-val-required="El campo fecha es obligatorio."
                data-date-format="DD/MM/YYYY" pattern="[0-9][0-9]/[0-9][0-9]/[0-9][0-9][0-9][0-9]"
                type="text" value="@ViewBag.fechaInicial">
 
         </div>
         <div class="col-md-3">
-            <label class="control-label">Término:</label>
+            <label class="control-label">Hasta:</label>
             <input class="form-control fecha" id="fechaFinal" name="fechaFinal" data-val-date="Ingrese por favor una fecha." data-val-required="El campo fecha es obligatorio."
                data-date-format="DD/MM/YYYY" pattern="[0-9][0-9]/[0-9][0-9]/[0-9][0-9][0-9][0-9]"
                type="text" value="@ViewBag.fechaFinal">
+        </div>
+    
+        <div class="col-md-3">
+            <label class="control-label">Numero Documento</label>
+            <input class="form-control numDoc" name="numDoc" id="numDoc" type="number" />
         </div>        
-        <div class="col-md-4">
+        <div class="col-md-3">
             <br />
-            <input class="btn btn-primary btn-block" id="Boton" value="Buscar" type="button" />
+            <input class="btn btn-primary btn-block" id="Boton" value="Buscar" type="button" onclick="return false;"/>
         </div>
 </div>
+<span>*Al buscar por numero de documento se omiten las fechas</span>
 <br />
 <br />
 <h2>Documentos Registrados</h2>
 <br />
 <div class="table-responsive">
-    <table class="table">
+    <table class="table table-hover">
         <thead>
             <tr>
                 <th>
                     Numero Boleta
-                </th>                
+                </th>
                 <th>
                     Fecha Emision
                 </th>
@@ -52,15 +68,15 @@
                 <tr>
                     <td>
                         @Html.DisplayFor(modelItem => item.numeroDocumento)
-                    </td>                    
+                    </td>
                     <td>
-                        @SoftwareCelta.Models.Formateador.fechaCompletaToString(item.fechaEmision)                        
+                        @SoftwareCelta.Models.Formateador.fechaCompletaToString(item.fechaEmision)
                     </td>
                     <td>
                         @Html.DisplayFor(modelItem => item.tipoDocumento)
                     </td>
-                    <td>                       
-                        @Html.ActionLink("Mostrar", "DocumentoRegistrado", new { documentoID = item.dw_movinID }) 
+                    <td>
+                        @Html.ActionLink("Mostrar", "DocumentoRegistrado", new { documentoID = item.dw_movinID })
                     </td>
                 </tr>
             }
@@ -81,14 +97,33 @@
             $("#Boton").click(function () {
                 var fechaInicial = $("#fechaInicial").val();
                 var fechaFinal = $("#fechaFinal").val();
+                var numDoc = $("#numDoc").val();
                 fechaInicial = fechaInicial.replace("/", "-").replace("/", "-");
                 fechaFinal = fechaFinal.replace("/", "-").replace("/", "-");
-                if (fechaInicial == "" || fechaFinal == "") {
-                    alert("Debe ingresar ambas fechas");
+
+                if (numDoc != "") {
+                    $.ajax({
+                        method: "POST",
+                        url: "/documentos/BuscarDocumentoPorNumero", data: { "numDoc": numDoc},
+                        success: function (retorno) {
+                            if (retorno == "true") {
+                                ruta = "/documentos/Buscador?numDoc=" + numDoc;
+                                window.location.href = ruta
+                            } else {
+                                $("#divError").removeClass("hidden");
+                            }
+                        }
+                    });
+                    
                 }
-                else {                    
-                    ruta = "/documentos/Buscador?strFechaInicial=" + fechaInicial + "&strFechaFinal=" + fechaFinal;
-                    window.location.href = ruta
+                else {
+                    if (fechaInicial == "" || fechaFinal == "") {
+                        alert("Debe ingresar ambas fechas");
+                    }
+                    else {
+                        ruta = "/documentos/Buscador?strFechaInicial=" + fechaInicial + "&strFechaFinal=" + fechaFinal;
+                        window.location.href = ruta
+                    }
                 }
             });
         });

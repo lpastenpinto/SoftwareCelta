@@ -43,7 +43,7 @@ namespace SoftwareCelta.Controllers
                 int numDocInt=Convert.ToInt32(numDoc);                
                 dw_movin dw_movin = db.Movins.SingleOrDefault(s => s.numeroDocumento == numDocInt);
                 if (dw_movin != null) {
-                    List<dw_detalle> listDetalle = db.DetalleMovin.Where(s => s.dw_movinID == dw_movin.dw_movinID).ToList();
+                    List<dw_detalle> listDetalle = db.DetalleMovin.Where(s => s.dw_movinID == dw_movin.dw_movinID & s.estadoDespacho!=0).ToList();
                     dw_envio dw_envio = db.DatosEnvio.SingleOrDefault(s => s.dw_movinID == dw_movin.dw_movinID);
                     datosEnvio.Add(dw_envio);
                     dw_movinList.Add(dw_movin);
@@ -81,12 +81,14 @@ namespace SoftwareCelta.Controllers
 
                 estadoFiltroDoc = "hidden";
                 estadoFiltroFecha = "";
-            }            
+            }
 
+            List<dw_areaInterna> dw_areaInternaList = db.Bodegas.ToList();
             ViewData["transportistas"] = db.Transportistas.ToList();
-            ViewData["bodegas"] = db.Bodegas.ToList();
+            ViewData["bodegas"] = dw_areaInternaList; 
             ViewData["datosEnvio"] = datosEnvio;
             ViewData["listaDeListaDetalle"] = listaDeListaDetalle;
+            ViewData["hashBodegas"] = Formateador.listToHash(dw_areaInternaList);
             ViewBag.fechaInicial = Formateador.fechaCompletaToString(fechaInicial);
             ViewBag.fechaFinal = Formateador.fechaCompletaToString(fechaFinal);
             ViewBag.filtroDoc = estadoFiltroDoc;
@@ -94,52 +96,73 @@ namespace SoftwareCelta.Controllers
             return View(dw_movinList);
         }
 
-        public ActionResult noDespachados() {
-            List<StringBuilder> listText = new List<StringBuilder>();
-            List<dw_movin> documentoList = new List<dw_movin>();
-            dw_movin doc1 = new dw_movin();
-            doc1.dw_movinID = 1;
-            doc1.numeroDocumento = 100;
-            doc1.numeroVale = 123;
-            doc1.fechaEmision= DateTime.Now;
-            documentoList.Add(doc1);
-            StringBuilder textoProductos1 = new StringBuilder();
-            textoProductos1.Append("Cama.");
-            listText.Add(textoProductos1);
+        public ActionResult noDespachados(string numDoc,string idAreaInt) {
 
-            dw_movin doc2 = new dw_movin();
-            doc2.dw_movinID = 2;
-            doc2.numeroDocumento = 1002;
-            doc2.numeroVale = 12234233;
-            doc2.fechaEmision= DateTime.Now;
-            documentoList.Add(doc2);
+            List<dw_movin> dw_movinList = new List<dw_movin>();
+            List<List<dw_detalle>> listaDeListaDetalle = new List<List<dw_detalle>>();
+            string estadoFiltroDoc="";
+            string estadoFiltroAreaInterna="";
 
-            StringBuilder textoProductos2 = new StringBuilder();
-            textoProductos2.Append("Muchas camas1.|");
-            textoProductos2.Append("Muchas camas2.|");
-            textoProductos2.Append("Muchas camas3.|");
-            textoProductos2.Append("Muchas camas4.|");
-            textoProductos2.Append("Muchas camas5.|");
-            listText.Add(textoProductos2);
+            DateTime fechaDespacho = DateTime.Today.AddDays(1);
 
-            List<int> cantidadProductosPorDespachar = new List<int>();
-            cantidadProductosPorDespachar.Add(1);
-            cantidadProductosPorDespachar.Add(4);
-            ViewData["cantidadProductosPorDespachar"] = cantidadProductosPorDespachar;
-            ViewData["textoProductosDespachar"] = listText;
-            ViewData["bodegas"] = db.Bodegas.ToList();
-            return View(documentoList);                      
+            if (numDoc == null && idAreaInt == null)
+            {
+                List<dw_envio> listDwEnvio = db.DatosEnvio.Where(s => s.fechaDespacho == fechaDespacho).ToList();
+                foreach (var envio in listDwEnvio) {
+                    dw_movin dw_movin = db.Movins.Find(envio.dw_movinID);
+                    dw_movinList.Add(dw_movin);
+                    List<dw_detalle> listDetalle = db.DetalleMovin.Where(s => s.dw_movinID == envio.dw_movinID & s.estadoDespacho==1).ToList();
+                    listaDeListaDetalle.Add(listDetalle);
+                }
+                estadoFiltroDoc="hidden";
+                estadoFiltroAreaInterna="hidden";
+            }
+            else if(numDoc==null){
+                int idBodega = Convert.ToInt32(idAreaInt);
+                List<dw_envio> listDwEnvio = db.DatosEnvio.Where(s => s.fechaDespacho == fechaDespacho).ToList();
+                foreach (var envio in listDwEnvio)
+                {
+                    dw_movin dw_movin = db.Movins.Find(envio.dw_movinID);                    
+                    dw_movinList.Add(dw_movin);
+                    List<dw_detalle> listDetalle = db.DetalleMovin.Where(s => s.dw_movinID == envio.dw_movinID & s.dw_areaInternaID == idBodega & s.estadoDespacho == 1).ToList();
+                    listaDeListaDetalle.Add(listDetalle);
+                   
+                }
+                estadoFiltroDoc = "hidden";
+                estadoFiltroAreaInterna = "";
+                
+            }
+            else if (idAreaInt == null) {
+                int numeroDoc = Convert.ToInt32(numDoc);
+                dw_movin dw_movin = db.Movins.SingleOrDefault(s => s.numeroDocumento == numeroDoc);
+                dw_movinList.Add(dw_movin);
+                List<dw_detalle> detalles = db.DetalleMovin.Where(s => s.dw_movinID == dw_movin.dw_movinID & s.estadoDespacho == 1).ToList();
+                listaDeListaDetalle.Add(detalles);
+
+                estadoFiltroDoc = "";
+                estadoFiltroAreaInterna = "hidden";
+            }
+            List<dw_areaInterna> dw_areaInternaList = db.Bodegas.ToList();
+            ViewData["listaDeListaDetalle"] = listaDeListaDetalle;
+            ViewData["bodegas"] = dw_areaInternaList;
+
+
+            ViewData["hashBodegas"] = Formateador.listToHash(dw_areaInternaList);
+            ViewBag.filtroDoc=estadoFiltroDoc;
+            ViewBag.filtroAreaInterna = estadoFiltroAreaInterna;
+
+            return View(dw_movinList);                     
         }
 
         public ActionResult porDespachar(string arInt) {
 
             int areaInternaID=Convert.ToInt32(arInt);
             DateTime fechaActual = DateTime.Today;
-
+            DateTime diaAnterior = DateTime.Today.AddDays(-1);
             List<dw_movin> dw_movinList = new List<dw_movin>();
             List<int> cantidadProductosPorDespachar = new List<int>();
             List<List<dw_detalle>> listaDeListaDetalle = new List<List<dw_detalle>>();
-            List<dw_envio> datosEnvio = db.DatosEnvio.Where(s=>s.fechaDespacho==fechaActual & s.dw_datosTransportistaID==0).ToList();
+            List<dw_envio> datosEnvio = db.DatosEnvio.Where(s => s.fechaDespacho <= fechaActual & s.fechaDespacho >= diaAnterior & s.dw_datosTransportistaID == 0).ToList();
 
             foreach (var datoEnvio in datosEnvio)
             {
@@ -150,14 +173,15 @@ namespace SoftwareCelta.Controllers
                                 
                 dw_movinList.Add(dw_movin);
                 listaDeListaDetalle.Add(dw_detalleList);
-            }  
+            }
 
-               
-            
+
+            List<dw_areaInterna> dw_areaInternaList = db.Bodegas.ToList();
             ViewData["cantidadProductosPorDespachar"] = cantidadProductosPorDespachar;
             ViewData["listaDeListaDetalle"] = listaDeListaDetalle;
-            ViewData["bodegas"] = db.Bodegas.ToList();
+            ViewData["bodegas"] = dw_areaInternaList; 
             ViewData["transportistas"]=db.Transportistas.ToList();
+            ViewData["hashBodegas"] = Formateador.listToHash(dw_areaInternaList);
 
             return View(dw_movinList);
         }
@@ -182,6 +206,7 @@ namespace SoftwareCelta.Controllers
             
             DateTime fechaDespacho = Formateador.fechaStringToDateTime((string)form["fechaDespacho"]);
             int dw_movinID= Convert.ToInt32((string)form["dw_movinID"]);
+            int numeroDocumento = Convert.ToInt32((string)form["numeroDocumento"]);
                         
             dw_envio dw_envio = db.DatosEnvio.SingleOrDefault(s => s.dw_movinID == dw_movinID);
             dw_envio.fechaDespacho = fechaDespacho;
@@ -198,6 +223,7 @@ namespace SoftwareCelta.Controllers
                 db.Entry(detalle).State = EntityState.Modified;                
                 db.SaveChanges();
             }
+            dw_log.registrarLog(Convert.ToInt32(Session["userID"]), Session["userName"].ToString(), "Despacho Documento:" + numeroDocumento);
             return RedirectToAction("porDespachar");
         }
 
@@ -207,11 +233,12 @@ namespace SoftwareCelta.Controllers
             int dw_transportistaID=Convert.ToInt32(idTransportista);
             dw_envio dw_envio = db.DatosEnvio.SingleOrDefault(s => s.dw_movinID == dw_movinID);
             List<dw_detalle> listDetalle = db.DetalleMovin.Where(s => s.dw_movinID == dw_movinID & s.estadoDespacho == 1).ToList();
-
+            dw_movin dw_movin = db.Movins.Find(dw_movinID);
             try
             {
                 dw_envio.dw_datosTransportistaID = dw_transportistaID;
                 dw_envio.cantidadVisitasDespacho = dw_envio.cantidadVisitasDespacho + 1;
+                dw_envio.fechaDespacho= Formateador.fechaStringToDateTime(Formateador.fechaCompletaToString(DateTime.Now));           
                 db.Entry(dw_envio).State = EntityState.Modified;
                 db.SaveChanges();
 
@@ -221,6 +248,8 @@ namespace SoftwareCelta.Controllers
                     db.Entry(detalle).State = EntityState.Modified;
                     db.SaveChanges();
                 }
+                dw_log.registrarLog(Convert.ToInt32(Session["userID"]), Session["userName"].ToString(), "Despachado documento numero: " + dw_movin.numeroDocumento);
+                
                 return "GUARDADO";
             }
             catch (Exception e) {
@@ -259,8 +288,51 @@ namespace SoftwareCelta.Controllers
                 db.Entry(detalle).State = EntityState.Modified;
                 db.SaveChanges();
             }
-            TempData["Success"] = "Cambio guardado con Exito. Su boleta con numero " + numeroBoleta + " tiene fecha de despacho " + Formateador.fechaCompletaToString(fechaDespacho);                         
+            TempData["Success"] = "Cambio guardado con Exito. Su boleta con numero " + numeroBoleta + " tiene fecha de despacho " + Formateador.fechaCompletaToString(fechaDespacho);
+            dw_log.registrarLog(Convert.ToInt32(Session["userID"]), Session["userName"].ToString(), "Se cambia fecha de despacho de documento:" + numeroBoleta+" ya que fue devuelto.");
+            
             return RedirectToAction("Despachados");
+        }
+
+        [HttpPost]
+        public string BuscarDocumentoPorNumero(string numDoc,string tipo)
+        {
+            //1:despachados
+            //2:no despachados
+            try
+            {
+                int numD = Convert.ToInt32(numDoc);
+                int tipoQ= Convert.ToInt32(tipo);
+                dw_movin dw_movin= db.Movins.SingleOrDefault(s => s.numeroDocumento == numD);                        
+                
+                if (dw_movin != null)
+                {
+                    dw_envio dw_envio = new dw_envio();
+                    if(tipoQ==1){
+                        dw_envio = db.DatosEnvio.SingleOrDefault(s => s.dw_movinID==dw_movin.dw_movinID & s.dw_datosTransportistaID != 0);
+                    }else{
+                         DateTime fechaDespacho = DateTime.Today.AddDays(1);
+                        dw_envio = db.DatosEnvio.SingleOrDefault(s => s.dw_movinID == dw_movin.dw_movinID & s.dw_datosTransportistaID == 0 & s.fechaDespacho == fechaDespacho);
+                    }
+                    if (dw_envio != null)
+                    {
+                        return "true";
+                    }
+                    else {
+                        return "false";
+                    }
+                    
+                }
+                else
+                {
+                    return "false";
+                }
+            }
+            catch (Exception e)
+            {
+                return "false";
+            }
+
         }
     }
 }

@@ -4,7 +4,7 @@
     SoftwareCelta.Models.dw_envio datosEnvio = (SoftwareCelta.Models.dw_envio)ViewData["datosEnvio"];
     SoftwareCelta.DAL.ContextBDCelta db = new SoftwareCelta.DAL.ContextBDCelta();
     string nombreBodega = "";
-
+    string nombreTrans = "";
 }
 <br />
 <h2>Documento @Model.numeroDocumento  | @SoftwareCelta.Models.Formateador.fechaCompletaToString(Model.fechaEmision)</h2>
@@ -12,25 +12,25 @@
 
     <div class="row">
         <div class="col-md-4">
-            <label class="control-label">Nombre Cliente</label>
+            <label class="control-label">Nombre Cliente</label><br />
             @datosEnvio.nombreCliente
         </div>
         <div class="col-md-4">
-            <label class="control-label">Rut</label>
+            <label class="control-label">Rut</label><br />
             @datosEnvio.rutCliente
         </div>
         <div class="col-md-4">
-            <label class="control-label">Ciudad</label>
+            <label class="control-label">Ciudad</label><br />
             @datosEnvio.ciudad
 
         </div>
         <br /><br /><br /><br />
         <div class="col-md-4">
-            <label class="control-label">Telefono</label>
+            <label class="control-label">Telefono</label><br />
             @datosEnvio.telefono
         </div>
         <div class="col-md-8">
-            <label class="control-label">Direccion</label>
+            <label class="control-label">Direccion</label><br />
             @datosEnvio.direccion
         </div>
         <br /><br /><br />
@@ -39,14 +39,32 @@
             @datosEnvio.observacion
         </div>
         <br />
-        <div class="col-md-6">
-            <label class="control-label">Fecha Despacho</label>
+        <div class="col-md-4">
+            <label class="control-label">Fecha Despacho</label><br />
             @SoftwareCelta.Models.Formateador.fechaCompletaToStringS0(datosEnvio.fechaDespacho)
+        </div>
+        <div class="col-md-4">
+            <label class="control-label">Despachado Por</label><br />
+            @if (!datosEnvio.dw_datosTransportistaID.Equals(0))
+            {
+
+                nombreTrans = db.Bodegas.Find(@datosEnvio.dw_datosTransportistaID).nombre;
+
+            }
+            else
+            {
+                nombreTrans = "";
+            }
+            @nombreTrans            
+        </div>
+        <div class="col-md-4">
+            <label class="control-label">Cantidad De visitas Despacho</label><br />
+            @datosEnvio.cantidadVisitasDespacho
         </div>
     </div>
     <br />
     <br />
-
+    
     <h3>Productos Comprados</h3>
     <br />
     <div class="table-responsive">

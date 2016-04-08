@@ -25,7 +25,9 @@ namespace SoftwareCelta.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Login(FormCollection post)
         {
-            Session["userID"] = "User";
+            Session["userID"] = 1;
+            Session["userName"] = "lpasten";
+
             return RedirectToAction("Index", "Home");
         }
 

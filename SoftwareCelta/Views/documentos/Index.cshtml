@@ -24,81 +24,82 @@
 <h2>Documentos Registrados Hoy @SoftwareCelta.Models.Formateador.fechaCompletaToString(DateTime.Today)</h2>
 <br />
 <div class="table-responsive">
-    <table class="table">
+    <table class="table table-hover">
         <thead>
-        <tr>
-            <th>
-                Numero Boleta
-            </th>
-            <th>
-                Fecha Emision
-            </th>    
-            <th>
-                Tipo documento
-            </th>        
-            <th>
-                Numero de Vale
-            </th>
-            <th>
-                Productos para Despacho
-            </th>
-            <th></th>
-        </tr>
+            <tr>
+                <th>
+                    Numero Boleta
+                </th>
+                <th>
+                    Fecha Emision
+                </th>
+                <th>
+                    Tipo documento
+                </th>
+                <th>
+                    Numero de Vale
+                </th>
+                <th>
+                    Productos para Despacho
+                </th>
+                <th></th>
+            </tr>
         </thead>
         <tbody>
-        @foreach (var item in Model)
-        {
-            
-            <tr>
-                <td>                    
-                    @Html.DisplayFor(modelItem => item.numeroDocumento)
-                </td>
-                <td>
-                    @SoftwareCelta.Models.Formateador.fechaCompletaToString(item.fechaEmision)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.tipoDocumento)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.numeroVale)
-                </td>
-               <td class="col-md-5">
-                   @{string nameDiv = "prod" + i;}
-                   @{string nameDivSucces = "divSucces" + i;}
-                   <div class="col-xs-2">
-                       <button data-toggle="collapse" data-target="#@nameDiv" class="btn btn-success btn-collapse">+</button>
-                   </div>
-                   <div class="col-xs-10 divSucces"></div>
-                   <br /><br />
-                   <div class="collapse col-xs-12" id="@nameDiv">                       
-                       @foreach (var detalle in listaDeListaDetalle[i])
-                       {   
-                           <text>
-                            <input class="hidden detalleID" value="@detalle.dw_detalleID" name="detalleID"/>
-                           </text>
-                           <text><div class="col-xs-3">@detalle.codigoProducto</div><div class="col-xs-3">@detalle.descripcionProducto</div><div class="col-xs-3">@detalle.cantidadProducto</div></text>
-                           <text> 
-                            <select class="form-control areaInterna" name="areaInterna">
-                                @foreach (var areaInt in (List<SoftwareCelta.Models.dw_areaInterna>)ViewData["bodegas"]) { 
-                                    <text>
-                                        <option value="@areaInt.dw_areaInternaID" @if(areaInt.dw_areaInternaID.Equals(detalle.dw_areaInternaID)){<text>selected</text>}>@areaInt.nombre</option>
-                                    </text>
-                                }
-                            </select>
-                           </text>
-                           <text><br /><br /></text>
-                       }
-                       <button class="btn btn-success guardarAreaInternaProd">Guardar</button>
-                   </div>
-                   
-               </td>
-                <td>
-                    @Html.ActionLink("Editar", "Editar", new { documentoID = item.dw_movinID }) |
-                    @Html.ActionLink("Mostrar", "DocumentoRegistrado", new { documentoID = item.dw_movinID }) |
-                </td>
-            </tr>
-            i++;
-        }
+            @foreach (var item in Model)
+            {
+
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.numeroDocumento)
+                    </td>
+                    <td>
+                        @SoftwareCelta.Models.Formateador.fechaCompletaToString(item.fechaEmision)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.tipoDocumento)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.numeroVale)
+                    </td>
+                    <td class="col-md-5">
+                        @{string nameDiv = "prod" + i;}
+                        @{string nameDivSucces = "divSucces" + i;}
+                        <div class="col-xs-2">
+                            <button data-toggle="collapse" data-target="#@nameDiv" class="btn btn-success btn-collapse">+</button>
+                        </div>
+                        <div class="col-xs-10 divSucces"></div>
+                        <br /><br />
+                        <div class="collapse col-xs-12" id="@nameDiv">
+                            @foreach (var detalle in listaDeListaDetalle[i])
+                            {
+                                <text>
+                                    <input class="hidden detalleID" value="@detalle.dw_detalleID" name="detalleID" />
+                                </text>
+                                <text><div class="col-xs-3">@detalle.codigoProducto</div><div class="col-xs-3">@detalle.descripcionProducto</div><div class="col-xs-3">@detalle.cantidadProducto</div></text>
+                                <text>
+                                    <select class="form-control areaInterna" name="areaInterna">
+                                        @foreach (var areaInt in (List<SoftwareCelta.Models.dw_areaInterna>)ViewData["bodegas"])
+                                        {
+                                            <text>
+                                                <option value="@areaInt.dw_areaInternaID" @if (areaInt.dw_areaInternaID.Equals(detalle.dw_areaInternaID)) { <text> selected</text>}>@areaInt.nombre</option>
+                                            </text>
+                                        }
+                                    </select>
+                                </text>
+                                <text><br /><br /></text>
+                            }
+                            <button class="btn btn-success guardarAreaInternaProd">Guardar</button>
+                        </div>
+
+                    </td>
+                    <td>
+                        @Html.ActionLink("Editar", "Editar", new { documentoID = item.dw_movinID }) |
+                        @Html.ActionLink("Mostrar", "DocumentoRegistrado", new { documentoID = item.dw_movinID }) |
+                    </td>
+                </tr>
+                            i++;
+            }
         </tbody>
     </table>
 </div>

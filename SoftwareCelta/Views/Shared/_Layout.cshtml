@@ -31,27 +31,28 @@
                     <ul class="nav navbar-nav">
                         <li class="dropdown">
                             <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-                                Documentos<b class="caret"></b>
+                                Documentos/Boletas<b class="caret"></b>
                             </a>
                             <ul class="dropdown-menu">
-                                <li>@Html.ActionLink("Ingresar Documento/Boleta", "Index", "documentos")</li>
+                                <li>@Html.ActionLink("Boletas de Hoy", "Index", "documentos")</li>
                                 <li>@Html.ActionLink("Buscar Documento/Boleta", "Buscador", "documentos")</li>
                                 <li class="divider"></li>                                
                             </ul>
                         </li>
                         <li class="dropdown">
                             <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-                                Despacho<b class="caret"></b>
+                                Despachos<b class="caret"></b>
                             </a>
                             <ul class="dropdown-menu">
-                                <li>@Html.ActionLink("Despachados", "Despachados", "listadoDespacho")</li>
-                                <li>@Html.ActionLink("No Despachados", "noDespachados", "listadoDespacho")</li>                                
-                                <li>@Html.ActionLink("Por Despachar", "porDespachar", "listadoDespacho")</li>
+                                <li>@Html.ActionLink("Boletas Despachados", "Despachados", "listadoDespacho")</li>
+                                <li>@Html.ActionLink("Boletas Despachar Mañana", "noDespachados", "listadoDespacho")</li>                                
+                                <li>@Html.ActionLink("Boletas Despachar Hoy", "porDespachar", "listadoDespacho")</li>
                                 <li class="divider"></li>                               
                             </ul>
                         </li>
                         <li>@Html.ActionLink("Bodegas/Areas Internas", "Index", "bodegas") </li>
-                        <li>@Html.ActionLink("Usuarios", "Index", "Users")</li>
+                        <li>@Html.ActionLink("Transportistas", "Index", "Transportista") </li>
+                        <li>@Html.ActionLink("Registro de Acciones", "Index", "log")</li>
                     </ul>
                     <ul class="nav navbar-nav navbar-right">
                         <li><a href="@Url.Action("Logout", "Users")">Cerrar Sesión</a></li>
@@ -64,7 +65,8 @@
     <div class="container body-content">
         @RenderBody()
         <hr />
-        <div><!--navbar-fixed-bottom-->                            
+        <div><!--navbar-fixed-bottom-->   
+        <br /><br />                         
             <footer class="navbar ">
                 <p>&copy; @DateTime.Now.ToString("dd-MM-yyyy") - Celta Software</p>
             </footer>
