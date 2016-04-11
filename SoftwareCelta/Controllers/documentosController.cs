@@ -63,34 +63,29 @@ namespace SoftwareCelta.Controllers
             List<dw_areaInterna> bodegas = db.Bodegas.ToList();
 
             dw_movin documento = new dw_movin();
-            documento.dw_movinID = 1;
-            documento.numeroDocumento = 100;
-            documento.numeroVale = 123;
+            //documento.dw_movinID = 1;
+            documento.numeroDocumento = 102;
+            documento.numeroVale = 12223;
             documento.fechaEmision =  DateTime.Now;
+            documento.nombreVendedor = "Vendedor Nuevo";
 
             List<dw_detalle> listDetalleDocumento = new List<dw_detalle>();
             
             dw_detalle detalleDocumento_1 = new dw_detalle();
-            detalleDocumento_1.codigoProducto = "AS1111";
-            detalleDocumento_1.descripcionProducto = "CAMA";
+            detalleDocumento_1.codigoProducto = "AAA2";
+            detalleDocumento_1.descripcionProducto = "CAMA AMERICANA";
             detalleDocumento_1.valorProducto = 10000;
             detalleDocumento_1.cantidadProducto = 1;            
 
             listDetalleDocumento.Add(detalleDocumento_1);
 
             dw_detalle detalleDocumento_2 = new dw_detalle();
-            detalleDocumento_2.codigoProducto = "AS1122";
-            detalleDocumento_2.descripcionProducto = "Colchon";
+            detalleDocumento_2.codigoProducto = "MR1200";
+            detalleDocumento_2.descripcionProducto = "MARQUESA";
             detalleDocumento_2.cantidadProducto = 1;
             detalleDocumento_2.valorProducto = 11111;
             listDetalleDocumento.Add(detalleDocumento_2);
-
-            dw_detalle detalleDocumento_3 = new dw_detalle();
-            detalleDocumento_3.codigoProducto = "ASCCC2";
-            detalleDocumento_3.descripcionProducto = "Alhomada";
-            detalleDocumento_3.cantidadProducto = 2;
-            detalleDocumento_3.valorProducto = 5000;
-            listDetalleDocumento.Add(detalleDocumento_3);
+         
 
             ViewData["detalleDocumento"] = listDetalleDocumento;
             ViewData["bodegas"] = bodegas;
@@ -255,12 +250,12 @@ namespace SoftwareCelta.Controllers
         }
          
         [HttpPost]
-        public string guardarAreaInteraMovin(List<string> idsDetalles, List<string> areasInternas)
+        public string guardarAreaInteraMovin(List<string> idsDetalles, List<string> areasInternas,string idMovin)
         {
             try
             {                
                 int i = 0;
-                int idMov = Convert.ToInt32(idsDetalles[0]);
+                int idMov = Convert.ToInt32(idMovin);
                 dw_movin dw_movin = db.Movins.Find(idMov);
                 foreach (var idDetalle in idsDetalles)
                 {

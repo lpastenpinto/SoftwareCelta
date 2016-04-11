@@ -52,6 +52,7 @@
                 <tr>
                     <td>
                         @Html.DisplayFor(modelItem => item.numeroDocumento)
+                        <input class="hidden idMovin" value="@item.dw_movinID"/>
                     </td>
                     <td>
                         @SoftwareCelta.Models.Formateador.fechaCompletaToString(item.fechaEmision)
@@ -115,13 +116,14 @@
             });
             $(".guardarAreaInternaProd").click(function () {               
                 var idsDetalles = $(this).closest('tr').find("input[name='detalleID']").map(function () { return $(this).val(); }).get();
-                var areasInternas = $(this).closest('tr').find("select[name='areaInterna']").map(function () { return $(this).val(); }).get();                
+                var areasInternas = $(this).closest('tr').find("select[name='areaInterna']").map(function () { return $(this).val(); }).get();
+                var idMovin = $(this).closest('tr').find(".idMovin").val();
                 console.log(idsDetalles);
                 console.log(areasInternas);
                 var div = $(this).closest('tr');
                 $.ajax({
                     method: "POST",
-                    url: "/documentos/guardarAreaInteraMovin", data: { "idsDetalles": idsDetalles, "areasInternas": areasInternas },
+                    url: "/documentos/guardarAreaInteraMovin", data: { "idsDetalles": idsDetalles, "areasInternas": areasInternas, "idMovin": idMovin },
                     beforeSend: function () {
                         div.find('.divSucces').html("GUARDANDO...");
                     },

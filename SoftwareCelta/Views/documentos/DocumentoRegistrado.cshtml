@@ -39,11 +39,15 @@
             @datosEnvio.observacion
         </div>
         <br />
-        <div class="col-md-4">
+        <div class="col-md-3">
             <label class="control-label">Fecha Despacho</label><br />
             @SoftwareCelta.Models.Formateador.fechaCompletaToStringS0(datosEnvio.fechaDespacho)
         </div>
-        <div class="col-md-4">
+        <div class="col-md-3">
+            <label class="control-label">Nombre Vendedor</label><br />
+            @Model.nombreVendedor
+        </div>
+        <div class="col-md-3">
             <label class="control-label">Despachado Por</label><br />
             @if (!datosEnvio.dw_datosTransportistaID.Equals(0))
             {
@@ -57,10 +61,11 @@
             }
             @nombreTrans            
         </div>
-        <div class="col-md-4">
+        <div class="col-md-3">
             <label class="control-label">Cantidad De visitas Despacho</label><br />
             @datosEnvio.cantidadVisitasDespacho
         </div>
+        
     </div>
     <br />
     <br />
