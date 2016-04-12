@@ -155,6 +155,7 @@
 
             $("#Boton").click(function () {
                 var tipoFiltro = $("input[name='tipoFiltro']:checked").val()
+                var ruta = "";
                 if (tipoFiltro == "1") {
                     var numeroDoc = $(".docNum").val();
                     $.ajax({
@@ -162,7 +163,7 @@
                         url: "/listadoDespacho/BuscarDocumentoPorNumero", data: { "numDoc": numeroDoc,"tipo":"2" },
                         success: function (retorno) {
                             if (retorno == "true") {
-                                ruta = "/listadoDespacho/noDespachados?numDoc=" + numeroDoc;
+                                ruta = window.location.pathname + "?numDoc=" + numeroDoc;
                                 window.location.href = ruta;
                             } else {
                                 $("#divError").removeClass("hidden");
@@ -171,10 +172,9 @@
                     });                                        
                 } else if (tipoFiltro == "0") {
                     var idBodega = $('.idBodega').val();
-                    ruta = "/listadoDespacho/noDespachados?idAreaInt=" + idBodega;
+                    ruta = window.location.pathname + "?idAreaInt=" + idBodega;
                     window.location.href = ruta;
-                } else {
-                    ruta = "/listadoDespacho/noDespachados";
+                } else {                    
                     window.location.href = ruta;
                 }
             });

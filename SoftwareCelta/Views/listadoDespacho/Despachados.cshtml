@@ -185,7 +185,8 @@
 
 
             $("#Boton").click(function () {                
-                var tipoFiltro=$("input[name='tipoFiltro']:checked").val()                
+                var tipoFiltro = $("input[name='tipoFiltro']:checked").val()
+                var ruta = "";
                 if (tipoFiltro == "1") {                    
                     var numeroDoc = $(".docNum").val();
                     $.ajax({
@@ -193,7 +194,7 @@
                         url: "/listadoDespacho/BuscarDocumentoPorNumero", data: { "numDoc": numeroDoc, "tipo": "1" },
                         success: function (retorno) {
                             if (retorno == "true") {
-                                ruta = "/listadoDespacho/Despachados?numDoc=" + numeroDoc;
+                                ruta = window.location.pathname + "?numDoc=" + numeroDoc;
                                 window.location.href = ruta;
                             } else {
                                 $("#divError").removeClass("hidden");
@@ -210,15 +211,15 @@
                     fechaFinal = fechaFinal.replace("/", "-").replace("/", "-");
                     var idTransportista = $(".idTransportista").val();
                     var idBodega = $('.idBodega').val();
-                    ruta = "/listadoDespacho/Despachados?fInicial=" + fechaInicial + "&fFinal=" + fechaFinal + "&idTransport=" + idTransportista + "&idBodega=" + idBodega;
+                    ruta = window.location.pathname + "?fInicial=" + fechaInicial + "&fFinal=" + fechaFinal + "&idTransport=" + idTransportista + "&idBodega=" + idBodega;
                     if (idTransportista == "0") {
-                        ruta = "/listadoDespacho/Despachados?fInicial=" + fechaInicial + "&fFinal=" + fechaFinal + "&idBodega=" + idBodega;
+                        ruta = window.location.pathname + "?fInicial=" + fechaInicial + "&fFinal=" + fechaFinal + "&idBodega=" + idBodega;
                     }                    
                     if (idBodega == "0") {
-                        ruta = "/listadoDespacho/Despachados?fInicial=" + fechaInicial + "&fFinal=" + fechaFinal + "&idTransport=" + idTransportista ;
+                        ruta = window.location.pathname + "?fInicial=" + fechaInicial + "&fFinal=" + fechaFinal + "&idTransport=" + idTransportista;
                     }
                     if (idBodega == "0" && idTransportista == "0") {
-                        ruta = "/listadoDespacho/Despachados?fInicial=" + fechaInicial + "&fFinal=" + fechaFinal;
+                        ruta = window.location.pathname + "?fInicial=" + fechaInicial + "&fFinal=" + fechaFinal;
                     }
 
                     

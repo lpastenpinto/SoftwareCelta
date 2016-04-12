@@ -57,25 +57,30 @@ namespace SoftwareCelta.Controllers
                 
                 if (idTransport==null)
                 {
-                    datosEnvio = db.DatosEnvio.Where(s => s.fechaDespacho >= fechaInicial & s.fechaDespacho <= fechaFinal).ToList();                    
+                    datosEnvio = db.DatosEnvio.Where(s => s.fechaDespacho >= fechaInicial & s.fechaDespacho <= fechaFinal & s.dw_datosTransportistaID!=0).ToList();                    
                 }
                 else {
                     int idTransINT = Convert.ToInt32(idTransport);
                     datosEnvio = db.DatosEnvio.Where(s => s.fechaDespacho >= fechaInicial & s.fechaDespacho <= fechaFinal & s.dw_datosTransportistaID == idTransINT).ToList();                    
                 }
-                foreach (var envio in datosEnvio) {                     
+                foreach (var envio in datosEnvio) {
+                    List<dw_detalle> dw_detalle = new List<Models.dw_detalle>();
                     dw_movin dw_movin = db.Movins.Find(envio.dw_movinID);
-                    dw_movinList.Add(dw_movin);
+                    
     
                     if (idBodega==null)
                     {
-                        List<dw_detalle> dw_detalle = db.DetalleMovin.Where(s => s.dw_movinID == envio.dw_movinID).ToList();
+                        dw_detalle = db.DetalleMovin.Where(s => s.dw_movinID == envio.dw_movinID).ToList();
                         listaDeListaDetalle.Add(dw_detalle);
                     }
                     else {
                         int idBodegaInt = Convert.ToInt32(idBodega);
-                        List<dw_detalle> dw_detalle = db.DetalleMovin.Where(s => s.dw_movinID == envio.dw_movinID & s.dw_areaInternaID == idBodegaInt).ToList();
+                        dw_detalle = db.DetalleMovin.Where(s => s.dw_movinID == envio.dw_movinID & s.dw_areaInternaID == idBodegaInt).ToList();
                         listaDeListaDetalle.Add(dw_detalle);
+                    }
+
+                    if (dw_detalle.Count > 0) {
+                        dw_movinList.Add(dw_movin);
                     }
                 }
 
@@ -281,8 +286,8 @@ namespace SoftwareCelta.Controllers
             datosEnvio.dw_datosTransportistaID = 0;
             datosEnvio.fechaDespacho=fechaDespacho;
             db.Entry(datosEnvio).State = EntityState.Modified;
-
-            List<dw_detalle> listDetalleDocumento = db.DetalleMovin.Where(s => s.dw_movinID == dw_movinID && s.estadoDespacho==1).ToList();
+            db.SaveChanges();
+            List<dw_detalle> listDetalleDocumento = db.DetalleMovin.Where(s => s.dw_movinID == dw_movinID && s.estadoDespacho == 1 || s.estadoDespacho == 2).ToList();
             foreach (var detalle in listDetalleDocumento) {
                 detalle.estadoDespacho = 1;
                 db.Entry(detalle).State = EntityState.Modified;

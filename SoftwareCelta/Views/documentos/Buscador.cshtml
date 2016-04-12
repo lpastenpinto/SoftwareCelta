@@ -89,6 +89,8 @@
     @Scripts.Render("~/Scripts/datetimepicker/bootstrap-datetimepicker.js")
     <script>
         $(document).ready(function () {
+
+           
             $(".fecha").datetimepicker({
                 viewMode: 'days',
                 format: 'DD/MM/YYYY'
@@ -107,7 +109,7 @@
                         url: "/documentos/BuscarDocumentoPorNumero", data: { "numDoc": numDoc},
                         success: function (retorno) {
                             if (retorno == "true") {
-                                ruta = "/documentos/Buscador?numDoc=" + numDoc;
+                                ruta = window.location.pathname + "?numDoc=" + numDoc;
                                 window.location.href = ruta
                             } else {
                                 $("#divError").removeClass("hidden");
@@ -121,7 +123,7 @@
                         alert("Debe ingresar ambas fechas");
                     }
                     else {
-                        ruta = "/documentos/Buscador?strFechaInicial=" + fechaInicial + "&strFechaFinal=" + fechaFinal;
+                        ruta = window.location.pathname+"?strFechaInicial=" + fechaInicial + "&strFechaFinal=" + fechaFinal;
                         window.location.href = ruta
                     }
                 }

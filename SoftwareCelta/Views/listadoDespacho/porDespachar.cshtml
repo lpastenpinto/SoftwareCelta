@@ -128,8 +128,9 @@
             });
 
             $("#Boton").click(function () {
-                var bodega = $("#bodega").val();               
-                var ruta = "/listadoDespacho/porDespachar?arInt=" + bodega;
+                var bodega = $("#bodega").val();
+                var ruta = "";
+                ruta = window.location.pathname + "?arInt=" + bodega;
                 window.location.href = ruta
                 
             });
