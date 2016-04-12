@@ -5,28 +5,31 @@ using System.Web;
 using System.Web.Mvc;
 using SoftwareCelta.DAL;
 using SoftwareCelta.Models;
+using SoftwareCelta.Filters;
 
 namespace SoftwareCelta.Controllers
 {
     public class HomeController : Controller
     {
         private ContextBDCelta db = new ContextBDCelta();
+
+        [Permissions]
         public ActionResult Index()
         {
-            if (Session["userID"] == null)
+           /* if (Session["userID"] == null)
             {                
                 return RedirectToAction("Login", "Users");
             }
             else {
                 return View();
-            }
+            }*/
 
             /*List<int> listaPermiso = new List<int>();
             listaPermiso.Add(10);
             listaPermiso.Add(8);
             Session["permisosUser"] = listaPermiso;
             */
-            //return View();
+            return View();
         }
 
         public ActionResult About()

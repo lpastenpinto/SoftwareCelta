@@ -140,6 +140,7 @@
     <Compile Include="Controllers\UsersController.cs" />
     <Compile Include="DAL\ContextBDCelta.cs" />
     <Compile Include="DAL\ContextBDSoftland.cs" />
+    <Compile Include="Filters\Permissions.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
