@@ -104,7 +104,7 @@
                 <th>
                     Fecha Despacho
                 </th>
-                <th>Productos a Despachar</th>
+                <th class="col-md-5">Productos a Despachar</th>
                 <th></th>
                 <th></th>
 
@@ -138,16 +138,16 @@
                             <input class="hidden idDetalleLista" name="idDetalleLista" value="@listaDeListaDetalle[i]" />
                             @foreach (var detalle in listaDeListaDetalle[i])
                             {
-                                <text><div class="col-xs-4">@detalle.codigoProducto</div><div class="col-xs-4">@detalle.descripcionProducto</div><div class="col-xs-2">@detalle.cantidadProducto</div></text>
+                                <text><div class="col-xs-3">@detalle.codigoProducto</div><div class="col-xs-6">@detalle.descripcionProducto</div><div class="col-xs-3">@detalle.cantidadProducto</div></text>
                                 <text><br /></text>
                             }
                         </div>
                     </td>
                     <td>
-                        <a href="@Url.Action("DocumentoRegistrado", "documentos", new { documentoID = item.dw_movinID })">Mostrar</a>
+                        <a href="@Url.Action("DocumentoRegistrado", "documentos", new { documentoID = item.dw_movinID })">Ver</a>
                     </td>
                     <td>
-                        @Html.ActionLink("Despacho Devuelto|Cambiar Fecha Despacho", "despachoDevuelto", null, new { documentoID = item.dw_movinID }, new { @class = "btn btn-danger" })
+                        @Html.ActionLink("Despacho Devuelto", "despachoDevuelto", null, new { documentoID = item.dw_movinID }, new { @class = "btn btn-danger" })
                     </td>
                 </tr>
             }

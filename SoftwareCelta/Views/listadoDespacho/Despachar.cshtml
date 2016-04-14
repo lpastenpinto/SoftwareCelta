@@ -34,7 +34,7 @@
             @datosEnvio.ciudad
 
         </div>
-        <br /><br /><br /><br />
+        <br />
         <div class="col-md-4">
             <label class="control-label">Telefono</label>
             @datosEnvio.telefono
@@ -43,7 +43,7 @@
             <label class="control-label">Direccion</label>
             @datosEnvio.direccion
         </div>
-        <br /><br /><br />
+        <br />
         <div class="col-md-12">
             <label>Observacion</label>
             @datosEnvio.observacion
@@ -55,21 +55,18 @@
                    data-date-format="DD/MM/YYYY" pattern="[0-9][0-9]/[0-9][0-9]/[0-9][0-9][0-9][0-9]"
                    type="text" value="@SoftwareCelta.Models.Formateador.fechaCompletaToStringS0(datosEnvio.fechaDespacho)">
         </div>
-    </div>
-    <br />
-    <br />
+        <div class="col-md-6">
+            <label class="control-label">Transportista</label>
+            <select class="form-control areaInterna" name="datosTransportista">
+                @foreach (SoftwareCelta.Models.dw_datosTransportista transportista in (List<SoftwareCelta.Models.dw_datosTransportista>)ViewData["datosTransportistas"])
+                {
+                    <option value="@transportista.dw_datosTransportistaID">@transportista.nombreCompleto|@transportista.patente</option>
+                }
+            </select>
 
-    <div class="col-md-6">
-        <label class="control-label">Transportista</label>
-        <select class="form-control areaInterna" name="datosTransportista">
-            @foreach (SoftwareCelta.Models.dw_datosTransportista transportista in (List<SoftwareCelta.Models.dw_datosTransportista>)ViewData["datosTransportistas"])
-            {
-                <option value="@transportista.dw_datosTransportistaID">@transportista.nombreCompleto|@transportista.patente</option>
-            }
-        </select>
-
+        </div>
     </div>
-    <br />
+    <br />    
     <h3>Productos Comprados</h3>
     <br />
     <div class="table-responsive">
@@ -130,8 +127,8 @@
                             }
                             else { 
                                 <text>
-                                    <input type="checkbox" name="estadoDespacho" class="form-control" value="@detalle.dw_detalleID"/>
-                                    
+                                    <input type="checkbox" name="estadoDespacho" class="form-control hidden" value="@detalle.dw_detalleID" checked/>
+                                    Despacho Domicilio
                                 </text>
                             }
                         </td>

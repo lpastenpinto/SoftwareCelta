@@ -2,66 +2,21 @@
 @{
     ViewBag.Title = "Documento";
     int contadorProductos = 1;
-    string despacho = "estadoDespacho";    
-    string fechaDespacho=SoftwareCelta.Models.Formateador.fechaCompletaToStringS0(DateTime.Now.AddDays(2));           
+    string despacho = "estadoDespacho";
+    string fechaDespacho = SoftwareCelta.Models.Formateador.fechaCompletaToStringS0(DateTime.Now.AddDays(2));
 }
 <br />
 <h2>Documento @Model.numeroDocumento / @SoftwareCelta.Models.Formateador.fechaCompletaToString(Model.fechaEmision)</h2>
 <br />
 
-
 <form role="form" method="post" action="@Url.Action("registrarNuevoDocumento", "documentos" )">
     <input type="text" class="hidden" value="@Model.numeroDocumento" name="numeroDocumento" />
     <input type="text" class="hidden" value="@Model.numeroVale" name="numeroVale" />
-    <input type="text" class="hidden" value="@SoftwareCelta.Models.Formateador.fechaCompletaToString(Model.fechaEmision)" name="fechaEmision" /> 
-    <input type="text" class="hidden" value="@Model.tipoDocumento" name="tipoDocumento" /> 
-    <div class="row">
-        <div class="col-md-4">
-            <label class="control-label">Nombre Cliente</label>
-            <input class="form-control" name="nombreCliente" type="text" />
-        </div>
-        <div class="col-md-4">
-            <label class="control-label">Rut</label>
-            <input class="form-control" name="rutCliente" type="text" />
-        </div>
-        <div class="col-md-4">
-            <label class="control-label">Ciudad</label>
-            <select name="ciudad" class="form-control">
-                <option value="LA SERENA">LA SERENA</option>    
-                <option value="COQUIMBO">COQUIMBO</option>
-                <option value="PAN DE AZUCAR">PAN DE AZUCAR</option>
-            </select>
-            
-        </div>
-        <br /><br /><br /><br />
-        <div class="col-md-4">
-            <label class="control-label">Telefono</label>
-            <input class="form-control" name="telefono" type="text" />
-        </div>
-        <div class="col-md-8">
-            <label class="control-label">Direccion</label>
-            <input class="form-control" name="direccion" type="text" style="max-width: 20000px;" />
-        </div>
-        <br /><br /><br />
-        <div class="col-md-12">
-            <label>Observacion</label>
-            <textarea style="max-width: 100% !important; width:100%;" class="form-control" name="observacion"></textarea>
-        </div>
-        <br />
-        <div class="col-md-6">
-            <label class="control-label">Fecha Despacho</label>
-            <input class="form-control fecha" id="fechaDespacho" name="fechaDespacho" data-val-date="Ingrese por favor una fecha." data-val-required="El campo fecha es obligatorio."
-                   data-date-format="DD/MM/YYYY" pattern="[0-9][0-9]/[0-9][0-9]/[0-9][0-9][0-9][0-9]"
-                   type="text" value="@fechaDespacho">
-        </div>
-        <div class="col-md-6">
-            <label>Nombre Vendedor</label>
-            <input class="form-control" name="nombreVendedor" value="@Model.nombreVendedor" type="text" />
-        </div>
-    </div>
+    <input type="text" class="hidden" value="@SoftwareCelta.Models.Formateador.fechaCompletaToString(Model.fechaEmision)" name="fechaEmision" />
+    <input type="text" class="hidden" value="@Model.tipoDocumento" name="tipoDocumento" />
     <br />
     <br />
-    
+
     <h3>Productos Comprados</h3>
     <br />
     <div class="table-responsive">
@@ -76,10 +31,7 @@
                     </th>
                     <th>
                         Cantidad Producto
-                    </th>
-                    <th>
-                        Area Interna /Bodega
-                    </th>
+                    </th>                  
                     <th>Entrega Inmediata</th>
                     <th>Despacho a Domicilio</th>
                 </tr>
@@ -101,16 +53,8 @@
                         </td>
                         <td>
                             @detalle.cantidadProducto
-                            <input class="form-control hidden" type="number" value="@detalle.cantidadProducto" name="cantidadProducto"/>
-                        </td>
-                        <td>
-                            <select class="form-control areaInterna" name="areaInterna">
-                                @foreach (SoftwareCelta.Models.dw_areaInterna bodega in (List<SoftwareCelta.Models.dw_areaInterna>)ViewData["bodegas"])
-                                {
-                                    <option value="@bodega.dw_areaInternaID">@bodega.nombre</option>
-                                }
-                            </select>
-                        </td>
+                            <input class="form-control hidden" type="number" value="@detalle.cantidadProducto" name="cantidadProducto" />
+                        </td>                        
                         <td>
 
                             <input type="radio" name="@nameDespacho" value="0" class="entregaInmediata">
@@ -141,19 +85,10 @@
                 viewMode: 'days',
                 format: 'DD/MM/YYYY'
             });
-
-            $(".entregaInmediata").click(function () {                                                
-                var selectAreaInterna = $(this).closest('tr').find('.areaInterna');                
-                selectAreaInterna.addClass("hidden");
-            });
-
-            $(".despachoDomicilio").click(function () {
-                var selectAreaInterna = $(this).closest('tr').find('.areaInterna');
-                selectAreaInterna.removeClass("hidden");
-            });
-
+           
         });
     </script>
 }
+
 
 

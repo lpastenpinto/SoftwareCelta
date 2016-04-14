@@ -1,0 +1,90 @@
+﻿@model SoftwareCelta.Models.dw_envio
+@{
+    ViewBag.Title = "Documento";
+    string fechaDespacho = "";
+    string verifNull = "";
+
+    fechaDespacho = SoftwareCelta.Models.Formateador.fechaCompletaToStringS0(Model.fechaDespacho);
+    if (fechaDespacho.Equals("1/1/1"))
+    {
+        fechaDespacho = SoftwareCelta.Models.Formateador.fechaCompletaToStringS0(DateTime.Now.AddDays(2));
+        verifNull = "Ys";
+    }
+
+    SoftwareCelta.Models.dw_movin dw_movin = (SoftwareCelta.Models.dw_movin)ViewData["dw_movin"];
+    
+}
+<h2>Boleta N° @dw_movin.numeroDocumento</h2>
+<form role="form" method="post" action="@Url.Action("datosEnvio", "documentos" )">
+    <input type="text" class="hidden" value="@dw_movin.dw_movinID" name="idDocumento" />  
+    <div class="row">
+        <div class="col-md-4">
+            <label class="control-label">Nombre Cliente</label>
+            <input class="form-control" name="nombreCliente" type="text"  value="@Model.nombreCliente"/>
+        </div>
+        <div class="col-md-4">
+            <label class="control-label">Rut</label>
+            <input class="form-control" name="rutCliente" type="text" value="@Model.rutCliente"/>
+        </div>
+        <div class="col-md-4">
+            <label class="control-label">Ciudad</label>
+            <select name="ciudad" class="form-control">
+                @if (verifNull.Equals("")) { 
+                    <option value="LA SERENA" @if(@Model.ciudad.Equals("LA SERENA")){<text> selected </text>}>LA SERENA</option>
+                    <option value="COQUIMBO" @if (@Model.ciudad.Equals("COQUIMBO")) { <text> selected </text> }>COQUIMBO</option>
+                    <option value="PAN DE AZUCAR" @if (@Model.ciudad.Equals("PAN DE AZUCAR")) { <text> selected </text> }>PAN DE AZUCAR</option>
+                }
+                else
+                {
+                    <option value="LA SERENA">LA SERENA</option>
+                    <option value="COQUIMBO">COQUIMBO</option>
+                    <option value="PAN DE AZUCAR">PAN DE AZUCAR</option>
+
+                }
+            </select>
+
+        </div>
+        <br /><br /><br /><br />
+        <div class="col-md-4">
+            <label class="control-label">Telefono</label>
+            <input class="form-control" name="telefono" type="text" value="@Model.telefono"/>
+        </div>
+        <div class="col-md-8">
+            <label class="control-label">Direccion</label>
+            <input class="form-control" name="direccion" type="text" style="max-width: 20000px;" value="@Model.direccion"/>
+        </div>
+        <br /><br /><br />
+        <div class="col-md-12">
+            <label>Observacion</label>
+            <textarea style="max-width: 100% !important; width:100%;" class="form-control" name="observacion">@Model.observacion</textarea>
+        </div>
+        <br />
+        <div class="col-md-6">
+            <label class="control-label">Fecha Despacho</label>
+            <input class="form-control fecha" id="fechaDespacho" name="fechaDespacho" data-val-date="Ingrese por favor una fecha." data-val-required="El campo fecha es obligatorio."
+                   data-date-format="DD/MM/YYYY" pattern="[0-9][0-9]/[0-9][0-9]/[0-9][0-9][0-9][0-9]"
+                   type="text" value="@fechaDespacho">
+        </div>        
+    </div>
+    <br />
+    <br />
+    <div class="clearfix"></div>
+    <div class="modal-footer">
+        <input type="submit" value="Guardar Datos Envio" class="btn btn-success btn-lg btn-default" />
+    </div>
+    
+</form>
+@section Scripts {
+    @Styles.Render("~/Content/bootstrap-datetimepicker.css")
+    @Scripts.Render("~/Scripts/datetimepicker/moment.js")
+    @Scripts.Render("~/Scripts/datetimepicker/bootstrap-datetimepicker.js")
+    <script>
+        $(document).ready(function () {
+            $(".fecha").datetimepicker({
+                viewMode: 'days',
+                format: 'DD/MM/YYYY'
+            });
+
+        });
+    </script>
+}

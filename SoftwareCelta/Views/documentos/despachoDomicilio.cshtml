@@ -1,0 +1,158 @@
+﻿@model IEnumerable<SoftwareCelta.Models.dw_movin>
+@{
+    ViewBag.Title = "Buscar Documento";
+    int i = 0;
+    List<List<SoftwareCelta.Models.dw_detalle>> listaDeListaDetalle = (List<List<SoftwareCelta.Models.dw_detalle>>)ViewData["listaDeListaDetalle"];
+}
+<br /><br /><br />
+<div class="row">
+
+    <h2>Buscar Documento</h2>    
+        <div class="col-md-6">
+            <input type="number" class="form-control" name="numeroDocumento" id="numeroDocumento" required />
+        </div>
+        <div class="col-md-6">
+            <input type="submit" value="Buscar" id="BotonBuscar" class="btn btn-lg btn-primary btn-block" />
+        </div>
+</div>
+<br />
+<div class="col-md-12 hidden" id="divError">
+    <div class="alert alert-danger">
+        <button type="button" class="close" data-dismiss="alert"
+                aria-hidden="true">
+            &times;
+        </button>
+        Este documento no existe en nuestros registros como boleta ya procesada
+    </div>
+</div>
+<br />
+<br />
+<h2>Documentos Registrados Hoy @SoftwareCelta.Models.Formateador.fechaCompletaToString(DateTime.Today)</h2>
+<br />
+<div class="table-responsive">
+    <table class="table table-hover">
+        <thead>
+            <tr>
+                <th class="col-md-2">
+                    Numero Boleta
+                </th>          
+                <th class="col-md-2">
+                    Tipo documento
+                </th>                
+                <th class="col-md-6">
+                    Productos para Despacho
+                </th>
+                <th class="col-md-2"></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.numeroDocumento)
+                        <input class="hidden idMovin" value="@item.dw_movinID" />
+                    </td>                 
+                    <td>
+                        @Html.DisplayFor(modelItem => item.tipoDocumento)
+                    </td>
+                    <td >
+                        @{string nameDiv = "prod" + i;}
+                        @{string nameDivSucces = "divSucces" + i;}
+                        <div class="col-xs-2">
+                            <button data-toggle="collapse" data-target="#@nameDiv" class="btn btn-success btn-collapse">+</button>
+                        </div>
+                        <div class="col-xs-10 divSucces"></div>
+                        <br /><br />
+                        <div class="collapse col-xs-12" id="@nameDiv">
+                            @foreach (var detalle in listaDeListaDetalle[i])
+                            {
+                                <text>
+                                    <input class="hidden detalleID" value="@detalle.dw_detalleID" name="detalleID" />
+                                </text>
+                                <text><div class="col-xs-2">@detalle.codigoProducto</div><div class="col-xs-4">@detalle.descripcionProducto</div><div class="col-xs-1">@detalle.cantidadProducto</div></text>
+                                <text>
+                                    <div class="col-xs-5">
+                                    <select class="form-control areaInterna" name="areaInterna">
+                                        <option value="0">Sin Asignar</option>
+                                        @foreach (var areaInt in (List<SoftwareCelta.Models.dw_areaInterna>)ViewData["bodegas"])
+                                        {
+                                            <text>
+                                                <option value="@areaInt.dw_areaInternaID" @if (areaInt.dw_areaInternaID.Equals(detalle.dw_areaInternaID)) { <text> selected</text>}>@areaInt.nombre</option>
+                                            </text>
+                                        }
+                                    </select>
+                                    </div>
+                                </text>
+                                <text><br /><br /></text>
+                            }
+                            <button class="btn btn-success guardarAreaInternaProd">Guardar</button>
+                        </div>
+
+                    </td>
+                    <td>
+                        @Html.ActionLink("Agregar Areas Internas", "paraDespacharADomicilio", new { documentoID = item.dw_movinID }) |
+                        <br />
+                        @Html.ActionLink("Agregar Datos Envio", "datosEnvio", new { documentoID = item.dw_movinID }) |<br />                    
+                       
+                    </td>
+                </tr>
+                            i++;
+            }
+        </tbody>
+    </table>
+</div>
+@section Scripts {
+    @Styles.Render("~/Content/bootstrap-datetimepicker.css")
+    @Scripts.Render("~/Scripts/datetimepicker/moment.js")
+    @Scripts.Render("~/Scripts/datetimepicker/bootstrap-datetimepicker.js")
+    <script>
+        $(document).ready(function () {
+            $(".fecha").datetimepicker({
+                viewMode: 'days',
+                format: 'DD/MM/YYYY'
+            });
+            $(".guardarAreaInternaProd").click(function () {
+                var idsDetalles = $(this).closest('tr').find("input[name='detalleID']").map(function () { return $(this).val(); }).get();
+                var areasInternas = $(this).closest('tr').find("select[name='areaInterna']").map(function () { return $(this).val(); }).get();
+                var idMovin = $(this).closest('tr').find(".idMovin").val();
+                console.log(idsDetalles);
+                console.log(areasInternas);
+                var div = $(this).closest('tr');
+                $.ajax({
+                    method: "POST",
+                    url: "/documentos/guardarAreaInteraMovin", data: { "idsDetalles": idsDetalles, "areasInternas": areasInternas, "idMovin": idMovin },
+                    beforeSend: function () {
+                        div.find('.divSucces').html("GUARDANDO...");
+                    },
+                    success: function (retorno) {
+                        div.find('.divSucces').html(retorno);
+                        div.find(".btn-collapse").trigger('click');
+                    }
+                });
+            });
+
+            $("#BotonBuscar").click(function () {
+               
+                var numeroDoc = $("#numeroDocumento").val();
+                    $.ajax({
+                        method: "POST",
+                        url: "/documentos/BuscarDocumentoPorNumeroFechaActual", data: { "numDoc": numeroDoc},
+                        success: function (retorno) {
+                            if (retorno != "false") {
+                                ruta = "/documentos/paraDespacharADomicilio?documentoID="+retorno;
+                                window.location.href = ruta;
+                            } else {
+                                $("#divError").removeClass("hidden");
+                            }
+                        }
+                    });
+
+
+            });
+
+        });
+
+    </script>
+}

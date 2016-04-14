@@ -129,6 +129,14 @@ namespace SoftwareCelta.Controllers
             base.Dispose(disposing);
         }
 
+        public JsonResult getAreasInternas()
+        {
+            List<dw_areaInterna> areasInternas = db.Bodegas.ToList();
+            var result = areasInternas;
+            return Json(result, JsonRequestBehavior.AllowGet);
+
+        }
+
         
     }
 }

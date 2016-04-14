@@ -1,0 +1,126 @@
+﻿@model SoftwareCelta.Models.dw_movin
+@{
+    ViewBag.Title = "Documento";
+    int contadorProductos = 1;
+    string despacho = "estadoDespacho";
+  
+}
+<br />
+<h2>Documento @Model.numeroDocumento / @SoftwareCelta.Models.Formateador.fechaCompletaToString(Model.fechaEmision)</h2>
+<br />
+@Html.ActionLink("Agregar Datos Envio", "datosEnvio", new { documentoID = Model.dw_movinID })
+
+<br />
+<form role="form" method="post" action="@Url.Action("paraDespacharADomicilio", "documentos" )">
+    <input type="text" class="hidden" value="@SoftwareCelta.Models.Formateador.fechaCompletaToString(Model.fechaEmision)" name="fechaEmision" />
+    <input type="text" class="hidden" value="@Model.tipoDocumento" name="tipoDocumento" />
+    <br />
+    <br />
+
+    <h3>Productos Comprados</h3>
+    <br />
+    <div class="table-responsive">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>
+                        Codigo Producto
+                    </th>
+                    <th>
+                        Descripcion Producto
+                    </th>
+                    <th>
+                        Cantidad Producto
+                    </th>                    
+                    <th>Entrega Inmediata</th>
+                    <th>Despacho a Domicilio</th>
+                    <th>
+                        Area Interna /Bodega
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+
+                @foreach (SoftwareCelta.Models.dw_detalle detalle in (List<SoftwareCelta.Models.dw_detalle>)ViewData["detalleDocumento"])
+                {
+                    string nameDespacho = despacho + contadorProductos;
+                    string hidd = "";
+                    <tr>
+                        <td>
+                            @detalle.codigoProducto
+                            <input class="hidden" value="@detalle.dw_detalleID" name="detalleID" />
+                        </td>
+                        <td>
+                            @detalle.descripcionProducto                            
+                        </td>
+                        <td>
+                            @detalle.cantidadProducto
+                        </td>
+                       
+                        <td>
+                            @if (detalle.estadoDespacho.Equals(0))
+                            {   hidd="hidden";
+                                <text>X</text>
+                                <input type="text" class="hidden" name="estadoDespacho" value="0" />
+                                
+                            }                         
+                            
+                            
+                        </td>
+                        <td>
+                            @if (!detalle.estadoDespacho.Equals(0))
+                            { 
+                                <text>X</text>
+                                <input type="text" class="hidden" name="estadoDespacho" value="1" />
+                            }
+
+                            
+                        </td>
+                        <td>
+                            <select class="form-control areaInterna @hidd" name="areaInterna">
+                                <option value="0" @if(detalle.dw_areaInternaID.Equals(0)){<text>selected</text>}>Sin asignar</option>
+                                @foreach (SoftwareCelta.Models.dw_areaInterna bodega in (List<SoftwareCelta.Models.dw_areaInterna>)ViewData["bodegas"])
+                                {
+                                    <option value="@bodega.dw_areaInternaID" @if (detalle.dw_areaInternaID.Equals(bodega.dw_areaInternaID)) { <text> selected</text>}>@bodega.nombre</option>
+                                }
+                            </select>
+                            
+                        </td>
+                    </tr>
+                                contadorProductos++;
+                }
+            </tbody>
+        </table>
+        <br />
+        <div class="clearfix"></div>
+        <div class="modal-footer">
+            <input type="submit" value="Guardar" class="btn btn-success btn-lg btn-default" />
+        </div>
+    </div>
+</form>
+<br />
+@section Scripts {
+    @Styles.Render("~/Content/bootstrap-datetimepicker.css")
+    @Scripts.Render("~/Scripts/datetimepicker/moment.js")
+    @Scripts.Render("~/Scripts/datetimepicker/bootstrap-datetimepicker.js")
+    <script>
+        $(document).ready(function () {
+            $(".fecha").datetimepicker({
+                viewMode: 'days',
+                format: 'DD/MM/YYYY'
+            });
+
+            $(".entregaInmediata").click(function () {
+                var selectAreaInterna = $(this).closest('tr').find('.areaInterna');
+                selectAreaInterna.addClass("hidden");
+            });
+
+            $(".despachoDomicilio").click(function () {
+                var selectAreaInterna = $(this).closest('tr').find('.areaInterna');
+                selectAreaInterna.removeClass("hidden");
+            });
+
+        });
+    </script>
+}
+
