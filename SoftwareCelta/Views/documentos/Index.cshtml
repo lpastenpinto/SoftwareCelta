@@ -60,7 +60,7 @@
                         <div class="col-xs-10 divSucces"></div>
                         <br /><br />
                         <div class="collapse col-xs-12" id="@nameDiv">
-                            @foreach (var detalle in listaDeListaDetalle[i])
+                            @foreach (var detalle in item.detalleMovin)
                             {
                                 <text><div class="col-xs-3">@detalle.codigoProducto</div><div class="col-xs-7">@detalle.descripcionProducto</div><div class="col-xs-2">@detalle.cantidadProducto</div><br /></text>
                             }
@@ -109,7 +109,7 @@
             });
         });
         function irUrl(documentoID) {            
-            window.location.href = 'documentos/Documento?documentoID='+documentoID;
+            //window.location.href = '/documentos/Documento?documentoID='+documentoID;
         }
     </script>
 }

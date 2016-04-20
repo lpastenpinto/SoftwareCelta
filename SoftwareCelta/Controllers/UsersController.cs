@@ -5,19 +5,39 @@ using System.Web;
 using System.Web.Mvc;
 using SoftwareCelta.DAL;
 using SoftwareCelta.Models;
-
+using System.Data.SqlClient;
+using System.Data;
+using System.Data.Entity;
+using SoftwareCelta.Filters;
 namespace SoftwareCelta.Controllers
 {
     public class UsersController : Controller
     {
         private ContextBDCelta db = new ContextBDCelta();
 
+        [Permissions(Permission1 = 1)]
         public ActionResult Index() {
             return View(db.Users.ToList());
         }
         // GET: Users
         public ActionResult Login()
         {
+
+            SqlConnection cnx = Connection.getConection();
+            SqlCommand cmd = new SqlCommand();
+            cmd.Connection = cnx;
+            cmd.CommandText = "SELECT * from todasBodegas";
+            cmd.CommandType = CommandType.Text;
+            SqlDataReader dr = cmd.ExecuteReader();
+            
+            while (dr.Read())
+            {
+                //porcentaje = (string)dr["valor"];
+
+            }
+            cnx.Close();
+
+           // Mail.send("leohm63@gmail.com","subject","body");
             return View();
         }
 
@@ -25,10 +45,23 @@ namespace SoftwareCelta.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Login(FormCollection post)
         {
-            Session["userID"] = 1;
-            Session["userName"] = "lpasten";
-
-            return RedirectToAction("Index", "Home");
+            string userName=(string)post["userName"];
+            string password = encriptacion.GetMD5((string)post["password"]);
+            user user=db.Users.SingleOrDefault(s=>s.userName==userName & s.password==password);
+            if(user==null){
+                ViewBag.mensaje = "login erroneo";
+                return View();
+            }else{
+                List<permisoUser> permisosUser= db.PermisosUser.Where(s=>s.userID==user.userID).ToList();
+                List<int> permisos = new List<int>();
+                foreach (var perm in permisosUser) {
+                    permisos.Add(perm.rolesID);
+                }
+                Session["userID"] = user.userID;
+                Session["userName"] = user.userName;
+                Session["permisosUser"] = permisos;
+                return RedirectToAction("Index", "Home");
+            }                                    
         }
 
         public ActionResult Logout()
@@ -43,6 +76,7 @@ namespace SoftwareCelta.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Permissions(Permission1 = 1)]
         public ActionResult Create(FormCollection form) {
 
             user NewUser = new user();
@@ -54,15 +88,22 @@ namespace SoftwareCelta.Controllers
             return RedirectToAction("Index");            
         }
 
-   
+        [Permissions(Permission1 = 1)]
         public ActionResult AsignarPermisos(int userID) {
             user user = db.Users.Find(userID);
+            List<permisoUser> permisos = db.PermisosUser.Where(s => s.userID == userID).ToList();
+            List<int> permisosUser = new List<int>();
+            foreach (var perm in permisos) {
+                permisosUser.Add(perm.rolesID);
+            }
+            ViewData["permisosUser"] = permisosUser;
             ViewData["roles"] = db.Roles.ToList();
             return View(user);
         }
 
 
         [HttpPost]
+        [Permissions(Permission1 = 1)]
         public ActionResult AsignarPermisos(FormCollection form)
         {
             string[] rolID = Request.Form.GetValues("rolID");
@@ -88,6 +129,62 @@ namespace SoftwareCelta.Controllers
             return RedirectToAction("Index");
         }
 
+        public ActionResult cambiarDatos()
+        {                        
+            if (Session["userID"] != null)
+            {
+                string id = Session["userID"].ToString();
+                int userID = Convert.ToInt32(id);
+                user user = db.Users.Find(userID);
+                return View(user);
+            }
+            else {
+                return Redirect("sinPermisos");
+            }
+        }
+
+        [HttpPost]        
+        public ActionResult cambiarDatos(FormCollection form)
+        {
+            
+            int userID = Convert.ToInt32((string)form["userID"]);
+            user user = db.Users.Find(userID);
+            user.userName = (string)form["userName"];
+            user.nombreCompleto = (string)form["nombreCompleto"];
+            string newPass = encriptacion.GetMD5((string)form["passwordNew"]);
+            if (!newPass.Equals("")) {
+                user.password = newPass;
+            }
+            //user.password = (string)form["passwordNew"];//
+            db.Entry(user).State = EntityState.Modified;
+            db.SaveChanges();
+            TempData["Success"] = "Usuario "+user.userName+" sus datos han sido guardados exitosamente";
+            return View(user);
+        }
+
+        [Permissions(Permission1 = 1)]
+        public ActionResult Delete(int userID) {
+            user user = db.Users.Find(userID);
+            return View(user);
+        }
+
+
+        [HttpPost]
+        [Permissions(Permission1 = 1)]
+        public ActionResult Delete(FormCollection form) {
+            int userID = Convert.ToInt32((string)form["userID"]);
+            user user = db.Users.Find(userID);
+            db.Users.Remove(user);
+            db.SaveChanges();
+            dw_log.registrarLog(Convert.ToInt32(Session["userID"]), Session["userName"].ToString(), "Se elimina usuario de nombre " + user.userName);            
+            return RedirectToAction("Index");
+        }
+
+
+        public ActionResult sinPermisos() {
+            ViewBag.userName=Session["userName"].ToString();
+            return View();
+        }
 
     }
 }

@@ -1,0 +1,47 @@
+﻿@model SoftwareCelta.Models.user
+
+@{
+    ViewBag.Title = "Eliminar";
+}
+
+<h2>¿Seguro que desea eliminar a este usuario?</h2>
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+
+    <div class="form-horizontal">
+        <h4>Usuario</h4>
+        <hr />
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+        @Html.HiddenFor(model => model.userID)
+        <div id="divNombreNombre" class="form-group">
+            <label class="control-label col-md-2">Nombre de Usuario</label>
+            <div class="col-md-10">
+                <input type="text" name="userName" id="userName" class="form-control" value="@Model.userName" readonly/>
+                <div id="mensajeErrorNombre" class="alert alert-danger hidden">
+                    <strong>Error: </strong> ya existe un usuario con este nombre
+                </div>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="control-label col-md-2">Nombre Completo</label>
+            <div class="col-md-10">
+                <input type="text" name="nombreCompleto" id="nombreCompleto" class="form-control" value="@Model.nombreCompleto" readonly/>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="submit" value="Eliminar" id="boton" class="btn btn-warning"/>
+            </div>
+        </div>
+    </div>
+}
+
+
+
+
+
+

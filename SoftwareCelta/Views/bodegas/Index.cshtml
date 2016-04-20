@@ -9,27 +9,66 @@
 <p>
     @Html.ActionLink("Crear Nueva", "Create",null,null, new { @class = "btn btn-primary" })
 </p>
-<div class="table-responsive">
-<table class="table">
+<div class="table-responsive" ng-app="bodegaApp">    
+<br />
+<input type="text"  class="form-control" placeholder="Ingrese nombre bodega" ng-model="searchBodega" />
+<br /><br />
+<table class="table" ng-controller="bodegaController">
     <tr>
         <th>
             Nombre Bodega/Area Interna
         </th>
         <th></th>
     </tr>
-
-@foreach (var item in Model) {
-    <tr>
-        <td>
-            @Html.DisplayFor(modelItem => item.nombre)
-        </td>
-        <td>
-            @Html.ActionLink("Editar", "Edit", new { id = item.dw_areaInternaID }) |
-            @Html.ActionLink("Mostrar", "Details", new { id = item.dw_areaInternaID }) |
-            @Html.ActionLink("Eliminar", "Delete", new { id = item.dw_areaInternaID })
-        </td>
+    <tr ng-repeat="bodega in bodegas | filter : searchBodega">
+        <td>{{bodega.nombre}}</td>
+        <td><a href="/bodegas/Edit/{{bodega.dw_areaInternaID}}">Editar</a>|<a href="/bodegas/Details/{{bodega.dw_areaInternaID}}">Mostrar</a>|<a href="/bodegas/Delete/{{bodega.dw_areaInternaID}}">Eliminar</a></td>        
     </tr>
-}
-
 </table>
 </div>
+
+@section scripts{
+    <script src="~/Scripts/angular.js"></script>
+    <script>
+        var bodegaApp = angular.module('bodegaApp', []);
+        bodegaApp.controller('bodegaController', function ($scope,$interval,$http, bodegaService) {           
+            $scope.bodegas = [];
+            getBodegas();
+            function getBodegas() {
+                bodegaService.getBodegas()
+                    .success(function (bods) {                        
+                        for (var i = 0;i< bods.length; i++) {                            
+                            $scope.bodegas.push(bods[i]);
+                        }
+                        
+                    })
+                    .error(function (error) {
+                        $scope.status = 'Unable to load customer data: ' + error.message;
+                        console.log($scope.status);
+                    });
+            }
+            /*$interval(function () {
+                $http.get('/bodegas/getAreasInternas').success(function (response) {
+                    for (var i = 0; i < response.length; i++) {
+                        $scope.bodegas.push(response[i]);
+                    }
+                });
+            }, 20000);*/
+            
+           
+        });
+
+        bodegaApp.factory('bodegaService', ['$http', function ($http) {
+
+            var bodegaService = {};
+            bodegaService.getBodegas = function () {
+                return $http.get('/bodegas/getAreasInternas');
+            };            
+            return bodegaService;
+
+        }]);
+
+    </script>
+}
+
+

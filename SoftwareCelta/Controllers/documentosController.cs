@@ -25,7 +25,7 @@ namespace SoftwareCelta.Controllers
             documento.fechaEmision = DateTime.Now;
             documento.nombreVendedor = "Vendedor Nuevo";
 
-            documentosRegistrados.Add(documento);
+            
 
             List<dw_detalle> listDetalleDocumento = new List<dw_detalle>();
 
@@ -43,7 +43,14 @@ namespace SoftwareCelta.Controllers
             detalleDocumento_2.cantidadProducto = 1;
             detalleDocumento_2.valorProducto = 11111;
             listDetalleDocumento.Add(detalleDocumento_2);
+            
+            
             listaDeListaDetalle.Add(listDetalleDocumento);
+
+            documento.detalleMovin = listDetalleDocumento;
+            documentosRegistrados.Add(documento);
+
+
             ViewData["listaDeListaDetalle"] = listaDeListaDetalle;            
             return View(documentosRegistrados);
         }
@@ -114,7 +121,7 @@ namespace SoftwareCelta.Controllers
             DateTime fechaInicial= new DateTime();
             DateTime fechaFinal = new DateTime();
             if(strFechaFinal==null || strFechaInicial==null){
-                fechaInicial=DateTime.Now.AddDays(-7);
+                fechaInicial=DateTime.Now.AddDays(-1);
                 fechaFinal=DateTime.Now;
             }else{
                 fechaInicial=Formateador.formatearFechaCompleta(strFechaInicial);

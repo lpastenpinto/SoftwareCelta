@@ -7,13 +7,14 @@ using SoftwareCelta.Models;
 using System.Text;
 using SoftwareCelta.DAL;
 using System.Data.Entity;
+using SoftwareCelta.Filters;
 
 namespace SoftwareCelta.Controllers
 {
     public class listadoDespachoController : Controller
     {
         private ContextBDCelta db = new ContextBDCelta();
-        // GET: listadoDespacho         
+        // GET: listadoDespacho                 
         public ActionResult Despachados(string fInicial, string fFinal, string idTransport,string idBodega, string numDoc) {
 
             string estadoFiltroDoc="";
@@ -23,7 +24,7 @@ namespace SoftwareCelta.Controllers
             DateTime fechaFinal = new DateTime();            
             if (fInicial == null || fFinal == null)
             {
-                fechaInicial = DateTime.Now.AddDays(-7);
+                fechaInicial = DateTime.Now.AddDays(-1);
                 fechaFinal = DateTime.Now;
             }
             else

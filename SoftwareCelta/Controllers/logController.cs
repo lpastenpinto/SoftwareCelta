@@ -23,7 +23,7 @@ namespace SoftwareCelta.Controllers
             DateTime fechaFinal = new DateTime();
             if (fInicial == null || fFinal == null)
             {
-                fechaInicial = DateTime.Now.AddDays(-7);
+                fechaInicial = DateTime.Now.AddDays(-1);
                 fechaFinal = DateTime.Now;
             }
             else

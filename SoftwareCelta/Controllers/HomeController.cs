@@ -15,20 +15,7 @@ namespace SoftwareCelta.Controllers
 
         [Permissions]
         public ActionResult Index()
-        {
-           /* if (Session["userID"] == null)
-            {                
-                return RedirectToAction("Login", "Users");
-            }
-            else {
-                return View();
-            }*/
-
-            /*List<int> listaPermiso = new List<int>();
-            listaPermiso.Add(10);
-            listaPermiso.Add(8);
-            Session["permisosUser"] = listaPermiso;
-            */
+        {           
             return View();
         }
 
