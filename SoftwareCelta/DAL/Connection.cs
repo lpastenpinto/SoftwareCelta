@@ -4,6 +4,8 @@ using System.Data.SqlClient;
 using System.IO;
 using System.Linq;
 using System.Web;
+using System.Web.Configuration; 
+
 namespace SoftwareCelta.DAL
 {
     public class Connection
@@ -18,8 +20,8 @@ namespace SoftwareCelta.DAL
             //var rutaAcceso = "Server=192.168.3.221;Database=Despacho;User ID=dys;Password=dys2016;";
             
             //VISTA SOFTLAND
-            var rutaAcceso = "Server=192.168.3.221;Database=COMERCIAL;User ID=consulta;Password=consulta2011;";
-            SqlConnection conn = new SqlConnection(rutaAcceso);
+            //var rutaAcceso = "Server=192.168.3.221;Database=COMERCIAL;User ID=consulta;Password=consulta2011;";
+            SqlConnection conn = new SqlConnection(WebConfigurationManager.ConnectionStrings["BDComercial"].ConnectionString);
 
             conn.Open();
             return conn;
