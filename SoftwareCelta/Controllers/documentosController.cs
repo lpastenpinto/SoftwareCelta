@@ -6,82 +6,57 @@ using System.Web.Mvc;
 using System.Data.Entity;
 using SoftwareCelta.Models;
 using SoftwareCelta.DAL;
+using System.Data.SqlClient;
+using System.Data;
+using SoftwareCelta.Filters;
+
 namespace SoftwareCelta.Controllers
 {
     public class documentosController : Controller
     {
         private ContextBDCelta db = new ContextBDCelta();
         // GET: documentos
+        [Permissions]
         public ActionResult Index()
-        {
-            DateTime fechaActual = DateTime.Today;
+        {                        
+            return View();
 
-            List<dw_movin> documentosRegistrados = new List<dw_movin>();
-            List<List<dw_detalle>> listaDeListaDetalle = new List<List<dw_detalle>>();
-            dw_movin documento = new dw_movin();
-            //documento.dw_movinID = 1;
-            documento.numeroDocumento = 102;
-            documento.numeroVale = 12223;
-            documento.fechaEmision = DateTime.Now;
-            documento.nombreVendedor = "Vendedor Nuevo";
-
-            
-
-            List<dw_detalle> listDetalleDocumento = new List<dw_detalle>();
-
-            dw_detalle detalleDocumento_1 = new dw_detalle();
-            detalleDocumento_1.codigoProducto = "AAA2";
-            detalleDocumento_1.descripcionProducto = "CAMA AMERICANA";
-            detalleDocumento_1.valorProducto = 10000;
-            detalleDocumento_1.cantidadProducto = 1;
-
-            listDetalleDocumento.Add(detalleDocumento_1);
-
-            dw_detalle detalleDocumento_2 = new dw_detalle();
-            detalleDocumento_2.codigoProducto = "MR1200";
-            detalleDocumento_2.descripcionProducto = "MARQUESA";
-            detalleDocumento_2.cantidadProducto = 1;
-            detalleDocumento_2.valorProducto = 11111;
-            listDetalleDocumento.Add(detalleDocumento_2);
-            
-            
-            listaDeListaDetalle.Add(listDetalleDocumento);
-
-            documento.detalleMovin = listDetalleDocumento;
-            documentosRegistrados.Add(documento);
-
-
-            ViewData["listaDeListaDetalle"] = listaDeListaDetalle;            
-            return View(documentosRegistrados);
         }
 
-
+        [Permissions]
         public ActionResult despachoDomicilio() {
             DateTime fechaActual = DateTime.Today;
             List<dw_movin> documetosRegistrados = db.Movins.Where(s => s.fechaEmision == fechaActual).ToList();
             List<List<dw_detalle>> listaDeListaDetalle = new List<List<dw_detalle>>();
+            List<dw_movin> documentosRegistradosParaDespacho = new List<dw_movin>();
             foreach (var dw_movin in documetosRegistrados)
             {
                 List<dw_detalle> listDetalle = db.DetalleMovin.Where(s => s.dw_movinID == dw_movin.dw_movinID & s.estadoDespacho == 1).ToList();
-                listaDeListaDetalle.Add(listDetalle);
+                if (listDetalle.Count!=0) {
+                    dw_movin.detalleMovin = listDetalle;
+                    documentosRegistradosParaDespacho.Add(dw_movin);
+                    //listaDeListaDetalle.Add(listDetalle);
+                }                
             }
-            ViewData["listaDeListaDetalle"] = listaDeListaDetalle;
+            //ViewData["listaDeListaDetalle"] = listaDeListaDetalle;
             ViewData["bodegas"] = db.Bodegas.ToList();
-            return View(documetosRegistrados);
+            return View(documentosRegistradosParaDespacho);
         }
 
-
+        [Permissions]
         public ActionResult datosEnvio(int documentoID) {
             dw_envio dw_envio = db.DatosEnvio.SingleOrDefault(s=>s.dw_movinID==documentoID);
             if (dw_envio == null) {
                 dw_envio = new dw_envio();
             }
+            ViewData["dw_ciudades"] = dw_ciudades_despacho.listaCiudades();
             ViewData["dw_movin"] = db.Movins.Find(documentoID);
             return View(dw_envio);
         
         }
 
         [HttpPost]
+        [Permissions]
         public ActionResult datosEnvio(FormCollection form)
         {
             int idDocumento =Convert.ToInt32((string)form["idDocumento"]);
@@ -116,7 +91,7 @@ namespace SoftwareCelta.Controllers
 
         }
 
-
+        [Permissions]
         public ActionResult Buscador(string strFechaInicial, string strFechaFinal, string numDoc) {
             DateTime fechaInicial= new DateTime();
             DateTime fechaFinal = new DateTime();
@@ -145,42 +120,40 @@ namespace SoftwareCelta.Controllers
             return View(listDocumentos);
         }
 
-
+        [Permissions]
         public ActionResult Documento(int documentoID)
         {
-            //VER SI YA SE INGRESO BOLETA
-            //int numeroDocumento = Convert.ToInt32((string)form["numeroDocumento"]);
-          
 
-            dw_movin documento = new dw_movin();
-            //documento.dw_movinID = 1;
-            documento.numeroDocumento = 102;
-            documento.numeroVale = 12223;
-            documento.fechaEmision =  DateTime.Now;
-            documento.nombreVendedor = "Vendedor Nuevo";
+            DateTime fechaActual = DateTime.Now.AddDays(-1);
+            SqlConnection cnx = Connection.getConection();
+            SqlCommand cmd = new SqlCommand();
+            cmd.Connection = cnx;
 
-            List<dw_detalle> listDetalleDocumento = new List<dw_detalle>();
+            cmd.CommandText = "SELECT * from softland.celta_ventas WHERE Folio =" + documentoID + " AND anno=" + fechaActual.Year;
+            cmd.CommandType = CommandType.Text;
+            SqlDataReader dr = cmd.ExecuteReader();
             
-            dw_detalle detalleDocumento_1 = new dw_detalle();
-            detalleDocumento_1.codigoProducto = "AAA2";
-            detalleDocumento_1.descripcionProducto = "CAMA AMERICANA";
-            detalleDocumento_1.valorProducto = 10000;
-            detalleDocumento_1.cantidadProducto = 1;            
+            dw_movin documento = new dw_movin();
+            List<dw_detalle> listDetalle = new List<dw_detalle>();
+            documento.numeroDocumento = documentoID;
+            while (dr.Read())
+            {
+                documento.fechaEmision = (DateTime)dr["Fecha"];
+                                
+                dw_detalle detalle = new dw_detalle();
+                detalle.cantidadProducto = Convert.ToDouble(dr["CantFacturada"]);
+                detalle.codigoProducto = (string)dr["CodProd"];
+                detalle.descripcionProducto = (string)dr["DesProd"];
+                detalle.dw_movinID = documento.dw_movinID;
+                listDetalle.Add(detalle);
+                documento.detalleMovin = listDetalle;                
+            }
 
-            listDetalleDocumento.Add(detalleDocumento_1);
-
-            dw_detalle detalleDocumento_2 = new dw_detalle();
-            detalleDocumento_2.codigoProducto = "MR1200";
-            detalleDocumento_2.descripcionProducto = "MARQUESA";
-            detalleDocumento_2.cantidadProducto = 1;
-            detalleDocumento_2.valorProducto = 11111;
-            listDetalleDocumento.Add(detalleDocumento_2);
-         
-
-            ViewData["detalleDocumento"] = listDetalleDocumento;            
+            cnx.Close();                        
             return View(documento);
         }
 
+        [Permissions]
         public ActionResult paraDespacharADomicilio(int documentoID)
         {
             dw_movin dw_movin = db.Movins.Find(documentoID);
@@ -190,6 +163,7 @@ namespace SoftwareCelta.Controllers
         }
 
         [HttpPost]
+        [Permissions]
         public ActionResult paraDespacharADomicilio(FormCollection form) {
             string[] detalleID = Request.Form.GetValues("detalleID");
             string[] estadoDespacho = Request.Form.GetValues("estadoDespacho");
@@ -208,6 +182,7 @@ namespace SoftwareCelta.Controllers
             return RedirectToAction("despachoDomicilio");
         }
 
+        [Permissions]
         public ActionResult DocumentoRegistrado(int documentoID) {
 
             dw_movin dw_movin = db.Movins.Find(documentoID);
@@ -220,7 +195,7 @@ namespace SoftwareCelta.Controllers
             return View(dw_movin);
         }
 
-        
+        [Permissions]
         public ActionResult Editar(int documentoID)
         {
 
@@ -237,6 +212,7 @@ namespace SoftwareCelta.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Permissions]
         public ActionResult Editar(FormCollection form)
         {
             int dw_movinID = Convert.ToInt32((string)form["dw_movinID"]);
@@ -293,25 +269,19 @@ namespace SoftwareCelta.Controllers
         }
 
         [HttpPost]
+        [Permissions]
         public ActionResult registrarNuevoDocumento(FormCollection form) {
-
-
             int numeroDocumento = Convert.ToInt32((string)form["numeroDocumento"]);
-            int numeroVale = Convert.ToInt32((string)form["numeroVale"]);
-            string sdfsd = (string)form["fechaEmision"];
+            int numeroVale = Convert.ToInt32((string)form["numeroVale"]);            
             DateTime fechaEmision = Formateador.fechaFormatoGuardar((string)form["fechaEmision"]);
             
             dw_movin documento = new dw_movin();
             documento.fechaEmision = fechaEmision;
             documento.numeroDocumento = numeroDocumento;
             documento.numeroVale = numeroVale;
-            documento.nombreVendedor = "VENDEDOR";
+            documento.nombreVendedor = "";
             db.Movins.Add(documento);
             db.SaveChanges();
-            //GUARDAR DOC
-
-            //GUARDAR DATOS ENVIO
-            //GUARDAR DETALLE
                                            
             string[] codigoProducto  = Request.Form.GetValues("codigoProducto");
             string[] descripcionProducto= Request.Form.GetValues("descripcionProducto");
@@ -347,6 +317,7 @@ namespace SoftwareCelta.Controllers
         }
          
         [HttpPost]
+        [Permissions]
         public string guardarAreaInteraMovin(List<string> idsDetalles, List<string> areasInternas,string idMovin)
         {
             try
@@ -372,6 +343,7 @@ namespace SoftwareCelta.Controllers
         }
 
         [HttpPost]
+        [Permissions]
         public string BuscarDocumentoPorNumero(string numDoc) {
             try
             {
@@ -393,6 +365,7 @@ namespace SoftwareCelta.Controllers
         }
 
         [HttpPost]
+        [Permissions]
         public string BuscarDocumentoPorNumeroFechaActual(string numDoc)
         {
             try
@@ -416,6 +389,70 @@ namespace SoftwareCelta.Controllers
 
         }
 
-        
+        private string generateStringQuery(DateTime fecha) {
+            string retorno ="";
+            List<dw_movin> listMovins = db.Movins.Where(s => s.fechaEmision >= fecha).ToList();
+            if (listMovins.Count != 0)
+            {
+                foreach (var mov in listMovins)
+                {
+                    retorno = retorno + " AND Folio!=" + mov.numeroDocumento;
+                }
+            }
+            return retorno;
+        }
+
+        [HttpGet]
+
+        public JsonResult getNewDocuments()
+        {
+            DateTime fecha = DateTime.Now.AddDays(-1);
+
+            string moreQuery = generateStringQuery(fecha);
+            SqlConnection cnx = Connection.getConection();
+            SqlCommand cmd = new SqlCommand();
+            cmd.Connection = cnx;
+            cmd.CommandText = "SELECT * from softland.celta_ventas WHERE Fecha >'" + fecha + "' AND anno="+fecha.Year+"" + moreQuery;
+            cmd.CommandType = CommandType.Text;
+            SqlDataReader dr = cmd.ExecuteReader();
+
+            int i = 0;
+            int x = 0;
+            int folio = 0;
+
+            dw_movin mov = new dw_movin();
+            List<dw_movin> documentosRegistrados = new List<dw_movin>();
+            List<dw_detalle> listDetalle = new List<dw_detalle>();
+
+            while (dr.Read())
+            {
+                if (folio != Convert.ToInt32(dr["Folio"]))
+                {
+                    x++;
+                    mov = new dw_movin();
+                    listDetalle = new List<dw_detalle>();
+                    mov.dw_movinID = x;
+                    mov.fechaEmision = (DateTime)dr["Fecha"];
+                    mov.numeroDocumento = Convert.ToInt32(dr["Folio"]);
+                    mov.tipoDocumento =(string)dr["Tipo"];
+                    folio = Convert.ToInt32(dr["Folio"]);
+                    documentosRegistrados.Add(mov);
+                }
+                dw_detalle detalle = new dw_detalle();
+                detalle.cantidadProducto = Convert.ToDouble(dr["CantFacturada"]);
+                detalle.codigoProducto = (string)dr["CodProd"];
+                detalle.descripcionProducto = (string)dr["DesProd"];
+                detalle.dw_movinID = mov.dw_movinID;
+                listDetalle.Add(detalle);
+                mov.detalleMovin = listDetalle;
+                i++;
+            }
+
+            cnx.Close();
+            var result = documentosRegistrados; 
+            return Json(result, JsonRequestBehavior.AllowGet);
+
+        }
+
     }
 }

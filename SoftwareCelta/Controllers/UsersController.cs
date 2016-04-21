@@ -22,22 +22,7 @@ namespace SoftwareCelta.Controllers
         // GET: Users
         public ActionResult Login()
         {
-
-            SqlConnection cnx = Connection.getConection();
-            SqlCommand cmd = new SqlCommand();
-            cmd.Connection = cnx;
-            cmd.CommandText = "SELECT * from todasBodegas";
-            cmd.CommandType = CommandType.Text;
-            SqlDataReader dr = cmd.ExecuteReader();
-            
-            while (dr.Read())
-            {
-                //porcentaje = (string)dr["valor"];
-
-            }
-            cnx.Close();
-
-           // Mail.send("leohm63@gmail.com","subject","body");
+           // Mail.send("leohm63@gmail.com","subject","body");*/            
             return View();
         }
 
@@ -70,6 +55,7 @@ namespace SoftwareCelta.Controllers
             return RedirectToAction("Index", "Home");
         }
 
+        [Permissions(Permission1 = 1)]
         public ActionResult Create() {
             return View();
         }

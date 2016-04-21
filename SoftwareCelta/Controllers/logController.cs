@@ -8,7 +8,7 @@ using System.Web;
 using System.Web.Mvc;
 using SoftwareCelta.DAL;
 using SoftwareCelta.Models;
-
+using SoftwareCelta.Filters;
 namespace SoftwareCelta.Controllers
 {
     public class logController : Controller
@@ -16,6 +16,7 @@ namespace SoftwareCelta.Controllers
         private ContextBDCelta db = new ContextBDCelta();
 
         // GET: log
+        [Permissions(Permission1=1)]
         public ActionResult Index(string fInicial, string fFinal, string user)
         {
 

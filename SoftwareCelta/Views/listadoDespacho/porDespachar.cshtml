@@ -19,17 +19,17 @@
         <div id="divAlertText"></div>
     </div>
 </div>
-<div class="col-md-12 hidden">
+<div class="col-md-12">
     <div class="col-md-12">
         <h4>Filtros:</h4>
     </div>      
     <div class="col-md-4">
-        <label class="control-label">Area/Bodega</label>
-        <select class="form-control" name="bodega" id="bodega">      
-            <option value="0">TODOS</option>     
-            @foreach (SoftwareCelta.Models.dw_areaInterna bodega in (List<SoftwareCelta.Models.dw_areaInterna>)ViewData["bodegas"])
+        <label class="control-label">Ciudades</label>
+        <select class="form-control" name="ciudad" id="ciudad">      
+            <option value="todas">Todas</option>     
+            @foreach (SoftwareCelta.Models.dw_ciudades_despacho ciudad in (List<SoftwareCelta.Models.dw_ciudades_despacho>)ViewData["ciudades"])
             {
-                <option value="@bodega.dw_areaInternaID">@bodega.nombre</option>
+                <option value="@ciudad.nombre">@ciudad.nombre</option>
             }
         </select>
     </div>
@@ -40,7 +40,7 @@
 </div>
 
 <br /><br /><br />
-<h2>Boletas para despachar Hoy @SoftwareCelta.Models.Formateador.fechaCompletaToString(DateTime.Today)</h2>
+<h2>Boletas para despachar Hoy @SoftwareCelta.Models.Formateador.fechaCompletaToString(DateTime.Today) @ViewBag.ciudad</h2>
 <br />
 <div class="table-responsive">
     <table class="table table-hover">
@@ -53,7 +53,7 @@
                     Cantidad Productos por despachar
                 </th>
                 <th>Productos a Despachar</th>
-                <th></th>
+                <th>Transportista</th>
                 <th></th>
             </tr>
         </thead>
@@ -84,8 +84,15 @@
                             <input class="hidden idDetalleLista" name="idDetalleLista" value="@listaDeListaDetalle[i]" />
                             @foreach (var detalle in listaDeListaDetalle[i])
                             {
-                                <text><div class="col-xs-4">@detalle.codigoProducto</div><div class="col-xs-4">@detalle.descripcionProducto</div><div class="col-xs-2">@detalle.cantidadProducto</div></text>
+                                <text><div class="col-xs-2">@detalle.codigoProducto</div><div class="col-xs-8">@detalle.descripcionProducto</div><div class="col-xs-1">@detalle.cantidadProducto</div></text>
                                 <text><br /></text>
+                                if (detalle.descripcionProducto.Length > 20) { 
+                                    <text><br /></text>
+                                }
+                                if (detalle.descripcionProducto.Length > 40)
+                                {
+                                    <text><br /></text>
+                                }
                             }
                         </div>
                     </td>
@@ -128,9 +135,9 @@
             });
 
             $("#Boton").click(function () {
-                var bodega = $("#bodega").val();
+                var ciudad= $("#ciudad").val();
                 var ruta = "";
-                ruta = window.location.pathname + "?arInt=" + bodega;
+                ruta = window.location.pathname + "?ciudad=" + ciudad;
                 window.location.href = ruta
                 
             });

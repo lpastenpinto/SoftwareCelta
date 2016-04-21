@@ -8,6 +8,7 @@ using System.Web;
 using System.Web.Mvc;
 using SoftwareCelta.DAL;
 using SoftwareCelta.Models;
+using SoftwareCelta.Filters;
 
 namespace SoftwareCelta.Controllers
 {
@@ -16,12 +17,14 @@ namespace SoftwareCelta.Controllers
         private ContextBDCelta db = new ContextBDCelta();
 
         // GET: Transportista
+        [Permissions]
         public ActionResult Index()
         {
             return View(db.Transportistas.ToList());
         }
 
         // GET: Transportista/Details/5
+        [Permissions]
         public ActionResult Details(int? id)
         {
             if (id == null)
@@ -37,16 +40,16 @@ namespace SoftwareCelta.Controllers
         }
 
         // GET: Transportista/Create
+        [Permissions]
         public ActionResult Create()
         {
             return View();
         }
 
-        // POST: Transportista/Create
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
+        // POST: Transportista/Create        
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Permissions]
         public ActionResult Create([Bind(Include = "dw_datosTransportistaID,nombreCompleto,rut,razonSocial,patente,direccion,telefono,mail,contacto,ciudad,giro")] dw_datosTransportista dw_datosTransportista)
         {
             if (ModelState.IsValid)
@@ -61,6 +64,7 @@ namespace SoftwareCelta.Controllers
         }
 
         // GET: Transportista/Edit/5
+        [Permissions]
         public ActionResult Edit(int? id)
         {
             if (id == null)
@@ -76,10 +80,10 @@ namespace SoftwareCelta.Controllers
         }
 
         // POST: Transportista/Edit/5
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
+        
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Permissions]
         public ActionResult Edit([Bind(Include = "dw_datosTransportistaID,nombreCompleto,rut,razonSocial,patente,direccion,telefono,mail,contacto,ciudad,giro")] dw_datosTransportista dw_datosTransportista)
         {
             if (ModelState.IsValid)
@@ -93,6 +97,7 @@ namespace SoftwareCelta.Controllers
         }
 
         // GET: Transportista/Delete/5
+        [Permissions]
         public ActionResult Delete(int? id)
         {
             if (id == null)
@@ -109,6 +114,7 @@ namespace SoftwareCelta.Controllers
 
         // POST: Transportista/Delete/5
         [HttpPost, ActionName("Delete")]
+        [Permissions]
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(int id)
         {

@@ -114,7 +114,7 @@
 
             @foreach (var item in Model)
             {
-                string nameDiv = "divProd" + @i;
+                string nameDiv = "divProd" + i;
                 <tr>
                     <td>
                         @Html.DisplayFor(modelItem => item.numeroDocumento)
@@ -150,6 +150,7 @@
                         @Html.ActionLink("Despacho Devuelto", "despachoDevuelto", null, new { documentoID = item.dw_movinID }, new { @class = "btn btn-danger" })
                     </td>
                 </tr>
+                i++;
             }
         </tbody>
     </table>

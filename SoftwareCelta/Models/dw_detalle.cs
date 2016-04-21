@@ -13,7 +13,7 @@ namespace SoftwareCelta.Models
         public string codigoProducto { set; get; }
         public string descripcionProducto { set; get; }
         public int valorProducto { set; get; }
-        public int cantidadProducto { set; get; }
+        public double cantidadProducto { set; get; }
         public int estadoDespacho { set; get; }
     }
 }

@@ -35,10 +35,10 @@
                                 Documentos/Boletas<b class="caret"></b>
                             </a>
                             <ul class="dropdown-menu">
-                                <li>@Html.ActionLink("Boletas de Hoy", "Index", "documentos")</li>
-                                <li>@Html.ActionLink("Boletas para Despacho Hoy", "despachoDomicilio", "documentos")</li>
-                                <li>@Html.ActionLink("Buscar Documento/Boleta", "Buscador", "documentos")</li>
-                                <li class="divider"></li>                                
+                                <li>@Html.ActionLink("Boletas Nuevas", "Index", "documentos")</li>
+                                <li>@Html.ActionLink("Boletas para Despacho(Hoy)", "despachoDomicilio", "documentos")</li>
+                                <li>@Html.ActionLink("Buscardor Historico Boletas", "Buscador", "documentos")</li>
+                                                         
                             </ul>
                         </li>
                         <li class="dropdown">
@@ -46,10 +46,10 @@
                                 Despachos<b class="caret"></b>
                             </a>
                             <ul class="dropdown-menu">
-                                <li>@Html.ActionLink("Boletas Despachados", "Despachados", "listadoDespacho")</li>
+                                <li>@Html.ActionLink("Boletas Despachadas", "Despachados", "listadoDespacho")</li>
                                 <li>@Html.ActionLink("Boletas Despachar Mañana", "noDespachados", "listadoDespacho")</li>                                
                                 <li>@Html.ActionLink("Boletas Despachar Hoy", "porDespachar", "listadoDespacho")</li>
-                                <li class="divider"></li>                               
+                                
                             </ul>
                         </li>
                         <li>@Html.ActionLink("Bodegas/Areas Internas", "Index", "bodegas") </li>
@@ -79,6 +79,7 @@
 
                             
                                 <li><a href="@Url.Action("cambiarDatos", "Users")">Cambiar Datos</a></li>
+                                <li class="divider"></li>                               
                                 <li><a href="@Url.Action("Logout", "Users")">Cerrar Sesión</a></li>
                             </ul>
                         </li>
@@ -94,7 +95,7 @@
         <hr />
         <div><!--navbar-fixed-bottom-->   
         <br /><br />                         
-            <footer class="navbar ">
+            <footer class="navbar hidden">
                 <p>&copy; @DateTime.Now.ToString("dd-MM-yyyy") - Celta Software</p>
             </footer>
         </div>

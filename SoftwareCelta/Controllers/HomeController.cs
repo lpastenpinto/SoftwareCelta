@@ -18,28 +18,6 @@ namespace SoftwareCelta.Controllers
         {           
             return View();
         }
-
-        public ActionResult About()
-        {
-            List<int> lista = (List<int>)Session["permisosUser"];
-            if (lista.Contains(1))
-            {
-                ViewBag.Message = "Your application description page.";
-            }
-            else {
-                ViewBag.Message = "NO LO TIENE";
-            }
-            
-
-            return View();
-        }
-
-        public ActionResult Contact()
-        {
-            //ViewData["user"] = db.Users.ToList();          
-            ViewBag.Message = "Your contact page.";
-
-            return View(db.Users.ToList());
-        }
+      
     }
 }

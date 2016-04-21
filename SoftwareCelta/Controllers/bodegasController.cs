@@ -8,7 +8,7 @@ using System.Web;
 using System.Web.Mvc;
 using SoftwareCelta.DAL;
 using SoftwareCelta.Models;
-
+using SoftwareCelta.Filters;
 namespace SoftwareCelta.Controllers
 {
     public class bodegasController : Controller
@@ -16,12 +16,14 @@ namespace SoftwareCelta.Controllers
         private ContextBDCelta db = new ContextBDCelta();
 
         // GET: bodegas
+        [Permissions]
         public ActionResult Index()
-        {
-            return View(db.Bodegas.ToList());
+        {   //db.Bodegas.ToList()
+            return View();
         }
 
         // GET: bodegas/Details/5
+        [Permissions]
         public ActionResult Details(int? id)
         {
             if (id == null)
@@ -37,6 +39,7 @@ namespace SoftwareCelta.Controllers
         }
 
         // GET: bodegas/Create
+        [Permissions]
         public ActionResult Create()
         {
             return View();
@@ -47,6 +50,7 @@ namespace SoftwareCelta.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Permissions]
         public ActionResult Create([Bind(Include = "dw_areaInternaID,nombre")] dw_areaInterna bodega)
         {
             if (ModelState.IsValid)
@@ -61,6 +65,7 @@ namespace SoftwareCelta.Controllers
         }
 
         // GET: bodegas/Edit/5
+        [Permissions]
         public ActionResult Edit(int? id)
         {
             if (id == null)
@@ -80,6 +85,7 @@ namespace SoftwareCelta.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Permissions]
         public ActionResult Edit([Bind(Include = "dw_areaInternaID,nombre")] dw_areaInterna bodega)
         {
             if (ModelState.IsValid)
@@ -94,6 +100,7 @@ namespace SoftwareCelta.Controllers
         }
 
         // GET: bodegas/Delete/5
+        [Permissions]
         public ActionResult Delete(int? id)
         {
             if (id == null)
@@ -111,6 +118,7 @@ namespace SoftwareCelta.Controllers
         // POST: bodegas/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
+        [Permissions]
         public ActionResult DeleteConfirmed(int id)
         {
             dw_areaInterna bodega = db.Bodegas.Find(id);

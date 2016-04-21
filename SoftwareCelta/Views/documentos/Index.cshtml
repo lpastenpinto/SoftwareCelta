@@ -1,87 +1,68 @@
-﻿@model IEnumerable<SoftwareCelta.Models.dw_movin>
+﻿
 @{
     ViewBag.Title = "Buscar Documento";
-    int i = 0;
-    List<List<SoftwareCelta.Models.dw_detalle>> listaDeListaDetalle = (List<List<SoftwareCelta.Models.dw_detalle>>)ViewData["listaDeListaDetalle"];
+    int i = 0;   
 }
-<br /><br /><br />
-<div class="row hidden">
-    
-        <h2>Buscar Documento</h2>
-        <form role="form" method="post" action="@Url.Action("Documento", "documentos" )">
-            
-                <div class="col-md-6">
-                    <input type="text" class="form-control" name="numeroDocumento" required />
-                </div>
-                <div class="col-md-6">
-                    <input type="submit" value="Buscar" class="btn btn-lg btn-primary btn-block" />
-                </div>
-            
-        </form>
-</div>
+
 <br />
 <br />
 <h2>Documentos de Hoy @SoftwareCelta.Models.Formateador.fechaCompletaToString(DateTime.Today)</h2>
-<br />
-<div class="table-responsive">
-    <table class="table table-hover">
+
+<div class="table-responsive" ng-app="docsApp">
+    <br />
+    <input type="text" class="form-control" placeholder="Ingrese numero Folio" ng-model="searchDocs" />
+    <br />
+    <table class="table table-hover table-striped" ng-controller="docsController">
         <thead>
             <tr>
-                <th>
+                <th class="col-md-2">
                     Numero Boleta
-                </th>                
-                <th>
+                </th>
+                <th class="col-md-2">
                     Tipo documento
-                </th>                
-                <th>
+                </th>
+                <th class="col-md-5">
                     Productos Comprados
                 </th>
-                <th></th>
+                <th class="col-md-3"></th>
             </tr>
         </thead>
-        <tbody>
-            @foreach (var item in Model)
-            {
-
-                <tr onclick="irUrl(@item.dw_movinID);">
-                    <td>
-                        @Html.DisplayFor(modelItem => item.numeroDocumento)
-                        <input class="hidden idMovin" value="@item.dw_movinID" />
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.tipoDocumento)
-                    </td>
-                    <td class="col-md-5">
-                        @{string nameDiv = "prod" + i;}
-                        @{string nameDivSucces = "divSucces" + i;}
-                        <div class="col-xs-2">
-                            <button data-toggle="collapse" data-target="#@nameDiv" class="btn btn-primary btn-collapse">+</button>
+        <tbody style="overflow-y: scroll;height: 300px;position: absolute;" class="col-md-11">
+            <tr ng-repeat="doc in docs | filter : searchDocs:strict">
+                <td class="col-md-2">{{doc.numeroDocumento}}</td>
+                <td class="col-md-2">{{doc.tipoDocumento}}</td>
+                <td class="col-md-5">
+                    <div class="col-xs-2">
+                        <button data-toggle="collapse" data-target="#prod{{$index}}" class="btn btn-primary btn-collapse">+</button>
+                    </div>
+                    <div class="col-xs-10 divSucces"></div>
+                    <br /><br />
+                    <div class="collapse col-xs-12" id="prod{{$index}}">
+                        <div ng-repeat="detalle in doc.detalleMovin">
+                            <div class="col-xs-3">{{detalle.codigoProducto}}</div><div class="col-xs-7">{{detalle.descripcionProducto}}</div><div class="col-xs-2">{{detalle.cantidadProducto}}</div><br />
                         </div>
-                        <div class="col-xs-10 divSucces"></div>
-                        <br /><br />
-                        <div class="collapse col-xs-12" id="@nameDiv">
-                            @foreach (var detalle in item.detalleMovin)
-                            {
-                                <text><div class="col-xs-3">@detalle.codigoProducto</div><div class="col-xs-7">@detalle.descripcionProducto</div><div class="col-xs-2">@detalle.cantidadProducto</div><br /></text>
-                            }
+                    </div>
 
-                        </div>
+                </td>
 
-                    </td>
-                    <td>
-                        @Html.ActionLink("Registrar Compra", "Documento", null, new { documentoID = item.dw_movinID }, new { @class = "btn btn-success" })
+                <td class="col-md-3"><a href="/documentos/Documento?documentoID={{doc.numeroDocumento}}" class="btn btn-success">Registrar Compra</a></td>
 
-                    </td>
-                </tr>
-                            i++;
-            }
+            </tr>
         </tbody>
     </table>
 </div>
+<br />
 @section Scripts {
     @Styles.Render("~/Content/bootstrap-datetimepicker.css")
     @Scripts.Render("~/Scripts/datetimepicker/moment.js")
     @Scripts.Render("~/Scripts/datetimepicker/bootstrap-datetimepicker.js")
+    <script src="~/Scripts/angular.js"></script>
+    <style>
+        tr {
+            width: 100%;
+            display: inline-table;
+        }
+    </style>
     <script>        
         $(document).ready(function () {
             $(".fecha").datetimepicker({
@@ -111,5 +92,42 @@
         function irUrl(documentoID) {            
             //window.location.href = '/documentos/Documento?documentoID='+documentoID;
         }
+    </script>
+    <script>
+        var docsApp = angular.module('docsApp', []);
+        docsApp.controller('docsController', function ($scope, $interval, $http, docsService) {
+            $scope.docs = [];
+            getDocs();
+            function getDocs() {
+                docsService.getDocs()
+                    .success(function (docs) {
+                        /*for (var i = 0; i < docs.length; i++) {
+                            $scope.docs.push(docs[i]);
+                        }*/
+                        $scope.docs = docs;
+                    })
+                    .error(function (error) {
+                        $scope.status = 'Unable to load customer data: ' + error.message;
+                        console.log($scope.status);
+                    });
+            }
+            $interval(function () {
+                $http.get('/documentos/getNewDocuments').success(function (response) {
+                    /*for (var i = 0; i < response.length; i++) {
+                        $scope.bodegas.push(response[i]);
+                    }*/
+                    console.log(response);
+                    $scope.docs = response;
+                });
+            }, 60000);
+        });
+
+        docsApp.factory('docsService', ['$http', function ($http) {
+            var docsService = {};
+            docsService.getDocs = function () {
+                return $http.get('/documentos/getNewDocuments');
+            };
+            return docsService;
+        }]);
     </script>
 }

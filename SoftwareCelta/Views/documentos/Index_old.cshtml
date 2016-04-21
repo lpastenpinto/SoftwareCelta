@@ -1,0 +1,115 @@
+﻿@model IEnumerable<SoftwareCelta.Models.dw_movin>
+@{
+    ViewBag.Title = "Buscar Documento";
+    int i = 0;
+   // List<List<SoftwareCelta.Models.dw_detalle>> listaDeListaDetalle = (List<List<SoftwareCelta.Models.dw_detalle>>)ViewData["listaDeListaDetalle"];
+}
+<br /><br /><br />
+<div class="row hidden">
+    
+        <h2>Buscar Documento</h2>
+        <form role="form" method="post" action="@Url.Action("Documento", "documentos" )">
+            
+                <div class="col-md-6">
+                    <input type="text" class="form-control" name="numeroDocumento" required />
+                </div>
+                <div class="col-md-6">
+                    <input type="submit" value="Buscar" class="btn btn-lg btn-primary btn-block" />
+                </div>
+            
+        </form>
+</div>
+<br />
+<br />
+<h2>Documentos de Hoy @SoftwareCelta.Models.Formateador.fechaCompletaToString(DateTime.Today)</h2>
+<br />
+<div class="table-responsive">
+    <table class="table table-hover">
+        <thead>
+            <tr>
+                <th>
+                    Numero Boleta
+                </th>                
+                <th>
+                    Tipo documento
+                </th>                
+                <th>
+                    Productos Comprados
+                </th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+
+                <tr onclick="irUrl(@item.dw_movinID);">
+                    <td>
+                        @Html.DisplayFor(modelItem => item.numeroDocumento)
+                        <input class="hidden idMovin" value="@item.dw_movinID" />
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.tipoDocumento)
+                    </td>
+                    <td class="col-md-5">
+                        @{string nameDiv = "prod" + i;}
+                        @{string nameDivSucces = "divSucces" + i;}
+                        <div class="col-xs-2">
+                            <button data-toggle="collapse" data-target="#@nameDiv" class="btn btn-primary btn-collapse">+</button>
+                        </div>
+                        <div class="col-xs-10 divSucces"></div>
+                        <br /><br />
+                        <div class="collapse col-xs-12" id="@nameDiv">
+                            @foreach (var detalle in item.detalleMovin)
+                            {
+                                <text><div class="col-xs-3">@detalle.codigoProducto</div><div class="col-xs-7">@detalle.descripcionProducto</div><div class="col-xs-2">@detalle.cantidadProducto</div><br /></text>
+                            }
+
+                        </div>
+
+                    </td>
+                    <td>
+                        @Html.ActionLink("Registrar Compra", "Documento", null, new { documentoID = item.numeroDocumento }, new { @class = "btn btn-success" })
+
+                    </td>
+                </tr>
+                            i++;
+            }
+        </tbody>
+    </table>
+</div>
+@section Scripts {
+    @Styles.Render("~/Content/bootstrap-datetimepicker.css")
+    @Scripts.Render("~/Scripts/datetimepicker/moment.js")
+    @Scripts.Render("~/Scripts/datetimepicker/bootstrap-datetimepicker.js")
+    <script>        
+        $(document).ready(function () {
+            $(".fecha").datetimepicker({
+                viewMode: 'days',
+                format: 'DD/MM/YYYY'
+            });
+            $(".guardarAreaInternaProd").click(function () {               
+                var idsDetalles = $(this).closest('tr').find("input[name='detalleID']").map(function () { return $(this).val(); }).get();
+                var areasInternas = $(this).closest('tr').find("select[name='areaInterna']").map(function () { return $(this).val(); }).get();
+                var idMovin = $(this).closest('tr').find(".idMovin").val();
+                console.log(idsDetalles);
+                console.log(areasInternas);
+                var div = $(this).closest('tr');
+                $.ajax({
+                    method: "POST",
+                    url: "/documentos/guardarAreaInteraMovin", data: { "idsDetalles": idsDetalles, "areasInternas": areasInternas, "idMovin": idMovin },
+                    beforeSend: function () {
+                        div.find('.divSucces').html("GUARDANDO...");
+                    },
+                    success: function (retorno) {
+                        div.find('.divSucces').html(retorno);
+                        div.find(".btn-collapse").trigger('click');
+                    }
+                });
+            });
+        });
+        function irUrl(documentoID) {            
+            //window.location.href = '/documentos/Documento?documentoID='+documentoID;
+        }
+    </script>
+}

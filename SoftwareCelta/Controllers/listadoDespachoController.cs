@@ -15,6 +15,7 @@ namespace SoftwareCelta.Controllers
     {
         private ContextBDCelta db = new ContextBDCelta();
         // GET: listadoDespacho                 
+        [Permissions]
         public ActionResult Despachados(string fInicial, string fFinal, string idTransport,string idBodega, string numDoc) {
 
             string estadoFiltroDoc="";
@@ -102,6 +103,7 @@ namespace SoftwareCelta.Controllers
             return View(dw_movinList);
         }
 
+        [Permissions]
         public ActionResult noDespachados(string numDoc,string idAreaInt) {
 
             List<dw_movin> dw_movinList = new List<dw_movin>();
@@ -111,7 +113,7 @@ namespace SoftwareCelta.Controllers
 
             DateTime fechaDespacho = DateTime.Today.AddDays(1);
 
-            if (numDoc == null && idAreaInt == null)
+            if (numDoc == null && (idAreaInt == null||idAreaInt.Equals("0")))
             {
                 List<dw_envio> listDwEnvio = db.DatosEnvio.Where(s => s.fechaDespacho == fechaDespacho).ToList();
                 foreach (var envio in listDwEnvio) {
@@ -163,15 +165,24 @@ namespace SoftwareCelta.Controllers
             return View(dw_movinList);                     
         }
 
-        public ActionResult porDespachar(string arInt) {
+        [Permissions]
+        public ActionResult porDespachar(string ciudad) {
 
-            int areaInternaID=Convert.ToInt32(arInt);
+            //int areaInternaID=Convert.ToInt32(arInt);
             DateTime fechaActual = DateTime.Today;
             DateTime diaAnterior = DateTime.Today.AddDays(-1);
             List<dw_movin> dw_movinList = new List<dw_movin>();
             List<int> cantidadProductosPorDespachar = new List<int>();
             List<List<dw_detalle>> listaDeListaDetalle = new List<List<dw_detalle>>();
-            List<dw_envio> datosEnvio = db.DatosEnvio.Where(s => s.fechaDespacho <= fechaActual & s.fechaDespacho >= diaAnterior & s.dw_datosTransportistaID == 0).ToList();
+            List<dw_envio> datosEnvio = new List<dw_envio>();
+            if (ciudad == null || ciudad.Equals("todas")) {
+                ViewBag.ciudad = "";
+                datosEnvio = db.DatosEnvio.Where(s => s.fechaDespacho <= fechaActual & s.fechaDespacho >= diaAnterior & s.dw_datosTransportistaID == 0).ToList();
+            }else {
+                ViewBag.ciudad = ciudad;
+                datosEnvio = db.DatosEnvio.Where(s => s.fechaDespacho <= fechaActual & s.fechaDespacho >= diaAnterior & s.dw_datosTransportistaID == 0 & s.ciudad==ciudad).ToList();
+            }
+            
 
             foreach (var datoEnvio in datosEnvio)
             {
@@ -191,10 +202,13 @@ namespace SoftwareCelta.Controllers
             ViewData["bodegas"] = dw_areaInternaList; 
             ViewData["transportistas"]=db.Transportistas.ToList();
             ViewData["hashBodegas"] = Formateador.listToHash(dw_areaInternaList);
-
+            ViewData["ciudades"] = dw_ciudades_despacho.listaCiudades();
+            
+            
             return View(dw_movinList);
         }
 
+        [Permissions]
         public ActionResult Despachar(int documentoID)
         {
             dw_movin dw_movin = db.Movins.Find(documentoID);
@@ -211,6 +225,7 @@ namespace SoftwareCelta.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Permissions]
         public ActionResult Despachar(FormCollection form) {
             
             DateTime fechaDespacho = Formateador.fechaStringToDateTime((string)form["fechaDespacho"]);
@@ -237,6 +252,7 @@ namespace SoftwareCelta.Controllers
         }
 
         [HttpPost]
+        [Permissions]
         public string despacharSinEditar(string idDetalleMovin, string idTransportista ) {
             int dw_movinID = Convert.ToInt32(idDetalleMovin);
             int dw_transportistaID=Convert.ToInt32(idTransportista);
@@ -266,7 +282,7 @@ namespace SoftwareCelta.Controllers
             }       
         }
 
-
+        [Permissions]
         public ActionResult despachoDevuelto(int documentoID)
         {
             dw_movin dw_movin = db.Movins.Find(documentoID);
@@ -279,6 +295,7 @@ namespace SoftwareCelta.Controllers
         }
 
         [HttpPost]
+        [Permissions]
         [ValidateAntiForgeryToken]
         public ActionResult despachoDevuelto(FormCollection form)
         {
@@ -304,6 +321,7 @@ namespace SoftwareCelta.Controllers
         }
 
         [HttpPost]
+        [Permissions]
         public string BuscarDocumentoPorNumero(string numDoc,string tipo)
         {
             //1:despachados

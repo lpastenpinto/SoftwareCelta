@@ -12,6 +12,7 @@
     }
 
     SoftwareCelta.Models.dw_movin dw_movin = (SoftwareCelta.Models.dw_movin)ViewData["dw_movin"];
+    List<SoftwareCelta.Models.dw_ciudades_despacho> ciudades = (List<SoftwareCelta.Models.dw_ciudades_despacho>)ViewData["dw_ciudades"];
     
 }
 <h2>Boleta N° @dw_movin.numeroDocumento</h2>
@@ -29,16 +30,20 @@
         <div class="col-md-4">
             <label class="control-label">Ciudad</label>
             <select name="ciudad" class="form-control">
-                @if (verifNull.Equals("")) { 
-                    <option value="LA SERENA" @if(@Model.ciudad.Equals("LA SERENA")){<text> selected </text>}>LA SERENA</option>
-                    <option value="COQUIMBO" @if (@Model.ciudad.Equals("COQUIMBO")) { <text> selected </text> }>COQUIMBO</option>
-                    <option value="PAN DE AZUCAR" @if (@Model.ciudad.Equals("PAN DE AZUCAR")) { <text> selected </text> }>PAN DE AZUCAR</option>
+
+                @if (verifNull.Equals(""))
+                {
+                    foreach (var ciudad in ciudades)
+                    {
+                        <option value="@ciudad.nombre" @if (@Model.ciudad.Equals(ciudad.nombre)) { <text> selected </text> }>@ciudad.nombre</option>
+                    }
                 }
                 else
                 {
-                    <option value="LA SERENA">LA SERENA</option>
-                    <option value="COQUIMBO">COQUIMBO</option>
-                    <option value="PAN DE AZUCAR">PAN DE AZUCAR</option>
+                    foreach (var ciudad in ciudades)
+                    {
+                        <option value="@ciudad.nombre">@ciudad.nombre</option>
+                    }                    
 
                 }
             </select>

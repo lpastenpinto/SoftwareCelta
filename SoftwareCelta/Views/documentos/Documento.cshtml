@@ -6,8 +6,9 @@
     string fechaDespacho = SoftwareCelta.Models.Formateador.fechaCompletaToStringS0(DateTime.Now.AddDays(2));
 }
 <br />
-<h2>Documento @Model.numeroDocumento / @SoftwareCelta.Models.Formateador.fechaCompletaToString(Model.fechaEmision)</h2>
-<br />
+<h2>Documento @Model.numeroDocumento</h2>
+
+Fecha Emision: @SoftwareCelta.Models.Formateador.fechaCompletaToString(Model.fechaEmision)
 
 <form role="form" method="post" action="@Url.Action("registrarNuevoDocumento", "documentos" )">
     <input type="text" class="hidden" value="@Model.numeroDocumento" name="numeroDocumento" />
@@ -38,7 +39,7 @@
             </thead>
             <tbody>
 
-                @foreach (SoftwareCelta.Models.dw_detalle detalle in (List<SoftwareCelta.Models.dw_detalle>)ViewData["detalleDocumento"])
+                @foreach (SoftwareCelta.Models.dw_detalle detalle in Model.detalleMovin)
                 {
                     string nameDespacho = despacho + contadorProductos;
                     <tr>

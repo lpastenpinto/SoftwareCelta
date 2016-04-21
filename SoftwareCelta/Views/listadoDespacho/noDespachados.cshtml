@@ -94,7 +94,7 @@
 
             @foreach (var item in Model)
             {
-                string nameDiv = "divProd" + @i;
+                string nameDiv = "divProd" + i;
                 <tr class="clickable-row">
                     <td>
                         @Html.DisplayFor(modelItem => item.numeroDocumento)
@@ -113,7 +113,20 @@
                             {
                                 <text><div class="col-xs-3">@detalle.codigoProducto</div><div class="col-xs-4">@detalle.descripcionProducto</div><div class="col-xs-1">@detalle.cantidadProducto</div><div class="col-xs-4">@hashAreaInterna[detalle.dw_areaInternaID]</div></text>
                                 <text><br /></text>
+                                if (detalle.descripcionProducto.Length > 15)
+                                {
+                                    <text><br /></text>
+                                }
+                                if (detalle.descripcionProducto.Length > 30)
+                                {
+                                    <text><br /></text>
+                                }
+                                if (detalle.descripcionProducto.Length > 43)
+                                {
+                                    <text><br /></text>
+                                }
                             }
+                            
                         </div>
                     </td>
                     <td>
@@ -123,6 +136,7 @@
                         @Html.ActionLink("Cambiar Fecha Despacho", "despachoDevuelto", null, new { documentoID = item.dw_movinID }, new { @class = "btn btn-danger" })
                     </td>
                 </tr>
+                i++;
             }
         </tbody>
     </table>
@@ -175,7 +189,8 @@
                     ruta = window.location.pathname + "?idAreaInt=" + idBodega;
                     window.location.href = ruta;
                 } else {                    
-                    window.location.href = ruta;
+                    window.location.href = window.location.pathname;
+                    
                 }
             });
 

@@ -146,6 +146,7 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Models\dw_areaInterna.cs" />
+    <Compile Include="Models\dw_ciudades_despacho.cs" />
     <Compile Include="Models\dw_envio.cs" />
     <Compile Include="Models\dw_datosTransportista.cs" />
     <Compile Include="Models\dw_detalle.cs" />
@@ -1019,6 +1020,7 @@
     <Content Include="Views\Users\cambiarDatos.cshtml" />
     <Content Include="Views\Users\Delete.cshtml" />
     <Content Include="Views\Users\sinPermisos.cshtml" />
+    <Content Include="Views\documentos\Index_old.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
