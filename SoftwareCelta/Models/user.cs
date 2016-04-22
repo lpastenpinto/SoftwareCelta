@@ -10,7 +10,8 @@ namespace SoftwareCelta.Models
         public int userID { set; get; }
         public string userName { set; get; }
         public string password { set;get; }
-        public string nombreCompleto { set; get; }        
+        public string nombreCompleto { set; get; }
+        public string email { set; get; }
         List<permisoUser> listaPermisosUser { set; get; }
         List<int> permisosUser { set; get; }
         

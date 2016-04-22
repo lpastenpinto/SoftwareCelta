@@ -5,18 +5,18 @@
     string despacho = "estadoDespacho";
     string fechaDespacho = SoftwareCelta.Models.Formateador.fechaCompletaToStringS0(DateTime.Now.AddDays(2));
 }
-<br />
+<br /><br />
 <h2>Documento @Model.numeroDocumento</h2>
 
 Fecha Emision: @SoftwareCelta.Models.Formateador.fechaCompletaToString(Model.fechaEmision)
 
 <form role="form" method="post" action="@Url.Action("registrarNuevoDocumento", "documentos" )">
     <input type="text" class="hidden" value="@Model.numeroDocumento" name="numeroDocumento" />
-    <input type="text" class="hidden" value="@Model.numeroVale" name="numeroVale" />
+    <input type="text" class="hidden" value="@Model.numeroVale" name="numeroVale" />    
     <input type="text" class="hidden" value="@SoftwareCelta.Models.Formateador.fechaCompletaToString(Model.fechaEmision)" name="fechaEmision" />
-    <input type="text" class="hidden" value="@Model.tipoDocumento" name="tipoDocumento" />
-    <br />
-    <br />
+    <input type="text" class="hidden" value="@Model.tipoDocumento" name="Tipo" />
+    <input type="text" class="hidden" value="@Model.nombreVendedor" name="CodVendedor" />
+    <br />    
 
     <h3>Productos Comprados</h3>
     <br />

@@ -68,6 +68,7 @@ namespace SoftwareCelta.Controllers
             user NewUser = new user();
             NewUser.userName = (string)form["userName"];
             NewUser.nombreCompleto = (string)form["nombreCompleto"];
+            NewUser.email = (string)form["email"];
             NewUser.password = encriptacion.GetMD5((string)form["password"]);
             db.Users.Add(NewUser);
             db.SaveChanges();
@@ -137,6 +138,7 @@ namespace SoftwareCelta.Controllers
             user user = db.Users.Find(userID);
             user.userName = (string)form["userName"];
             user.nombreCompleto = (string)form["nombreCompleto"];
+            user.email = (string)form["email"];
             string newPass = encriptacion.GetMD5((string)form["passwordNew"]);
             if (!newPass.Equals("")) {
                 user.password = newPass;

@@ -87,6 +87,7 @@ namespace SoftwareCelta.Controllers
                 db.Entry(dw_envioForm).State = EntityState.Modified;
                 db.SaveChanges();
             }
+            TempData["Success"] = "Informacion Guardada con exito";
             return RedirectToAction("despachoDomicilio");
 
         }
@@ -139,7 +140,8 @@ namespace SoftwareCelta.Controllers
             while (dr.Read())
             {
                 documento.fechaEmision = (DateTime)dr["Fecha"];
-                                
+                documento.tipoDocumento = (string)dr["Tipo"];
+                documento.nombreVendedor = (string)dr["CodVendedor"];
                 dw_detalle detalle = new dw_detalle();
                 detalle.cantidadProducto = Convert.ToDouble(dr["CantFacturada"]);
                 detalle.codigoProducto = (string)dr["CodProd"];
@@ -179,6 +181,7 @@ namespace SoftwareCelta.Controllers
                     db.SaveChanges();
                 }                
             }
+            TempData["Success"] = "Informacion Guardada con exito";
             return RedirectToAction("despachoDomicilio");
         }
 
@@ -272,14 +275,17 @@ namespace SoftwareCelta.Controllers
         [Permissions]
         public ActionResult registrarNuevoDocumento(FormCollection form) {
             int numeroDocumento = Convert.ToInt32((string)form["numeroDocumento"]);
-            int numeroVale = Convert.ToInt32((string)form["numeroVale"]);            
+            int numeroVale = Convert.ToInt32((string)form["numeroVale"]);
+            string tipoDoc = (string)form["Tipo"];
+            string nombreVendedor = (string)form["CodVendedor"];
             DateTime fechaEmision = Formateador.fechaFormatoGuardar((string)form["fechaEmision"]);
             
             dw_movin documento = new dw_movin();
             documento.fechaEmision = fechaEmision;
             documento.numeroDocumento = numeroDocumento;
             documento.numeroVale = numeroVale;
-            documento.nombreVendedor = "";
+            documento.nombreVendedor = nombreVendedor;
+            documento.tipoDocumento = tipoDoc;
             db.Movins.Add(documento);
             db.SaveChanges();
                                            
@@ -313,6 +319,7 @@ namespace SoftwareCelta.Controllers
             
             
             dw_log.registrarLog(Convert.ToInt32(Session["userID"]), Session["userName"].ToString(), "Registro nuevo documento numero:" + numeroDocumento);
+            TempData["Success"] = "Se registro el documento Folio "+documento.numeroDocumento+" Exitosamente";
             return RedirectToAction("Index");
         }
          

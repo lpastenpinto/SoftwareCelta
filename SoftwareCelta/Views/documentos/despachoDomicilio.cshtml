@@ -4,7 +4,20 @@
     int i = 0;
     //List<List<SoftwareCelta.Models.dw_detalle>> listaDeListaDetalle = (List<List<SoftwareCelta.Models.dw_detalle>>)ViewData["listaDeListaDetalle"];
 }
-<br /><br /><br />
+<br /><br />
+@if (TempData["Success"] != null)
+{   <br /><br /><br />
+    <div class="col-md-12">
+        <div class="alert alert-success">
+            <button type="button" class="close" data-dismiss="alert"
+                    aria-hidden="true">
+                &times;
+            </button>
+            @TempData["Success"]
+        </div>
+    </div>
+}
+<br />
 <div class="row">
 
     <h2>Buscar Documento</h2>    
@@ -40,7 +53,14 @@
                     Tipo documento
                 </th>                
                 <th class="col-md-6">
-                    Productos para Despacho
+                    <div class="col-md-12">Productos para Despacho</div>
+                    <div class="col-md-12">
+                        <div class="col-md-2">Codigo</div>
+                        <div class="col-md-4">Desc.</div>
+                        <div class="col-md-1">Cant.</div>
+                        <div class="col-md-5">Area Interna</div>
+                    </div>
+                    
                 </th>
                 <th class="col-md-2"></th>
             </tr>
@@ -61,7 +81,7 @@
                         @{string nameDiv = "prod" + i;}
                         @{string nameDivSucces = "divSucces" + i;}
                         <div class="col-xs-2">
-                            <button data-toggle="collapse" data-target="#@nameDiv" class="btn btn-success btn-collapse">+</button>
+                            <button data-toggle="collapse" data-target="#@nameDiv" class="btn btn-primary btn-collapse">+</button>
                         </div>
                         <div class="col-xs-10 divSucces"></div>
                         <br /><br />

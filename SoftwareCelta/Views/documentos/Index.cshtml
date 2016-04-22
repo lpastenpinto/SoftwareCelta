@@ -7,7 +7,18 @@
 <br />
 <br />
 <h2>Documentos de Hoy @SoftwareCelta.Models.Formateador.fechaCompletaToString(DateTime.Today)</h2>
-
+@if (TempData["Success"] != null)
+{   <br /><br /><br />
+    <div class="col-md-12">
+        <div class="alert alert-success">
+            <button type="button" class="close" data-dismiss="alert"
+                    aria-hidden="true">
+                &times;
+            </button>
+            @TempData["Success"]
+        </div>
+    </div><br />
+}
 <div class="table-responsive" ng-app="docsApp">
     <br />
     <input type="text" class="form-control" placeholder="Ingrese numero Folio" ng-model="searchDocs" />
@@ -22,7 +33,14 @@
                     Tipo documento
                 </th>
                 <th class="col-md-5">
-                    Productos Comprados
+                    <div class="col-md-12">Productos Comprados</div>
+                    <div class="col-md-12">
+                        <div class="col-md-3">Codigo</div>
+                        <div class="col-md-7">Desc.</div>
+                        <div class="col-md-2">Cant.</div>
+                        
+                    </div>
+                    
                 </th>
                 <th class="col-md-3"></th>
             </tr>
