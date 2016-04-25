@@ -24,6 +24,7 @@ namespace SoftwareCelta.DAL
         public DbSet<dw_detalle> DetalleMovin { set; get; }
         public DbSet<dw_movin> Movins { set; get; }
         public DbSet<dw_log> Logs { set; get; }
+        public DbSet<dw_ciudades_despacho> Ciudades { set; get; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {

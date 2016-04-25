@@ -23,47 +23,39 @@
     <br />
     <input type="text" class="form-control" placeholder="Ingrese numero Folio" ng-model="searchDocs" />
     <br />
-    <table class="table table-hover table-striped" ng-controller="docsController">
+    <table class="table table-hover table-striped col-md-12" ng-controller="docsController">
         <thead>
             <tr>
                 <th class="col-md-2">
-                    Numero Boleta
+                    Numero Doc.
                 </th>
                 <th class="col-md-2">
                     Tipo documento
                 </th>
-                <th class="col-md-5">
-                    <div class="col-md-12">Productos Comprados</div>
-                    <div class="col-md-12">
-                        <div class="col-md-3">Codigo</div>
-                        <div class="col-md-7">Desc.</div>
-                        <div class="col-md-2">Cant.</div>
-                        
-                    </div>
-                    
+                <th class="col-md-1">
+                    Fecha
                 </th>
-                <th class="col-md-3"></th>
+                <th class="col-md-4">
+                    Cliente
+                </th>
+                <th class="col-md-1">
+                    Total $
+                </th>
+                <th class="col-md-2"></th>
             </tr>
         </thead>
-        <tbody style="overflow-y: scroll;height: 300px;position: absolute;" class="col-md-11">
+        <tbody style="overflow-y: scroll;height: 300px;position: absolute;">
             <tr ng-repeat="doc in docs | filter : searchDocs:strict">
                 <td class="col-md-2">{{doc.numeroDocumento}}</td>
                 <td class="col-md-2">{{doc.tipoDocumento}}</td>
-                <td class="col-md-5">
-                    <div class="col-xs-2">
-                        <button data-toggle="collapse" data-target="#prod{{$index}}" class="btn btn-primary btn-collapse">+</button>
-                    </div>
-                    <div class="col-xs-10 divSucces"></div>
-                    <br /><br />
-                    <div class="collapse col-xs-12" id="prod{{$index}}">
-                        <div ng-repeat="detalle in doc.detalleMovin">
-                            <div class="col-xs-3">{{detalle.codigoProducto}}</div><div class="col-xs-7">{{detalle.descripcionProducto}}</div><div class="col-xs-2">{{detalle.cantidadProducto}}</div><br />
-                        </div>
-                    </div>
-
+                <td class="col-md-1">
+                    {{doc.nombreVendedor}}
                 </td>
-
-                <td class="col-md-3"><a href="/documentos/Documento?documentoID={{doc.numeroDocumento}}" class="btn btn-success">Registrar Compra</a></td>
+                <td class="col-md-4">
+                    {{doc.nombreCliente}}
+                </td>
+                <td class="col-md-1 text-right"><b>${{doc.total|number}}</b></td>
+                <td class="col-md-1"><a href="/documentos/Documento?documentoID={{doc.numeroDocumento}}" class="btn btn-success">Ver Documento <span class="glyphicon .glyphicon-search"></span></a></td>
 
             </tr>
         </tbody>
@@ -110,6 +102,7 @@
         function irUrl(documentoID) {            
             //window.location.href = '/documentos/Documento?documentoID='+documentoID;
         }
+       
     </script>
     <script>
         var docsApp = angular.module('docsApp', []);
@@ -147,5 +140,6 @@
             };
             return docsService;
         }]);
+
     </script>
 }

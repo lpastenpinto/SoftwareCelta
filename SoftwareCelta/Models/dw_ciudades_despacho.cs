@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
+using SoftwareCelta.DAL;
 
 namespace SoftwareCelta.Models
 {
@@ -10,21 +11,10 @@ namespace SoftwareCelta.Models
         public int dw_ciudades_despachoID { set; get; }
         public string nombre { set; get; }
         public static List<dw_ciudades_despacho> listaCiudades() {
-            List<dw_ciudades_despacho> list = new List<dw_ciudades_despacho>();
-            dw_ciudades_despacho ciudad1 = new dw_ciudades_despacho();
-            ciudad1.dw_ciudades_despachoID = 1;
-            ciudad1.nombre = "LA SERENA";
-            list.Add(ciudad1);
-            
-            dw_ciudades_despacho ciudad2 = new dw_ciudades_despacho();
-            ciudad2.dw_ciudades_despachoID = 2;
-            ciudad2.nombre = "COQUIMBO";
-            list.Add(ciudad2);
 
-            dw_ciudades_despacho ciudad3 = new dw_ciudades_despacho();
-            ciudad3.dw_ciudades_despachoID = 3;
-            ciudad3.nombre = "PAN DE AZUCAR";
-            list.Add(ciudad3);
+            ContextBDCelta db = new ContextBDCelta();
+            List<dw_ciudades_despacho> list = db.Ciudades.ToList();
+            
             return list;
 
         } 

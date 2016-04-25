@@ -15,7 +15,7 @@ namespace SoftwareCelta.Controllers
     {
         private ContextBDCelta db = new ContextBDCelta();
         // GET: listadoDespacho                 
-        [Permissions]
+        [Permissions(Permission1 = 1, Permission3 = 3)]
         public ActionResult Despachados(string fInicial, string fFinal, string idTransport,string idBodega, string numDoc) {
 
             string estadoFiltroDoc="";
@@ -103,7 +103,7 @@ namespace SoftwareCelta.Controllers
             return View(dw_movinList);
         }
 
-        [Permissions]
+        [Permissions(Permission1 = 1, Permission3 = 3)]
         public ActionResult noDespachados(string numDoc,string idAreaInt) {
 
             List<dw_movin> dw_movinList = new List<dw_movin>();
@@ -165,7 +165,7 @@ namespace SoftwareCelta.Controllers
             return View(dw_movinList);                     
         }
 
-        [Permissions]
+        [Permissions(Permission1 = 1, Permission3 = 3)]
         public ActionResult porDespachar(string ciudad) {
 
             //int areaInternaID=Convert.ToInt32(arInt);
@@ -208,7 +208,7 @@ namespace SoftwareCelta.Controllers
             return View(dw_movinList);
         }
 
-        [Permissions]
+        [Permissions(Permission1 = 1, Permission3 = 3)]
         public ActionResult Despachar(int documentoID)
         {
             dw_movin dw_movin = db.Movins.Find(documentoID);
@@ -282,7 +282,7 @@ namespace SoftwareCelta.Controllers
             }       
         }
 
-        [Permissions]
+        [Permissions(Permission1 = 1, Permission3 = 3)]
         public ActionResult despachoDevuelto(int documentoID)
         {
             dw_movin dw_movin = db.Movins.Find(documentoID);
@@ -321,7 +321,7 @@ namespace SoftwareCelta.Controllers
         }
 
         [HttpPost]
-        [Permissions]
+        [Permissions(Permission1 = 1, Permission3 = 3)]
         public string BuscarDocumentoPorNumero(string numDoc,string tipo)
         {
             //1:despachados

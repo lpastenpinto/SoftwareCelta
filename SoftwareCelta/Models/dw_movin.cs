@@ -13,6 +13,8 @@ namespace SoftwareCelta.Models
         public DateTime fechaEmision { set; get; }
         public string tipoDocumento { set; get; }
         public string nombreVendedor { set; get; }
+        public string nombreCliente { set; get; }
+        public double total { set; get; }
 
         public List<dw_detalle> detalleMovin { set; get; }
     }
