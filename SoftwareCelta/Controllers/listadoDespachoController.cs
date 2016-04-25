@@ -104,16 +104,16 @@ namespace SoftwareCelta.Controllers
         }
 
         [Permissions(Permission1 = 1, Permission3 = 3)]
-        public ActionResult noDespachados(string numDoc,string idAreaInt) {
+        public ActionResult noDespachados(string numDoc,string idAreaInt,string ciudad) {
 
             List<dw_movin> dw_movinList = new List<dw_movin>();
             List<List<dw_detalle>> listaDeListaDetalle = new List<List<dw_detalle>>();
             string estadoFiltroDoc="";
             string estadoFiltroAreaInterna="";
-
+            string estadoFiltroCiudad = "";
             DateTime fechaDespacho = DateTime.Today.AddDays(1);
 
-            if (numDoc == null && (idAreaInt == null||idAreaInt.Equals("0")))
+            if (numDoc == null && (idAreaInt == null||idAreaInt.Equals("0"))&& (ciudad==null))
             {
                 List<dw_envio> listDwEnvio = db.DatosEnvio.Where(s => s.fechaDespacho == fechaDespacho).ToList();
                 foreach (var envio in listDwEnvio) {
@@ -124,8 +124,10 @@ namespace SoftwareCelta.Controllers
                 }
                 estadoFiltroDoc="hidden";
                 estadoFiltroAreaInterna="hidden";
+                estadoFiltroCiudad="hidden";
             }
-            else if(numDoc==null){
+            else if (idAreaInt != null && !idAreaInt.Equals("0"))
+            {
                 int idBodega = Convert.ToInt32(idAreaInt);
                 List<dw_envio> listDwEnvio = db.DatosEnvio.Where(s => s.fechaDespacho == fechaDespacho).ToList();
                 foreach (var envio in listDwEnvio)
@@ -140,10 +142,11 @@ namespace SoftwareCelta.Controllers
                                        
                 }
                 estadoFiltroDoc = "hidden";
+                estadoFiltroCiudad="hidden";
                 estadoFiltroAreaInterna = "";
                 
             }
-            else if (idAreaInt == null) {
+            else if (numDoc!=null) {
                 int numeroDoc = Convert.ToInt32(numDoc);
                 dw_movin dw_movin = db.Movins.SingleOrDefault(s => s.numeroDocumento == numeroDoc);
                 dw_movinList.Add(dw_movin);
@@ -152,6 +155,26 @@ namespace SoftwareCelta.Controllers
 
                 estadoFiltroDoc = "";
                 estadoFiltroAreaInterna = "hidden";
+                estadoFiltroCiudad="hidden";
+            }
+            else if (ciudad != null) {                
+                List<dw_envio> listDwEnvio = db.DatosEnvio.Where(s => s.fechaDespacho == fechaDespacho && s.ciudad==ciudad).ToList();
+                foreach (var envio in listDwEnvio)
+                {
+                    dw_movin dw_movin = db.Movins.Find(envio.dw_movinID);
+
+                    List<dw_detalle> listDetalle = db.DetalleMovin.Where(s => s.dw_movinID == envio.dw_movinID & s.estadoDespacho == 1).ToList();
+                    if (listDetalle.Count >= 1)
+                    {
+                        dw_movinList.Add(dw_movin);
+                        listaDeListaDetalle.Add(listDetalle);
+                    }
+
+                }
+                estadoFiltroDoc = "hidden";
+                estadoFiltroCiudad="";
+                estadoFiltroAreaInterna = "hidden";
+                
             }
             List<dw_areaInterna> dw_areaInternaList = db.Bodegas.ToList();
             ViewData["listaDeListaDetalle"] = listaDeListaDetalle;
@@ -161,6 +184,7 @@ namespace SoftwareCelta.Controllers
             ViewData["hashBodegas"] = Formateador.listToHash(dw_areaInternaList);
             ViewBag.filtroDoc=estadoFiltroDoc;
             ViewBag.filtroAreaInterna = estadoFiltroAreaInterna;
+            ViewBag.filtroCiudad = estadoFiltroCiudad;
 
             return View(dw_movinList);                     
         }

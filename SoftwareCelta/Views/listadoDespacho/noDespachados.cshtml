@@ -4,6 +4,7 @@
     ViewBag.Title = "Para despachar Mañana";    
     List<List<SoftwareCelta.Models.dw_detalle>> listaDeListaDetalle = (List<List<SoftwareCelta.Models.dw_detalle>>)ViewData["listaDeListaDetalle"];
     System.Collections.Hashtable hashAreaInterna = (System.Collections.Hashtable)ViewData["hashBodegas"];
+    List<SoftwareCelta.Models.dw_ciudades_despacho> ciudades = SoftwareCelta.Models.dw_ciudades_despacho.listaCiudades();
     
     int i = 0;
 }
@@ -25,15 +26,19 @@
     <h4>Filtrar Por:</h4>
     <div class="col-md-3">
         <label class="control-label">Area Interna</label>
-        <input type="radio" class="tipoFiltro" name="tipoFiltro" value="0" @if (ViewBag.filtroDoc.Equals("hidden") && ViewBag.filtroAreaInterna.Equals("")) { <text> checked</text>} />
+        <input type="radio" class="tipoFiltro" name="tipoFiltro" value="0" @if (ViewBag.filtroAreaInterna.Equals("")) { <text> checked</text>} />
     </div>
     <div class="col-md-3">
         <label class="control-label">Numero Boleta</label>
-        <input type="radio" class="tipoFiltro" name="tipoFiltro" value="1" @if (ViewBag.filtroDoc.Equals("") && ViewBag.filtroAreaInterna.Equals("hidden")) { <text> checked</text>} />
+        <input type="radio" class="tipoFiltro" name="tipoFiltro" value="1" @if (ViewBag.filtroDoc.Equals("")) { <text> checked</text>} />
+    </div>
+    <div class="col-md-3">
+        <label class="control-label">Ciudad Despacho</label>
+        <input type="radio" class="tipoFiltro" name="tipoFiltro" value="3" @if (ViewBag.filtroCiudad.Equals("")){ <text> checked</text>} />
     </div>
     <div class="col-md-3">
         <label class="control-label">Todos</label>
-        <input type="radio" class="tipoFiltro" name="tipoFiltro" value="2" @if (ViewBag.filtroDoc.Equals("hidden") && ViewBag.filtroAreaInterna.Equals("hidden")) { <text> checked</text>} />
+        <input type="radio" class="tipoFiltro" name="tipoFiltro" value="2" @if (ViewBag.filtroDoc.Equals("hidden") && ViewBag.filtroAreaInterna.Equals("hidden") && ViewBag.filtroCiudad.Equals("hidden")) { <text> checked</text>} />
     </div>
 </div>
 <br />
@@ -52,6 +57,17 @@
     <div class="col-md-3 divNumeroDocumento @ViewBag.filtroDoc">
         <label class="control-label">Numero Documento</label>
         <input class="form-control docNum" type="number" />
+    </div>
+    <div class="col-md-3 divCiudad @ViewBag.filtroCiudad">
+        <label class="control-label">Ciudad</label>
+        <select name="ciudad" class="ciudad form-control">
+             @{foreach(var ciudad in ciudades){
+                    <text>
+                        <option value="@ciudad.nombre">@ciudad.nombre</option>
+                    </text>
+               }
+             }
+        </select>
     </div>
     <div class="col-md-3">
         <br />
@@ -155,12 +171,21 @@
                 var valor = $(this).val();
                 if (valor == 0) {
                     $('.divNumeroDocumento').addClass("hidden");
-                    $('.divBodega').removeClass("hidden");                    
+                    $('.divBodega').removeClass("hidden");
+                    $('.divCiudad').addClass("hidden");
 
                 } else if (valor == 1) {
                     $('.divNumeroDocumento').removeClass("hidden");
                     $('.divBodega').addClass("hidden");
+                    $('.divCiudad').addClass("hidden");
+
+                } else if (valor == 3) {
+                    $('.divCiudad').removeClass("hidden");
+                    $('.divNumeroDocumento').addClass("hidden");
+                    $('.divBodega').addClass("hidden"); 
+                
                 } else {
+                    $('.divCiudad').addClass("hidden");
                     $('.divNumeroDocumento').addClass("hidden");
                     $('.divBodega').addClass("hidden");
                 }
@@ -188,7 +213,13 @@
                     var idBodega = $('.idBodega').val();
                     ruta = window.location.pathname + "?idAreaInt=" + idBodega;
                     window.location.href = ruta;
-                } else {                    
+                
+                } else if (tipoFiltro == "3") {
+                    var ciudad = $('.ciudad').val();
+                    ruta = window.location.pathname + "?ciudad=" + ciudad;
+                    window.location.href = ruta;
+                }
+                else {
                     window.location.href = window.location.pathname;
                     
                 }
