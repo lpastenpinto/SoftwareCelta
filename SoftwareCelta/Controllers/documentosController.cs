@@ -24,9 +24,23 @@ namespace SoftwareCelta.Controllers
         }
 
         [Permissions(Permission1 = 1, Permission2 = 2)]
-        public ActionResult despachoDomicilio() {
-            DateTime fechaActual = DateTime.Today;
-            List<dw_movin> documetosRegistrados = db.Movins.Where(s => s.fechaEmision == fechaActual).ToList();
+        public ActionResult despachoDomicilio(string fechaInicial, string fechaFinal) {
+            List<dw_movin> documetosRegistrados = new List<dw_movin>();
+            if (fechaFinal == null || fechaInicial == null)
+            {
+                DateTime fechaActual = DateTime.Today;
+                documetosRegistrados = db.Movins.Where(s => s.fechaEmision == fechaActual).OrderBy(s=>s.tipoDocumento).OrderBy(s=>s.numeroDocumento).ToList();
+                ViewBag.fechaDesde=Formateador.fechaCompletaToString(fechaActual);
+                ViewBag.fechaHasta = Formateador.fechaCompletaToString(fechaActual);
+            }
+            else {
+                DateTime desde = Formateador.fechaStringToDateTime(fechaInicial);
+                DateTime hasta = Formateador.fechaStringToDateTime(fechaFinal);
+                documetosRegistrados = db.Movins.Where(s => s.fechaEmision >= desde & s.fechaEmision<=hasta).OrderBy(s=>s.tipoDocumento).OrderBy(s=>s.numeroDocumento).ToList();
+                ViewBag.fechaDesde = fechaInicial;
+                ViewBag.fechaHasta = fechaFinal;
+            }
+            
             List<List<dw_detalle>> listaDeListaDetalle = new List<List<dw_detalle>>();
             List<dw_movin> documentosRegistradosParaDespacho = new List<dw_movin>();
             foreach (var dw_movin in documetosRegistrados)
@@ -62,9 +76,9 @@ namespace SoftwareCelta.Controllers
             int idDocumento =Convert.ToInt32((string)form["idDocumento"]);
             dw_envio dw_envioForm = db.DatosEnvio.SingleOrDefault(s => s.dw_movinID == idDocumento);
             if (dw_envioForm == null)
-            {
+            {                
                 dw_envio new_dw_envio = new dw_envio();
-                new_dw_envio.dw_movinID=idDocumento;
+                new_dw_envio.dw_movinID=idDocumento;                
                 new_dw_envio.ciudad = (string)form["ciudad"];
                 new_dw_envio.direccion = (string)form["direccion"];
                 new_dw_envio.fechaDespacho = Formateador.fechaStringToDateTime((string)form["fechaDespacho"]);
@@ -91,6 +105,7 @@ namespace SoftwareCelta.Controllers
             return RedirectToAction("despachoDomicilio");
 
         }
+
 
         [Permissions]
         public ActionResult Buscador(string strFechaInicial, string strFechaFinal, string numDoc) {
@@ -174,7 +189,7 @@ namespace SoftwareCelta.Controllers
                 listDetalle.Add(detalle);
                 documento.detalleMovin = listDetalle;
                 documento.total = documento.total + detalle.valorProducto;
-
+                documento.numeroVale = Convert.ToInt32(dr["NroVale"]);
             }
             
             cnx.Close();                        
@@ -185,6 +200,8 @@ namespace SoftwareCelta.Controllers
         public ActionResult paraDespacharADomicilio(int documentoID)
         {
             dw_movin dw_movin = db.Movins.Find(documentoID);
+            dw_envio dw_envio = db.DatosEnvio.SingleOrDefault(s => s.dw_movinID == dw_movin.dw_movinID);
+            ViewData["dw_envio"] = dw_envio;
             ViewData["detalleDocumento"] = db.DetalleMovin.Where(s => s.dw_movinID == documentoID).ToList();
             ViewData["bodegas"] = db.Bodegas.ToList();
             return View(dw_movin);
@@ -196,6 +213,13 @@ namespace SoftwareCelta.Controllers
             string[] detalleID = Request.Form.GetValues("detalleID");
             string[] estadoDespacho = Request.Form.GetValues("estadoDespacho");
             string[] areaInterna =Request.Form.GetValues("areaInterna");
+            DateTime fechaDespacho = Formateador.fechaStringToDateTime((string)form["fechaDespacho"]);
+            int dw_envioID = Convert.ToInt32((string)form["dw_envioID"]);
+            
+            dw_envio dw_envio = db.DatosEnvio.Find(dw_envioID);
+            dw_envio.fechaDespacho = fechaDespacho;
+            db.Entry(dw_envio).State = EntityState.Modified;
+            db.SaveChanges();
 
             for (int i = 0; i < estadoDespacho.Length; i++)
             {
@@ -344,9 +368,13 @@ namespace SoftwareCelta.Controllers
                 db.DetalleMovin.Add(detalle);                                
             }
 
+            string valeVentaString= numeroVale.ToString();
+            dw_envio dw_envio = db.DatosEnvio.SingleOrDefault(s => s.valeVenta == valeVentaString);
+            dw_envio.dw_movinID = documento.dw_movinID;
+
+            db.Entry(dw_envio).State = EntityState.Modified;
             db.SaveChanges();
-            
-            
+                                    
             dw_log.registrarLog(Convert.ToInt32(Session["userID"]), Session["userName"].ToString(), "Registro nuevo documento numero:" + numeroDocumento);
             TempData["Success"] = "Se registro el documento Folio "+documento.numeroDocumento+" Exitosamente";
             return RedirectToAction("Index");
@@ -438,21 +466,54 @@ namespace SoftwareCelta.Controllers
             return retorno;
         }
 
+        private List<int> generateStringQuery(DateTime fechaInicial, DateTime fechaFinal)
+        {
+            List<int> retorno = new List<int>();
+            List<dw_movin> listMovins = db.Movins.Where(s => s.fechaEmision >= fechaInicial & s.fechaEmision<=fechaFinal).ToList();
+            if (listMovins.Count != 0)
+            {
+                foreach (var mov in listMovins)
+                {
+                    retorno.Add(mov.numeroDocumento);
+                }
+            }
+            return retorno;
+        }
+
         [HttpGet]
 
-        public JsonResult getNewDocuments()
+        public JsonResult getNewDocuments(string fechaDesde,string fechaHasta)
         {
+            SqlDataReader dr;// = new SqlDataReader();
             DateTime fecha = DateTime.Now.AddDays(-1);
-
-            List<int> foliosGuardados = generateStringQuery(fecha);
             SqlConnection cnx = Connection.getConection();
-            SqlCommand cmd = new SqlCommand();
-            cmd.Connection = cnx;
-            cmd.CommandText = "SELECT * from softland.celta_ventas WHERE Fecha >@fecha AND anno=@anioActual AND CantFacturada>0";
-            cmd.CommandType = CommandType.Text;
-            cmd.Parameters.Add("@fecha", SqlDbType.DateTime).Value = fecha;
-            cmd.Parameters.Add("@anioActual", SqlDbType.Int).Value = fecha.Year;
-            SqlDataReader dr = cmd.ExecuteReader();
+            List<int> foliosGuardados = new List<int>();
+            if (fechaDesde == null && fechaHasta == null)
+            {
+                foliosGuardados = generateStringQuery(fecha);
+                
+                SqlCommand cmd = new SqlCommand();
+                cmd.Connection = cnx;
+                cmd.CommandText = "SELECT * from softland.celta_ventas WHERE Fecha >@fecha AND anno=@anioActual AND CantFacturada>0";
+                cmd.CommandType = CommandType.Text;
+                cmd.Parameters.Add("@fecha", SqlDbType.DateTime).Value = fecha;
+                cmd.Parameters.Add("@anioActual", SqlDbType.Int).Value = fecha.Year;
+                dr = cmd.ExecuteReader();
+            }
+            else {
+
+                DateTime fechaInicio = Formateador.fechaStringToDateTime(fechaDesde);
+                DateTime fechaFinal = Formateador.fechaStringToDateTime(fechaHasta);
+                foliosGuardados = generateStringQuery(fechaInicio,fechaFinal);
+                SqlCommand cmd = new SqlCommand();
+                cmd.Connection = cnx;
+                cmd.CommandText = "SELECT * from softland.celta_ventas WHERE Fecha >=@fechaInicial AND Fecha <=@fechaFinal AND CantFacturada>0";
+                cmd.CommandType = CommandType.Text;
+                cmd.Parameters.Add("@fechaInicial", SqlDbType.DateTime).Value = fechaInicio;
+                cmd.Parameters.Add("@fechaFinal", SqlDbType.DateTime).Value = fechaFinal;                
+                dr = cmd.ExecuteReader();
+
+            }
             
             int x = 0;
             int folio = 0;
@@ -493,7 +554,17 @@ namespace SoftwareCelta.Controllers
                         {
                             nomAux = "Cliente Boleta";
                         }
-                        mov.nombreCliente = nomAux;
+
+                        string valeVentaString=Convert.ToInt32(dr["NroVale"]).ToString();
+                        dw_envio dw_envio = db.DatosEnvio.SingleOrDefault(s => s.valeVenta == valeVentaString);
+                        if (dw_envio != null)
+                        {
+                            mov.nombreCliente = nomAux + " /" + dw_envio.direccion;
+                        }
+                        else {
+                            mov.nombreCliente = nomAux + " / ";
+                        }
+                        
                         folio = Convert.ToInt32(dr["Folio"]);
                         documentosRegistrados.Add(mov);
                     }

@@ -11,6 +11,7 @@ namespace SoftwareCelta.Models
         public int dw_movinID { set; get; }
         public int dw_datosTransportistaID { set; get; }
         public int userID { set; get; }
+        public string valeVenta { set; get; }
         public string nombreCliente { set; get; }
         public string rutCliente { set; get; }
         public string ciudad { set; get; }
@@ -20,5 +21,6 @@ namespace SoftwareCelta.Models
         public string observacion { set; get; }
         public int cantidadVisitasDespacho { set; get; }
         public DateTime fechaDespacho { set; get; }
+        public DateTime fechaValeVenta { set; get; }
     }
 }

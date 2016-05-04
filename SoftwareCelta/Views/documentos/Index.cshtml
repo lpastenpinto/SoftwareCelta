@@ -1,7 +1,11 @@
 ﻿
 @{
     ViewBag.Title = "Buscar Documento";
-    int i = 0;   
+    int i = 0;
+    string fechaDesde = SoftwareCelta.Models.Formateador.fechaCompletaToString(DateTime.Today);
+    string fechaHasta = SoftwareCelta.Models.Formateador.fechaCompletaToString(DateTime.Today);
+    
+        
 }
 
 <br />
@@ -19,47 +23,81 @@
         </div>
     </div><br />
 }
-<div class="table-responsive" ng-app="docsApp">
-    <br />
-    <input type="text" class="form-control" placeholder="Ingrese numero Folio" ng-model="searchDocs" />
-    <br />
-    <table class="table table-hover table-striped col-md-12" ng-controller="docsController">
-        <thead>
-            <tr>
-                <th class="col-md-2">
-                    Numero Doc.
-                </th>
-                <th class="col-md-2">
-                    Tipo documento
-                </th>
-                <th class="col-md-1">
-                    Fecha
-                </th>
-                <th class="col-md-4">
-                    Cliente
-                </th>
-                <th class="col-md-1">
-                    Total $
-                </th>
-                <th class="col-md-2"></th>
-            </tr>
-        </thead>
-        <tbody style="overflow-y: scroll;height: 300px;position: absolute;">
-            <tr ng-repeat="doc in docs | filter : searchDocs:strict">
-                <td class="col-md-2">{{doc.numeroDocumento}}</td>
-                <td class="col-md-2">{{doc.tipoDocumento}}</td>
-                <td class="col-md-1">
-                    {{doc.nombreVendedor}}
-                </td>
-                <td class="col-md-4">
-                    {{doc.nombreCliente}}
-                </td>
-                <td class="col-md-1 text-right"><b>${{doc.total|number}}</b></td>
-                <td class="col-md-1"><a href="/Despacho/documentos/Documento?documentoID={{doc.numeroDocumento}}" class="btn btn-success">Ver Documento <span class="glyphicon .glyphicon-search"></span></a></td>
 
-            </tr>
-        </tbody>
-    </table>
+<div ng-app="docsApp" ng-controller="docsController">
+    <div class="col-md-12">
+        <div class="col-md-3 fechaInicio">
+            <label class="control-label">Desde:</label>
+            <input class="form-control fecha" id="fechaInicial" name="fechaInicial" data-val-date="Ingrese por favor una fecha." data-val-required="El campo fecha es obligatorio."
+                   data-date-format="DD/MM/YYYY" pattern="[0-9][0-9]/[0-9][0-9]/[0-9][0-9][0-9][0-9]"
+                   type="text" value="@fechaDesde">
+
+        </div>
+        <div class="col-md-3 fechaFinal">
+            <label class="control-label">Hasta:</label>
+            <input class="form-control fecha" id="fechaFinal" name="fechaFinal" data-val-date="Ingrese por favor una fecha." data-val-required="El campo fecha es obligatorio."
+                   data-date-format="DD/MM/YYYY" pattern="[0-9][0-9]/[0-9][0-9]/[0-9][0-9][0-9][0-9]"
+                   type="text" value="@fechaHasta">
+        </div>
+        <div class="col-md-3">
+            <br />
+            <input class="btn btn-primary btn-block" id="Boton" value="Buscar" type="button" ng-click="buscarDocumentos()" />
+        </div>
+        <div class="col-md-3" ng-if="verifSearch">
+            <p>Buscando documentos. Espere hasta que cargue...</p>
+        </div>
+        <div class="col-md-3" ng-if="verifSearchExit">
+            <p>Listo</p>
+        </div>
+        
+    </div>
+    <br /><br />
+    <div class="table-responsive">
+        <br />
+        <br />
+        <input type="text" class="form-control" placeholder="Ingrese numero Folio" ng-model="searchDocs" />
+        <br />
+        <table class="table table-hover table-striped col-md-12">
+            <thead>
+                <tr>
+                    <th class="col-md-1">
+                        <span ng-click="order('numeroDocumento')">Numero Doc.</span>
+                        <span class="sortorder" ng-show="predicate === 'numeroDocumento'" ng-class="{reverse:reverse}"></span>
+                    </th>
+                    <th class="col-md-2">
+                        <span ng-click="order('tipoDocumento')">Tipo documento</span>
+                        <span class="sortorder" ng-show="predicate === 'tipoDocumento'" ng-class="{reverse:reverse}"></span>
+                    </th>
+                    <th class="col-md-1">
+                        Fecha
+                    </th>
+                    <th class="col-md-3">
+                        Cliente
+                    </th>
+                    <th class="col-md-3">
+                        Direccion
+                    </th>
+                    <th class="col-md-2"></th>
+                </tr>
+            </thead>
+            <tbody style="overflow-y: scroll;height: 300px;position: absolute;">
+                <tr ng-repeat="doc in docs | filter : searchDocs:strict">
+                    <td class="col-md-1">{{doc.numeroDocumento}}</td>
+                    <td class="col-md-2">{{doc.tipoDocumento}}</td>
+                    <td class="col-md-1">
+                        {{doc.nombreVendedor}}
+                    </td>
+                    <td class="col-md-3">
+                        
+                        {{Split(doc.nombreCliente,0)}}
+                    </td>
+                    <td class="col-md-3">{{Split(doc.nombreCliente,1)}}</td>
+                    <td class="col-md-2"><a href="/Despacho/documentos/Documento?documentoID={{doc.numeroDocumento}}" class="btn btn-success">Ver Documento <span class="glyphicon .glyphicon-search"></span></a></td>
+
+                </tr>
+            </tbody>
+        </table>
+    </div>
 </div>
 <br />
 @section Scripts {
@@ -71,6 +109,12 @@
         tr {
             width: 100%;
             display: inline-table;
+        }
+        .sortorder:after {
+            content: '\25b2';
+        }
+        .sortorder.reverse:after {
+            content: '\25bc';
         }
     </style>
     <script>        
@@ -99,15 +143,16 @@
                 });
             });
         });
-        function irUrl(documentoID) {            
-            //window.location.href = '/documentos/Documento?documentoID='+documentoID;
-        }
+
        
     </script>
     <script>
         var docsApp = angular.module('docsApp', []);
-        docsApp.controller('docsController', function ($scope, $interval, $http, docsService) {
+        docsApp.controller('docsController', function ($scope, $interval, $http,$filter, docsService) {
+            $scope.verifSearch = false;
+            $scope.verifSearchExit = false;
             $scope.docs = [];
+            var orderBy = $filter('orderBy');
             getDocs();
             function getDocs() {                
                 docsService.getDocs()
@@ -122,26 +167,73 @@
                         console.log($scope.status);
                     });
             }
+
+            $scope.order = function (predicate) {
+
+                $scope.predicate = predicate;
+                $scope.reverse = ($scope.predicate === predicate) ? !$scope.reverse : false;
+                $scope.docs = orderBy($scope.docs, predicate, $scope.reverse);
+            };
+            $scope.order('numeroDocumento', true);
+
+            $scope.buscarDocumentos = function () {
+                var desde = $('#fechaInicial').val();
+                var hasta = $('#fechaFinal').val();
+                $scope.verifSearch = true;
+                $scope.verifSearchExit = false;
+                var listDocs = docsService.getListDocs(desde, hasta);
+                listDocs.then(function (response) {
+                    $scope.docs = response;
+                    $scope.verifSearch = false;
+                    $scope.verifSearchExit = true;
+                });
+            };
             $interval(function () {
-                var ruta = window.location.pathname + "/getNewDocuments";
+               /* var ruta = window.location.pathname + "/getNewDocuments";
                 $http.get(ruta).success(function (response) {
                     /*for (var i = 0; i < response.length; i++) {
                         $scope.bodegas.push(response[i]);
-                    }*/
+                    }*
                     console.log(response);
                     $scope.docs = response;
-                });
+                });*/
+                $scope.buscarDocumentos();
             }, 60000);
+
+
+            $scope.Split = function (string, nb) {
+                var array = string.split('/');
+                return array[nb];
+            }
+
         });
 
-        docsApp.factory('docsService', ['$http', function ($http) {
+        docsApp.factory('docsService',function ($http,$q) {
             var docsService = {};
             docsService.getDocs = function () {
                 var ruta = window.location.pathname + "/getNewDocuments";
                 return $http.get(ruta);
             };
+
+            docsService.getListDocs = function (desde,hasta) {
+                var deferred = $q.defer();
+                                              
+                $http.get(window.location.pathname + "/getNewDocuments", {
+                    params: {
+                        fechaDesde: desde,
+                        fechaHasta: hasta
+                    }
+                }).
+                    success(function (response) {
+                        deferred.resolve(response);
+                    }).
+                    error(function (response) {
+                        deferred.reject(response);
+                    });
+                return deferred.promise;
+            };
             return docsService;
-        }]);
+        });
 
     </script>
 }

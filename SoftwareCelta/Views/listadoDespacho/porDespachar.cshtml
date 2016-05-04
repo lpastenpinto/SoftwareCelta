@@ -23,25 +23,45 @@
     <div class="col-md-12">
         <h4>Filtros:</h4>
     </div>      
-    <div class="col-md-4">
+    <div class="col-md-3">
         <label class="control-label">Ciudades</label>
         <select class="form-control" name="ciudad" id="ciudad">      
             <option value="todas">Todas</option>     
             @foreach (SoftwareCelta.Models.dw_ciudades_despacho ciudad in (List<SoftwareCelta.Models.dw_ciudades_despacho>)ViewData["ciudades"])
             {
-                <option value="@ciudad.nombre">@ciudad.nombre</option>
+                if (ViewBag.ciudad != null && ciudad.nombre == System.Convert.ToString(ViewBag.ciudad))
+                {
+                    <option value="@ciudad.nombre" selected>@ciudad.nombre</option>
+                }
+                else
+                {
+                    <option value="@ciudad.nombre">@ciudad.nombre</option>
+                }
             }
         </select>
     </div>
-    <div class="col-md-4">
+    <div class="col-md-3 fechaInicio">
+        <label class="control-label">Desde:</label>
+        <input class="form-control fecha" id="fechaInicial" name="fechaInicial" data-val-date="Ingrese por favor una fecha." data-val-required="El campo fecha es obligatorio."
+               data-date-format="DD/MM/YYYY" pattern="[0-9][0-9]/[0-9][0-9]/[0-9][0-9][0-9][0-9]"
+               type="text" value="@ViewBag.fechaInicial">
+
+    </div>
+    <div class="col-md-3 fechaFinal">
+        <label class="control-label">Hasta:</label>
+        <input class="form-control fecha" id="fechaFinal" name="fechaFinal" data-val-date="Ingrese por favor una fecha." data-val-required="El campo fecha es obligatorio."
+               data-date-format="DD/MM/YYYY" pattern="[0-9][0-9]/[0-9][0-9]/[0-9][0-9][0-9][0-9]"
+               type="text" value="@ViewBag.fechaFinal">
+    </div>   
+    <div class="col-md-3">
         <br />
         <input class="btn btn-primary btn-block" id="Boton" value="Filtrar" type="button" />
     </div>
 </div>
 
 <br /><br /><br />
-<h2>Boletas para despachar Hoy @SoftwareCelta.Models.Formateador.fechaCompletaToString(DateTime.Today) @ViewBag.ciudad</h2>
-<br />
+
+
 <div class="table-responsive">
     <table class="table table-hover">
         <thead>
@@ -136,8 +156,16 @@
 
             $("#Boton").click(function () {
                 var ciudad= $("#ciudad").val();
+                var fechaInicial=$("#fechaInicial").val();
+                var fechaFinal=$("#fechaFinal").val();
                 var ruta = "";
-                ruta = window.location.pathname + "?ciudad=" + ciudad;
+                if (fechaInicial == "" || fechaFinal == "") {
+                    ruta = window.location.pathname + "?ciudad=" + ciudad;
+                }
+                else {
+                    ruta = window.location.pathname + "?ciudad=" + ciudad + "&fechaDesde=" + fechaInicial + "&fechaHasta="+fechaFinal;
+                }
+                
                 window.location.href = ruta
                 
             });

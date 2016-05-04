@@ -185,26 +185,37 @@ namespace SoftwareCelta.Controllers
             ViewBag.filtroDoc=estadoFiltroDoc;
             ViewBag.filtroAreaInterna = estadoFiltroAreaInterna;
             ViewBag.filtroCiudad = estadoFiltroCiudad;
-
+            ViewBag.ciudad=ciudad;
+            ViewBag.areaInterna = idAreaInt;
             return View(dw_movinList);                     
         }
 
         [Permissions(Permission1 = 1, Permission3 = 3)]
-        public ActionResult porDespachar(string ciudad) {
+        public ActionResult porDespachar(string ciudad,string fechaDesde, string fechaHasta) {
 
             //int areaInternaID=Convert.ToInt32(arInt);
-            DateTime fechaActual = DateTime.Today;
-            DateTime diaAnterior = DateTime.Today.AddDays(-1);
+            DateTime fDesde = new DateTime();
+            DateTime fHasta= new DateTime();
+            if (fechaDesde != null && fechaHasta != null)
+            {
+                fDesde = Formateador.fechaStringToDateTime(fechaDesde);
+                fHasta = Formateador.fechaStringToDateTime(fechaHasta);
+            }
+            else {
+                fDesde = DateTime.Today;
+                fHasta = fDesde;//DateTime.Today.AddDays(-1);    
+            }
+            
             List<dw_movin> dw_movinList = new List<dw_movin>();
             List<int> cantidadProductosPorDespachar = new List<int>();
             List<List<dw_detalle>> listaDeListaDetalle = new List<List<dw_detalle>>();
             List<dw_envio> datosEnvio = new List<dw_envio>();
             if (ciudad == null || ciudad.Equals("todas")) {
                 ViewBag.ciudad = "";
-                datosEnvio = db.DatosEnvio.Where(s => s.fechaDespacho <= fechaActual & s.fechaDespacho >= diaAnterior & s.dw_datosTransportistaID == 0).ToList();
+                datosEnvio = db.DatosEnvio.Where(s => s.fechaDespacho <= fHasta & s.fechaDespacho >= fDesde & s.dw_datosTransportistaID == 0).ToList();
             }else {
                 ViewBag.ciudad = ciudad;
-                datosEnvio = db.DatosEnvio.Where(s => s.fechaDespacho <= fechaActual & s.fechaDespacho >= diaAnterior & s.dw_datosTransportistaID == 0 & s.ciudad==ciudad).ToList();
+                datosEnvio = db.DatosEnvio.Where(s => s.fechaDespacho <= fHasta  & s.fechaDespacho >= fDesde & s.dw_datosTransportistaID == 0 & s.ciudad == ciudad).ToList();
             }
             
 
@@ -227,8 +238,9 @@ namespace SoftwareCelta.Controllers
             ViewData["transportistas"]=db.Transportistas.ToList();
             ViewData["hashBodegas"] = Formateador.listToHash(dw_areaInternaList);
             ViewData["ciudades"] = dw_ciudades_despacho.listaCiudades();
-            
-            
+            ViewBag.fechaInicial = Formateador.fechaCompletaToString(fDesde);
+            ViewBag.fechaFinal = Formateador.fechaCompletaToString(fHasta);
+            ViewBag.ciudad = ciudad;
             return View(dw_movinList);
         }
 

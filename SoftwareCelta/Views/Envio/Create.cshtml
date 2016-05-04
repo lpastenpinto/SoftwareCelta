@@ -1,0 +1,82 @@
+﻿@model SoftwareCelta.Models.dw_envio
+@{
+    ViewBag.Title = "Datos Envio";
+
+    List<SoftwareCelta.Models.dw_ciudades_despacho> ciudades = (List<SoftwareCelta.Models.dw_ciudades_despacho>)ViewData["dw_ciudades"];
+
+}
+
+<h2>Nuevo</h2>
+
+@using (Html.BeginForm()) 
+{
+    @Html.AntiForgeryToken()
+    <div class="row">
+        <div class="col-md-4">
+            <label class="control-label">Vale Venta</label>
+            <input class="form-control" name="valeVenta" type="text" required/>
+        </div>
+        <div class="col-md-4">
+            <label class="control-label">Nombre Cliente</label>
+            <input class="form-control" name="nombreCliente" type="text" required />
+        </div>
+        <div class="col-md-4">
+            <label class="control-label">Rut</label>
+            <input class="form-control" name="rutCliente" type="text" required />
+        </div>
+        <div class="col-md-4">
+            <label class="control-label">Ciudad</label>
+            <select name="ciudad" class="form-control">
+                @foreach (var ciudad in ciudades)
+                {
+                <option value="@ciudad.nombre">@ciudad.nombre</option>
+                }
+            </select>
+
+        </div>
+        <br /><br /><br /><br />
+        <div class="col-md-4">
+            <label class="control-label">Telefono</label>
+            <input class="form-control" name="telefono" type="text" required />
+        </div>
+        <div class="col-md-8">
+            <label class="control-label">Direccion</label>
+            <input class="form-control" name="direccion" type="text" style="max-width: 20000px;" required />
+        </div>
+        <br /><br />
+        <br /><br />
+        <br /><br /><br />
+        <div class="col-md-12">
+            <label>Observacion</label>
+            <textarea style="max-width: 100% !important; width:100%;" class="form-control" name="observacion"></textarea>
+        </div>
+        <br />
+        <div class="col-md-6">
+            <label class="control-label">Fecha </label>
+            <input class="form-control fecha" id="fechaValeVenta" name="fechaValeVenta" data-val-date="Ingrese por favor una fecha." data-val-required="El campo fecha es obligatorio."
+                   data-date-format="DD/MM/YYYY" pattern="[0-9][0-9]/[0-9][0-9]/[0-9][0-9][0-9][0-9]"
+                   type="text" value="@SoftwareCelta.Models.Formateador.fechaCompletaToString(DateTime.Now)" required>
+        </div>
+    </div>
+    <div class="modal-footer">
+        @Html.ActionLink("Cancelar", "Index", null, null, new { @class = "btn btn-primary" })
+        <input type="submit" value="Guardar Datos Envio" class="btn btn-success btn-lg btn-default" />
+    </div>        
+}
+<br /><br />
+@section Scripts {
+    @Styles.Render("~/Content/bootstrap-datetimepicker.css")
+    @Scripts.Render("~/Scripts/datetimepicker/moment.js")
+    @Scripts.Render("~/Scripts/datetimepicker/bootstrap-datetimepicker.js")
+    <script>
+        $(document).ready(function () {
+            $(".fecha").datetimepicker({
+                viewMode: 'days',
+                format: 'DD/MM/YYYY'
+            });
+
+        });
+    </script>
+}
+
+

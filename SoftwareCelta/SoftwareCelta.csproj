@@ -133,6 +133,7 @@
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="Controllers\bodegasController.cs" />
     <Compile Include="Controllers\documentosController.cs" />
+    <Compile Include="Controllers\EnvioController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\listadoDespachoController.cs" />
     <Compile Include="Controllers\logController.cs" />
@@ -1022,6 +1023,11 @@
     <Content Include="Views\Users\Delete.cshtml" />
     <Content Include="Views\Users\sinPermisos.cshtml" />
     <Content Include="Views\documentos\Index_old.cshtml" />
+    <Content Include="Views\Envio\Create.cshtml" />
+    <Content Include="Views\Envio\Delete.cshtml" />
+    <Content Include="Views\Envio\Details.cshtml" />
+    <Content Include="Views\Envio\Edit.cshtml" />
+    <Content Include="Views\Envio\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

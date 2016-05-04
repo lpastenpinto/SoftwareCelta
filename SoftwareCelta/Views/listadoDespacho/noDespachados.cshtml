@@ -50,7 +50,17 @@
             <option value="0">Todas</option>
             @foreach (var bodega in (List<SoftwareCelta.Models.dw_areaInterna>)ViewData["bodegas"])
             {
-                <option value="@bodega.dw_areaInternaID">@bodega.nombre</option>
+
+
+                if (ViewBag.areaInterna != null && bodega.dw_areaInternaID == System.Convert.ToInt32(ViewBag.areaInterna))
+                {
+                    <option value="@bodega.dw_areaInternaID" selected>@bodega.nombre</option>
+                }
+                else
+                {
+                    <option value="@bodega.dw_areaInternaID">@bodega.nombre</option>
+                }
+
             }
         </select>
     </div>
@@ -61,12 +71,19 @@
     <div class="col-md-3 divCiudad @ViewBag.filtroCiudad">
         <label class="control-label">Ciudad</label>
         <select name="ciudad" class="ciudad form-control">
-             @{foreach(var ciudad in ciudades){
-                    <text>
-                        <option value="@ciudad.nombre">@ciudad.nombre</option>
-                    </text>
-               }
+             @foreach(var ciudad in ciudades){
+                 if (ViewBag.ciudad != null && ciudad.nombre == System.Convert.ToString(ViewBag.ciudad))
+                {                      
+                        <option value="@ciudad.nombre" selected>@ciudad.nombre</option>
+
+                }
+                 else
+                 {
+                    <option value="@ciudad.nombre" >@ciudad.nombre</option>
+                 }
+
              }
+             
         </select>
     </div>
     <div class="col-md-3">

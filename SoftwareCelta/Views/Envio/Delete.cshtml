@@ -1,0 +1,105 @@
+﻿@model SoftwareCelta.Models.dw_envio
+
+@{
+    ViewBag.Title = "Delete";
+}
+
+<h2>Eliminar</h2>
+
+<h3>¿Esta seguro desea eliminar este registro?</h3>
+<div>
+    <h4>Datos Envio</h4>
+    <hr />
+    <dl class="dl-horizontal">        
+
+        <dt>
+            @Html.DisplayNameFor(model => model.valeVenta)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.valeVenta)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.nombreCliente)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.nombreCliente)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.rutCliente)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.rutCliente)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.ciudad)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.ciudad)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.telefono)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.telefono)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.direccion)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.direccion)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.perimetroDespacho)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.perimetroDespacho)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.observacion)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.observacion)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.cantidadVisitasDespacho)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.cantidadVisitasDespacho)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.fechaDespacho)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.fechaDespacho)
+        </dd>
+
+    </dl>
+
+    @using (Html.BeginForm()) {
+        @Html.AntiForgeryToken()
+
+        <div class="form-actions no-color">
+            <input type="submit" value="Eliminar" class="btn btn-warning" /> |
+            @Html.ActionLink("Volver Atras", "Index")
+        </div>
+    }
+</div>

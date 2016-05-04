@@ -18,9 +18,28 @@
     </div>
 }
 <br />
-<div class="row">
+<div class="col-md-12">
+    <h3>Buscar Documento Registrado</h3>  
+    <div class="col-md-3 fechaInicio">
+        <label class="control-label">Desde:</label>
+        <input class="form-control fecha" id="fechaInicial" name="fechaInicial" data-val-date="Ingrese por favor una fecha." data-val-required="El campo fecha es obligatorio."
+               data-date-format="DD/MM/YYYY" pattern="[0-9][0-9]/[0-9][0-9]/[0-9][0-9][0-9][0-9]"
+               type="text" value="@ViewBag.fechaDesde">
 
-    <h2>Buscar Documento</h2>    
+    </div>
+    <div class="col-md-3 fechaFinal">
+        <label class="control-label">Hasta:</label>
+        <input class="form-control fecha" id="fechaFinal" name="fechaFinal" data-val-date="Ingrese por favor una fecha." data-val-required="El campo fecha es obligatorio."
+               data-date-format="DD/MM/YYYY" pattern="[0-9][0-9]/[0-9][0-9]/[0-9][0-9][0-9][0-9]"
+               type="text" value="@ViewBag.fechaHasta">
+    </div>
+    <div class="col-md-3">
+        <br />
+        <input class="btn btn-primary btn-block" id="Boton" value="Buscar" type="button" />
+    </div>    
+</div>
+<div class="row hidden">
+    <h3>Buscar Documento Registrado Hoy</h3>    
         <div class="col-md-6">
             <input type="number" class="form-control" name="numeroDocumento" id="numeroDocumento" required />
         </div>
@@ -28,6 +47,7 @@
             <input type="submit" value="Buscar" id="BotonBuscar" class="btn btn-lg btn-primary btn-block" />
         </div>
 </div>
+
 <br />
 <div class="col-md-12 hidden" id="divError">
     <div class="alert alert-danger">
@@ -81,7 +101,7 @@
                         @{string nameDiv = "prod" + i;}
                         @{string nameDivSucces = "divSucces" + i;}
                         <div class="col-xs-2">
-                            <button data-toggle="collapse" data-target="#@nameDiv" class="btn btn-primary btn-collapse">+</button>
+                            <button data-toggle="collapse" data-target="#@nameDiv" class="btn btn-collapse">Mostrar</button>
                         </div>
                         <div class="col-xs-10 divSucces"></div>
                         <br /><br />
@@ -94,7 +114,7 @@
                                 <text><div class="col-xs-2">@detalle.codigoProducto</div><div class="col-xs-4">@detalle.descripcionProducto</div><div class="col-xs-1">@detalle.cantidadProducto</div></text>
                                 <text>
                                     <div class="col-xs-5">
-                                    <select class="form-control areaInterna" name="areaInterna">
+                                    <select class="form-control areaInterna" name="areaInterna" disabled>
                                         <option value="0">Sin Asignar</option>
                                         @foreach (var areaInt in (List<SoftwareCelta.Models.dw_areaInterna>)ViewData["bodegas"])
                                         {
@@ -114,14 +134,15 @@
                                     <text><br /></text>
                                 }
                             }
-                            <button class="btn btn-success guardarAreaInternaProd">Guardar</button>
+                            <button class="btn btn-success guardarAreaInternaProd hidden">Guardar</button>
                         </div>
 
                     </td>
                     <td>
-                        @Html.ActionLink("Agregar Areas Internas", "paraDespacharADomicilio", new { documentoID = item.dw_movinID }) |
-                        <br />
-                        @Html.ActionLink("Agregar Datos Envio", "datosEnvio", new { documentoID = item.dw_movinID }) |<br />                    
+                        
+                        @Html.ActionLink("Asignacion Despacho +", "paraDespacharADomicilio", new { documentoID = item.dw_movinID }, new { @class = "btn btn-primary" })
+                        
+                        @Html.ActionLink("Editar Datos Envio", "datosEnvio", new { documentoID = item.dw_movinID })                    
                        
                     </td>
                 </tr>
@@ -176,6 +197,18 @@
                         }
                     });
 
+
+            });
+
+            $("#Boton").click(function () {
+                var fechaInicial = $("#fechaInicial").val();
+                var fechaFinal = $("#fechaFinal").val();
+                var url = "";
+                if (fechaInicial != "" && fechaFinal != "") {
+                    window.location.href = window.location.pathname + "?fechaInicial="+fechaInicial+"&fechaFinal="+fechaFinal;
+                } else {
+                    window.location.href = window.location.pathname;
+                }
 
             });
 

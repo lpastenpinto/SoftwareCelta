@@ -15,6 +15,8 @@ namespace SoftwareCelta.Filters
         public int Permission1 {get;set;}
         public int Permission2 { set; get; }
         public int Permission3 { set; get; }
+        public int Permission4 { set; get; }
+        public int Permission5 { set; get; }
         void IActionFilter.OnActionExecuting(ActionExecutingContext filterContext)
         {
             base.OnActionExecuting(filterContext);
@@ -43,6 +45,14 @@ namespace SoftwareCelta.Filters
                 if (Permission3 != 0)
                 {
                     listaPermisosReq.Add(Permission3);
+                }
+                if (Permission4 != 0)
+                {
+                    listaPermisosReq.Add(Permission4);
+                }
+                if (Permission5 != 0)
+                {
+                    listaPermisosReq.Add(Permission5);
                 }
 
                 

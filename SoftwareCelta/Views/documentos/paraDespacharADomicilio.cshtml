@@ -3,6 +3,11 @@
     ViewBag.Title = "Documento";
     int contadorProductos = 1;
     string despacho = "estadoDespacho";
+    SoftwareCelta.Models.dw_envio dw_envio = (SoftwareCelta.Models.dw_envio)ViewData["dw_envio"];
+    string fechaDespacho = SoftwareCelta.Models.Formateador.fechaCompletaToString(dw_envio.fechaDespacho);
+    if (fechaDespacho == "01/01/2000") {
+        fechaDespacho = "";
+    }
   
 }
 <br /><br />
@@ -11,9 +16,12 @@
 @Html.ActionLink("Agregar Datos Envio", "datosEnvio", new { documentoID = Model.dw_movinID })
 
 <br />
+    <p>@dw_envio.direccion/@dw_envio.ciudad</p>
+<br />
 <form role="form" method="post" action="@Url.Action("paraDespacharADomicilio", "documentos" )">
     <input type="text" class="hidden" value="@SoftwareCelta.Models.Formateador.fechaCompletaToString(Model.fechaEmision)" name="fechaEmision" />
     <input type="text" class="hidden" value="@Model.tipoDocumento" name="tipoDocumento" />
+    <input type="text" class="hidden" value="@dw_envio.dw_envioID" name="dw_envioID"/>
     <br />
     <br />
 
@@ -92,6 +100,12 @@
             </tbody>
         </table>
         <br />
+        <div class="col-md-3 fechaFinal">
+            <label class="control-label">Fecha Despacho</label>
+            <input class="form-control fecha" id="fechaDespacho" name="fechaDespacho" data-val-date="Ingrese por favor una fecha." data-val-required="El campo fecha es obligatorio."
+                   data-date-format="DD/MM/YYYY" pattern="[0-9][0-9]/[0-9][0-9]/[0-9][0-9][0-9][0-9]"
+                   type="text" value="@fechaDespacho">
+        </div>
         <div class="clearfix"></div>
         <div class="modal-footer">
 			@Html.ActionLink("Cancelar", "despachoDomicilio",null,null, new { @class = "btn btn-primary" })		
