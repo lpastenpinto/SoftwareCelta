@@ -148,8 +148,8 @@
                 console.log(areasInternas);
                 var div = $(this).closest('tr');
                 $.ajax({
-                    method: "POST",
-                    url: "/documentos/guardarAreaInteraMovin", data: { "idsDetalles": idsDetalles, "areasInternas": areasInternas, "idMovin": idMovin },
+                    method: "POST",			
+                    url: "/Despacho/documentos/guardarAreaInteraMovin", data: { "idsDetalles": idsDetalles, "areasInternas": areasInternas, "idMovin": idMovin },
                     beforeSend: function () {
                         div.find('.divSucces').html("GUARDANDO...");
                     },
@@ -165,10 +165,10 @@
                 var numeroDoc = $("#numeroDocumento").val();
                     $.ajax({
                         method: "POST",
-                        url: "/documentos/BuscarDocumentoPorNumeroFechaActual", data: { "numDoc": numeroDoc},
+                        url: "/Despacho/documentos/BuscarDocumentoPorNumeroFechaActual", data: { "numDoc": numeroDoc},
                         success: function (retorno) {
                             if (retorno != "false") {
-                                ruta = "/documentos/paraDespacharADomicilio?documentoID="+retorno;
+                                ruta = "/Despacho/documentos/paraDespacharADomicilio?documentoID="+retorno;
                                 window.location.href = ruta;
                             } else {
                                 $("#divError").removeClass("hidden");

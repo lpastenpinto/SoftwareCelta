@@ -11,11 +11,12 @@ namespace SoftwareCelta.DAL
     public class ContextBDSoftland : DbContext
     {
         public ContextBDSoftland()
-            : base("ContextBDSoftland")
+            : base("BDComercial")
         {
         }
 
         public DbSet<user> Users { set; get; }
+        public DbSet<dw_movin_Celta> DocsCelta { set; get; }
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
             modelBuilder.Conventions.Remove<PluralizingTableNameConvention>();

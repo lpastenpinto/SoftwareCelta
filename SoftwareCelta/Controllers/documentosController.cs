@@ -130,13 +130,16 @@ namespace SoftwareCelta.Controllers
             SqlCommand cmd = new SqlCommand();
             cmd.Connection = cnx;
 
-            cmd.CommandText = "SELECT * from softland.celta_ventas WHERE Folio =" + documentoID + " AND anno=" + fechaActual.Year;
+            cmd.CommandText = "SELECT * from softland.celta_ventas WHERE Folio=@documentoID  AND anno=@anioActual";            
             cmd.CommandType = CommandType.Text;
+            cmd.Parameters.Add("@documentoID", SqlDbType.Int).Value = documentoID;
+            cmd.Parameters.Add("@anioActual", SqlDbType.Int).Value = fechaActual.Year;
             SqlDataReader dr = cmd.ExecuteReader();
             
             dw_movin documento = new dw_movin();
             List<dw_detalle> listDetalle = new List<dw_detalle>();
             documento.numeroDocumento = documentoID;
+            documento.total = 0;
             while (dr.Read())
             {
                 documento.fechaEmision = (DateTime)dr["Fecha"];
@@ -165,11 +168,15 @@ namespace SoftwareCelta.Controllers
                 detalle.cantidadProducto = Convert.ToDouble(dr["CantFacturada"]);
                 detalle.codigoProducto = (string)dr["CodProd"];
                 detalle.descripcionProducto = (string)dr["DesProd"];
+                double precioProd = Math.Round(Convert.ToDouble(dr["Valor"])) - Math.Round(Convert.ToDouble(dr["Descuento"]));
+                detalle.valorProducto = Convert.ToInt32(precioProd);
                 detalle.dw_movinID = documento.dw_movinID;
                 listDetalle.Add(detalle);
-                documento.detalleMovin = listDetalle;                
-            }
+                documento.detalleMovin = listDetalle;
+                documento.total = documento.total + detalle.valorProducto;
 
+            }
+            
             cnx.Close();                        
             return View(documento);
         }
@@ -323,7 +330,7 @@ namespace SoftwareCelta.Controllers
                 detalle.cantidadProducto = Convert.ToInt32(cantidadProducto[i]);
                 detalle.codigoProducto = codigoProducto[i];
                 detalle.descripcionProducto = descripcionProducto[i];                
-                detalle.dw_movinID = documento.dw_movinID;
+                detalle.dw_movinID = documento.dw_movinID;                
                 detalle.valorProducto = Convert.ToInt32(valorProducto[i]);
      
                 string estadoDespacho = (string)form["estadoDespacho" + (i + 1)];
@@ -418,14 +425,14 @@ namespace SoftwareCelta.Controllers
 
         }
 
-        private string generateStringQuery(DateTime fecha) {
-            string retorno ="";
+        private List<int> generateStringQuery(DateTime fecha) {
+            List<int> retorno = new List<int>();
             List<dw_movin> listMovins = db.Movins.Where(s => s.fechaEmision >= fecha).ToList();
             if (listMovins.Count != 0)
             {
                 foreach (var mov in listMovins)
                 {
-                    retorno = retorno + " AND Folio!=" + mov.numeroDocumento;
+                    retorno.Add(mov.numeroDocumento);
                 }
             }
             return retorno;
@@ -437,15 +444,16 @@ namespace SoftwareCelta.Controllers
         {
             DateTime fecha = DateTime.Now.AddDays(-1);
 
-            string moreQuery = generateStringQuery(fecha);
+            List<int> foliosGuardados = generateStringQuery(fecha);
             SqlConnection cnx = Connection.getConection();
             SqlCommand cmd = new SqlCommand();
             cmd.Connection = cnx;
-            cmd.CommandText = "SELECT * from softland.celta_ventas WHERE Fecha >'" + fecha + "' AND anno="+fecha.Year+"" + moreQuery+" AND CantFacturada>0";
+            cmd.CommandText = "SELECT * from softland.celta_ventas WHERE Fecha >@fecha AND anno=@anioActual AND CantFacturada>0";
             cmd.CommandType = CommandType.Text;
+            cmd.Parameters.Add("@fecha", SqlDbType.DateTime).Value = fecha;
+            cmd.Parameters.Add("@anioActual", SqlDbType.Int).Value = fecha.Year;
             SqlDataReader dr = cmd.ExecuteReader();
-
-            int i = 0;
+            
             int x = 0;
             int folio = 0;
 
@@ -455,48 +463,53 @@ namespace SoftwareCelta.Controllers
             double totalDoc = 0;
             while (dr.Read())
             {
-                
-                if (folio != Convert.ToInt32(dr["Folio"]))
+                if (!foliosGuardados.Contains(Convert.ToInt32(dr["Folio"])))
                 {
-                    totalDoc=0;
-                    x++;
-                    mov = new dw_movin();
-                    listDetalle = new List<dw_detalle>();
-                    mov.dw_movinID = x;
-                    mov.fechaEmision = (DateTime)dr["Fecha"];
-                    mov.numeroDocumento = Convert.ToInt32(dr["Folio"]);
-                    mov.nombreVendedor = Formateador.fechaCompletaToString((DateTime)dr["Fecha"]);
-                    mov.tipoDocumento =(string)dr["Tipo"];
-                    if ((string)dr["Tipo"] == "B") {
-                        mov.tipoDocumento = "BOLETA";    
+                    if (folio != Convert.ToInt32(dr["Folio"]))
+                    {
+                        totalDoc = 0;
+                        x++;
+                        mov = new dw_movin();
+                        listDetalle = new List<dw_detalle>();
+                        mov.dw_movinID = x;
+                        mov.fechaEmision = (DateTime)dr["Fecha"];
+                        mov.numeroDocumento = Convert.ToInt32(dr["Folio"]);
+                        mov.nombreVendedor = Formateador.fechaCompletaToString((DateTime)dr["Fecha"]);
+                        mov.tipoDocumento = (string)dr["Tipo"];
+                        if ((string)dr["Tipo"] == "B")
+                        {
+                            mov.tipoDocumento = "BOLETA";
+                        }
+                        else if ((string)dr["Tipo"] == "F")
+                        {
+                            mov.tipoDocumento = "FACTURA";
+                        }
+                        string nomAux = "";
+                        try
+                        {
+                            nomAux = (string)dr["NomAux"];
+                        }
+                        catch (Exception)
+                        {
+                            nomAux = "Cliente Boleta";
+                        }
+                        mov.nombreCliente = nomAux;
+                        folio = Convert.ToInt32(dr["Folio"]);
+                        documentosRegistrados.Add(mov);
                     }
-                    else if ((string)dr["Tipo"] == "F") {
-                        mov.tipoDocumento = "FACTURA";
-                    }
-                    string nomAux="";
-                    try{
-                        nomAux = (string)dr["NomAux"];
-                    }
-                    catch(Exception){
-                        nomAux = "Cliente Boleta";
-                    }
-                    mov.nombreCliente = nomAux;                                         
-                    folio = Convert.ToInt32(dr["Folio"]);
-                    documentosRegistrados.Add(mov);
+                    dw_detalle detalle = new dw_detalle();
+                    detalle.cantidadProducto = Convert.ToDouble(dr["CantFacturada"]);
+                    detalle.codigoProducto = (string)dr["CodProd"];
+                    detalle.descripcionProducto = (string)dr["DesProd"];
+                    detalle.dw_movinID = mov.dw_movinID;
+                    listDetalle.Add(detalle);
+                    mov.detalleMovin = listDetalle;
+                    double Valor = (double)dr["Valor"];
+                    double Descuento = (double)dr["Descuento"];
+                    totalDoc = totalDoc + (Valor - Descuento);
+
+                    mov.total = Math.Round(totalDoc, 0);                    
                 }
-                dw_detalle detalle = new dw_detalle();
-                detalle.cantidadProducto = Convert.ToDouble(dr["CantFacturada"]);
-                detalle.codigoProducto = (string)dr["CodProd"];
-                detalle.descripcionProducto = (string)dr["DesProd"];
-                detalle.dw_movinID = mov.dw_movinID;
-                listDetalle.Add(detalle);
-                mov.detalleMovin = listDetalle;
-                double Valor = (double)dr["Valor"];
-                double Descuento=(double)dr["Descuento"];
-                totalDoc =totalDoc+ (Valor- Descuento);
-                
-                mov.total = Math.Round(totalDoc,0);                
-                i++;
             }
 
             cnx.Close();

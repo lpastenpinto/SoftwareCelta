@@ -114,7 +114,7 @@
 
                     </td>
                     <td>
-                        @Html.ActionLink("Ver detalle y Despachar", "Despachar", new { documentoID = item.dw_movinID }, new { target = "_blank" })
+                        @Html.ActionLink("Ver detalle y Despachar", "Despachar", new { documentoID = item.dw_movinID })
 
                     </td>
                 </tr>
@@ -147,19 +147,21 @@
                 var numeroDocumento = $(this).closest('tr').find('.numeroDocumento').val();
                 var idTransportista = $(this).closest('tr').find('.idTransportista').val();
                 var div=$(this).closest('tr');
-                               
-                $.ajax({
-                    method: "POST",
-                    url: "/listadoDespacho/despacharSinEditar", data: { "idDetalleMovin": idDetalleMovin, "idTransportista": idTransportista },
-                    beforeSend: function () {
-                        div.find('.divTextAjax').html("PROCESANDO...");
-                    },
-                    success: function (retorno) {
-                        $("#divAlert").removeClass("hidden");
-                        $("#divAlertText").html("La Boleta Numero" + numeroDocumento + " fue despachada");
-                        div.remove();
-                    }
-                });               
+                var rm=confirm("¿Seguro despachara este pedido?");
+			    if(rm==true){		
+					$.ajax({
+						method: "POST",
+						url: "/Despacho/listadoDespacho/despacharSinEditar", data: { "idDetalleMovin": idDetalleMovin, "idTransportista": idTransportista },
+						beforeSend: function () {
+							div.find('.divTextAjax').html("PROCESANDO...");
+						},
+						success: function (retorno) {
+							$("#divAlert").removeClass("hidden");
+							$("#divAlertText").html("La Boleta Numero" + numeroDocumento + " fue despachada");
+							div.remove();
+						}
+					});               
+				}
                 //$("#form-message").delay(5000).fadeOut('slow');
             });
         });

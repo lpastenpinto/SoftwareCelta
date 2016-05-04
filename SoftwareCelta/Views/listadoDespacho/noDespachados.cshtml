@@ -8,7 +8,7 @@
     
     int i = 0;
 }
-<br /><br />
+<br /><br /><br />
 
 <div class="col-md-12 hidden" id="divError">
     <div class="alert alert-danger">
@@ -19,9 +19,9 @@
         Este documento no existe en nuestros registros como documento para despachar el dia de mañana
     </div>
 </div>
-<br /><br />
+<br />
 <h2>Boletas para despachar el dia de Mañana @SoftwareCelta.Models.Formateador.fechaCompletaToString(DateTime.Now.AddDays(1))</h2>
-<br /><br />
+<br />
 <div class="col-md-12">
     <h4>Filtrar Por:</h4>
     <div class="col-md-3">
@@ -199,7 +199,7 @@
                     var numeroDoc = $(".docNum").val();
                     $.ajax({
                         method: "POST",
-                        url: "/listadoDespacho/BuscarDocumentoPorNumero", data: { "numDoc": numeroDoc,"tipo":"2" },
+                        url: "/Despacho/listadoDespacho/BuscarDocumentoPorNumero", data: { "numDoc": numeroDoc,"tipo":"2" },
                         success: function (retorno) {
                             if (retorno == "true") {
                                 ruta = window.location.pathname + "?numDoc=" + numeroDoc;

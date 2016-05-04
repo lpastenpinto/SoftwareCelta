@@ -19,7 +19,7 @@ namespace SoftwareCelta.Controllers
         [Permissions]
         public ActionResult Index()
         {   //db.Bodegas.ToList()
-            return View();
+            return View(db.Bodegas.ToList());
         }
 
         // GET: bodegas/Details/5

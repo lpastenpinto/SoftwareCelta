@@ -104,38 +104,7 @@
         </div>
         <div class="col-md-3">
             <label class="control-label">Despachado Por</label><br />
-            @{nombreTrans = "";}
-            @if (!Object.ReferenceEquals(datosEnvio, null))
-            {
-                if (!datosEnvio.dw_datosTransportistaID.Equals(0))
-                {
-
-                    nombreTrans = db.Bodegas.Find(@datosEnvio.dw_datosTransportistaID).nombre;
-
-                }
-                else
-                {
-                    nombreTrans = "";
-                }
-
-            }            
-            @nombreTrans            
-        </div>
-        <div class="col-md-3">
-            <label class="control-label">Cantidad De visitas Despacho</label><br />
-            @if (!Object.ReferenceEquals(datosEnvio, null))
-            {
-                <text>@datosEnvio.cantidadVisitasDespacho</text>
-
-            }
-            else
-            {
-                <text>Sin Dato</text>
-            }            
-        </div>
-        <br /><br /><br />
-        <div class="col-md-3">
-            <label class="control-label">Transportista</label>
+           
             @if (!Object.ReferenceEquals(datosEnvio, null))
             {
                 if(datosEnvio.dw_datosTransportistaID!=0){
@@ -150,8 +119,22 @@
             else
             {
                 <text>Sin Dato</text>
-            }
+            }          
+                    
         </div>
+        <div class="col-md-3">
+            <label class="control-label">Cantidad De visitas Despacho</label><br />
+            @if (!Object.ReferenceEquals(datosEnvio, null))
+            {
+                <text>@datosEnvio.cantidadVisitasDespacho</text>
+
+            }
+            else
+            {
+                <text>Sin Dato</text>
+            }            
+        </div>
+        <br /><br /><br />
         
     </div>
     <br />

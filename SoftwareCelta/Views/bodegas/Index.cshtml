@@ -1,4 +1,4 @@
-﻿
+﻿@model IEnumerable<SoftwareCelta.Models.dw_areaInterna>
 
 @{
     //@model IEnumerable<SoftwareCelta.Models.dw_areaInterna>
@@ -10,21 +10,22 @@
 <p>
     @Html.ActionLink("Crear Nueva", "Create",null,null, new { @class = "btn btn-primary" })
 </p>
-<div class="table-responsive" ng-app="bodegaApp">    
-<br />
-<input type="text"  class="form-control" placeholder="Ingrese nombre bodega" ng-model="searchBodega" />
+<div class="table-responsive">    
 <br /><br />
-<table class="table" ng-controller="bodegaController">
+<table class="table">
     <tr>
         <th>
             Nombre Bodega/Area Interna
         </th>
         <th></th>
     </tr>
-    <tr ng-repeat="bodega in bodegas | filter : searchBodega">
-        <td>{{bodega.nombre}}</td>
-        <td><a href="/bodegas/Edit/{{bodega.dw_areaInternaID}}">Editar</a>|<a href="/bodegas/Details/{{bodega.dw_areaInternaID}}">Mostrar</a>|<a href="/bodegas/Delete/{{bodega.dw_areaInternaID}}">Eliminar</a></td>        
-    </tr>
+    @foreach (var item in Model)
+    {   <tr>
+            <td>@item.nombre</td>            
+            <td>@Html.ActionLink("Editar", "Edit", new { id = item.dw_areaInternaID })| @Html.ActionLink("Eliminar", "Delete", new { id = item.dw_areaInternaID })|</td>
+        </tr>
+    }    
+        
 </table>
 </div>
 
@@ -34,7 +35,7 @@
         var bodegaApp = angular.module('bodegaApp', []);
         bodegaApp.controller('bodegaController', function ($scope,$interval,$http, bodegaService) {           
             $scope.bodegas = [];
-            getBodegas();
+            //getBodegas();
             function getBodegas() {
                 bodegaService.getBodegas()
                     .success(function (bods) {                        
@@ -47,14 +48,7 @@
                         $scope.status = 'Unable to load customer data: ' + error.message;
                         console.log($scope.status);
                     });
-            }
-            /*$interval(function () {
-                $http.get('/bodegas/getAreasInternas').success(function (response) {
-                    for (var i = 0; i < response.length; i++) {
-                        $scope.bodegas.push(response[i]);
-                    }
-                });
-            }, 20000);*/
+            }            
             
            
         });

@@ -152,6 +152,7 @@
     <Compile Include="Models\dw_detalle.cs" />
     <Compile Include="Models\dw_log.cs" />
     <Compile Include="Models\dw_movin.cs" />
+    <Compile Include="Models\dw_movin_Celta.cs" />
     <Compile Include="Models\encriptacion.cs" />
     <Compile Include="Models\Formateador.cs" />
     <Compile Include="Models\Mail.cs" />

@@ -18,7 +18,7 @@ Fecha Emision: @SoftwareCelta.Models.Formateador.fechaCompletaToString(Model.fec
     <input type="text" class="hidden" value="@Model.nombreVendedor" name="CodVendedor" />
     <input type="text" class="hidden" value="@Model.total" name="total" />
     <input type="text" class="hidden" value="@Model.nombreCliente" name="nombreCliente" />
-    <br />    
+       <br />    
 
     <h3>Productos Comprados</h3>
     <br />
@@ -47,7 +47,7 @@ Fecha Emision: @SoftwareCelta.Models.Formateador.fechaCompletaToString(Model.fec
                     <tr>
                         <td>
                             @detalle.codigoProducto
-                            <input class="hidden" value="@detalle.codigoProducto" name="codigoProducto" />
+                            <input class="hidden" value="@detalle.codigoProducto" name="codigoProducto" />                            
                         </td>
                         <td>
                             @detalle.descripcionProducto
@@ -73,7 +73,9 @@ Fecha Emision: @SoftwareCelta.Models.Formateador.fechaCompletaToString(Model.fec
         <br />
         <div class="clearfix"></div>
         <div class="modal-footer">
+			@Html.ActionLink("Cancelar", "Index",null,null, new { @class = "btn btn-primary" })			
             <input type="submit" value="Guardar" class="btn btn-success btn-lg btn-default" />
+			
         </div>
     </div>
 </form>

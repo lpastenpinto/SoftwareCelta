@@ -55,7 +55,7 @@
                     {{doc.nombreCliente}}
                 </td>
                 <td class="col-md-1 text-right"><b>${{doc.total|number}}</b></td>
-                <td class="col-md-1"><a href="/documentos/Documento?documentoID={{doc.numeroDocumento}}" class="btn btn-success">Ver Documento <span class="glyphicon .glyphicon-search"></span></a></td>
+                <td class="col-md-1"><a href="/Despacho/documentos/Documento?documentoID={{doc.numeroDocumento}}" class="btn btn-success">Ver Documento <span class="glyphicon .glyphicon-search"></span></a></td>
 
             </tr>
         </tbody>
@@ -109,7 +109,7 @@
         docsApp.controller('docsController', function ($scope, $interval, $http, docsService) {
             $scope.docs = [];
             getDocs();
-            function getDocs() {
+            function getDocs() {                
                 docsService.getDocs()
                     .success(function (docs) {
                         /*for (var i = 0; i < docs.length; i++) {
@@ -123,7 +123,8 @@
                     });
             }
             $interval(function () {
-                $http.get('/documentos/getNewDocuments').success(function (response) {
+                var ruta = window.location.pathname + "/getNewDocuments";
+                $http.get(ruta).success(function (response) {
                     /*for (var i = 0; i < response.length; i++) {
                         $scope.bodegas.push(response[i]);
                     }*/
@@ -136,7 +137,8 @@
         docsApp.factory('docsService', ['$http', function ($http) {
             var docsService = {};
             docsService.getDocs = function () {
-                return $http.get('/documentos/getNewDocuments');
+                var ruta = window.location.pathname + "/getNewDocuments";
+                return $http.get(ruta);
             };
             return docsService;
         }]);
