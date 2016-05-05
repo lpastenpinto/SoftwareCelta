@@ -1,0 +1,155 @@
+﻿@model IEnumerable<SoftwareCelta.Models.dw_movin>
+@{
+    ViewBag.Title = "Estadisticas Bodegas";
+    List<SoftwareCelta.Models.dw_envio> envios = (List<SoftwareCelta.Models.dw_envio>)ViewData["envios"];
+    System.Collections.Hashtable hashTransp = (System.Collections.Hashtable)ViewData["transportistaHash"];
+    int x = 0;
+    double total = 0;
+}
+<br /><br /><br />
+
+<div class="row">
+    <div class="col-md-12">
+        <h4>Filtros:</h4>
+    </div>
+    <div class="col-md-3">
+        <label class="control-label">Desde:</label>
+        <input class="form-control fecha" id="fechaInicial" name="fechaInicial" data-val-date="Ingrese por favor una fecha." data-val-required="El campo fecha es obligatorio."
+               data-date-format="DD/MM/YYYY" pattern="[0-9][0-9]/[0-9][0-9]/[0-9][0-9][0-9][0-9]"
+               type="text" value="@ViewBag.fechaInicial">
+
+    </div>
+    <div class="col-md-3">
+        <label class="control-label">Hasta:</label>
+        <input class="form-control fecha" id="fechaFinal" name="fechaFinal" data-val-date="Ingrese por favor una fecha." data-val-required="El campo fecha es obligatorio."
+               data-date-format="DD/MM/YYYY" pattern="[0-9][0-9]/[0-9][0-9]/[0-9][0-9][0-9][0-9]"
+               type="text" value="@ViewBag.fechaFinal">
+    </div>
+    <div class="col-md-3">
+        <label class="control-label">Transportista </label>
+        <select class="form-control" id="transportista">
+            <option value="todos">Todos</option>
+            @foreach (SoftwareCelta.Models.dw_datosTransportista transportista in (List<SoftwareCelta.Models.dw_datosTransportista>)ViewData["transportista"])
+            {
+                <option value="@transportista.dw_datosTransportistaID" @if ((System.Convert.ToString(ViewBag.transportistaActual) == transportista.dw_datosTransportistaID.ToString())) { <text> selected</text> }>@transportista.nombreCompleto</option>
+            }
+        </select>
+    </div>
+
+    <div class="col-md-3">
+        <label class="control-label">Tipo </label>
+        <select class="form-control" id="tipo">
+            <option value="todos" @if ((System.Convert.ToString(ViewBag.tipo) == "todos")) { <text> selected</text> }>Todos</option>
+            <option value="despacho" @if ((System.Convert.ToString(ViewBag.tipo) == "despacho")) { <text> selected</text> }>Despacho</option>
+            <option value="devolucion" @if ((System.Convert.ToString(ViewBag.tipo) == "devolucion")) { <text> selected</text> }>Devolucion</option>
+        </select>
+    </div>
+    <div class="col-md-3">
+        <br />
+        <input class="btn btn-primary btn-block" id="Boton" value="Buscar" type="button" onclick="return false;" />
+    </div>
+</div>
+
+<br />
+<br />
+<h2>Listado Despachos/Devoluciones Transportistas</h2>
+<br />
+<div class="table-responsive">
+    <table class="table table-hover">
+        <thead>
+            <tr>
+                <th>
+                    Numero Documento
+                </th>
+                <th>
+                    Fecha
+                </th>
+                <th>
+                    Transportista
+                </th>
+                <th>
+                    Tipo
+                </th>
+
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        @item.numeroDocumento
+                    </td>
+                    <td>
+                        @SoftwareCelta.Models.Formateador.fechaCompletaToString(item.fechaEmision)
+                    </td>
+                    <td>
+                        @hashTransp[envios[x].dw_datosTransportistaID].ToString()
+                    </td>
+                    <td>
+                        @if (envios[x].nombreCliente.ToString().Equals("Devolucion"))
+                        {
+                            <text>DEVOLUCION</text>
+                        }
+                        else
+                        {
+                            <text>DESPACHO</text>
+                        }
+                    </td>
+                </tr>
+
+                        x++;
+            }
+
+            <tr>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td><h2>Total:@x</h2></td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+@section Scripts {
+    @Styles.Render("~/Content/bootstrap-datetimepicker.css")
+    @Scripts.Render("~/Scripts/datetimepicker/moment.js")
+    @Scripts.Render("~/Scripts/datetimepicker/bootstrap-datetimepicker.js")
+    <script>
+        $(document).ready(function () {
+
+
+            $(".fecha").datetimepicker({
+                viewMode: 'days',
+                format: 'DD/MM/YYYY'
+            });
+
+            $("#Boton").click(function () {
+                var fechaInicial = $("#fechaInicial").val();
+                var fechaFinal = $("#fechaFinal").val();
+                var transportista = $("#transportista").val();
+                var tipo = $("#tipo").val();
+
+                fechaInicial = fechaInicial.replace("/", "-").replace("/", "-");
+                fechaFinal = fechaFinal.replace("/", "-").replace("/", "-");
+
+                    if (fechaInicial == "" || fechaFinal == "") {
+                        alert("Debe ingresar ambas fechas");
+                    }
+                    else {
+                        if (transportista == "todos" && tipo=="todos") {
+                            ruta = window.location.pathname+"?strFechaInicial=" + fechaInicial + "&strFechaFinal=" + fechaFinal;
+                        } else if(transportista!="todos" && tipo=="todos") {
+                            ruta = window.location.pathname + "?strFechaInicial=" + fechaInicial + "&strFechaFinal=" + fechaFinal + "&transportista=" + transportista;
+                        }
+                        else if(transportista=="todos" && tipo!="todos") {
+                            ruta = window.location.pathname + "?strFechaInicial=" + fechaInicial + "&tipo=" + tipo;
+                        } else {
+                            ruta = window.location.pathname + "?strFechaInicial=" + fechaInicial + "&strFechaFinal=" + fechaFinal + "&tipo=" + tipo + "&transportista=" + transportista;
+                        }
+                        window.location.href = ruta
+                    }
+
+            });
+        });
+    </script>
+}

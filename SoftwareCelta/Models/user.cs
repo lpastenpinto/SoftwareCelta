@@ -21,4 +21,10 @@ namespace SoftwareCelta.Models
         public int userID { set; get; }
         public int rolesID { set; get; }        
     }
+
+    public class permisosBodegas {
+        public int permisosBodegasID { set; get; }
+        public int bodegaID { set; get; }
+        public int userID { set; get; }
+    }
 }

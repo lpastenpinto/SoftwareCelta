@@ -5,7 +5,7 @@
     SoftwareCelta.DAL.ContextBDCelta db = new SoftwareCelta.DAL.ContextBDCelta();
     string nombreBodega = "";
 }
-<br /><br />
+<br />
 <h2>Documento @Model.numeroDocumento</h2>
 <br />
 
@@ -16,8 +16,6 @@
     @Html.ValidationSummary(true, "", new { @class = "text-danger" })
     @Html.HiddenFor(model => model.dw_movinID)
     <input class="hidden" name="numeroBoleta" value="@Model.numeroDocumento"/>
-    <input class="hidden" name="idTransportistaAnterior" value="@datosEnvio.dw_datosTransportistaID" />
-    <input class="hidden" name="fechaAnteriorDespacho" value="@SoftwareCelta.Models.Formateador.fechaCompletaToString(datosEnvio.fechaDespacho)" />
     <div class="row">
         <div class="col-md-4">
             <label class="control-label">Nombre Cliente</label>
@@ -62,7 +60,6 @@
 
     <h3>Productos Comprados</h3>
     <br />
-    <span>**Marque SOLO los productos que fueron DEVUELTOS**</span>
     <div class="table-responsive">
         <table class="table">
             <thead>
@@ -79,8 +76,8 @@
                     <th>
                         Area Interna /Bodega
                     </th>
-                    <th>Tipo de Entrega</th>
-                    <th>Devolucion de Productos</th>
+                    <th>Entrega Inmediata</th>
+                    <th>Despacho a Domicilio</th>
                 </tr>
             </thead>
             <tbody>
@@ -113,24 +110,10 @@
                         </td>
                         <td>
 
-                            @if (detalle.estadoDespacho.Equals(0))
-                            { 
-                                <text> Entregado en Tienda</text> 
-                            }else if (detalle.estadoDespacho.Equals(1))
-                            {
-                                <text> Producto por Despachar</text>
-                            }else if (detalle.estadoDespacho.Equals(2))
-                            {
-                                <text> Producto Despachado</text>
-                            }
-                            
+                            <input type="checkbox" class="entregaInmediata" @if (detalle.estadoDespacho.Equals(0)) { <text> checked</text> } readonly="readonly" onclick="javascript: return false;">
                         </td>
                         <td>
-                            @if (detalle.estadoDespacho.Equals(2))
-                            {
-                                <input type="checkbox" class="despachoDomicilio" value="@detalle.dw_detalleID" name="despachoDevuelto" />
-                            }
-                            
+                            <input type="checkbox" class="despachoDomicilio" @if (detalle.estadoDespacho.Equals(2) || detalle.estadoDespacho.Equals(1)) { <text> checked</text> } readonly="readonly" onclick="javascript: return false;">
                         </td>
                     </tr>
                 }
@@ -139,8 +122,7 @@
         <br />
         <div class="clearfix"></div>
         <div class="modal-footer">
-            @Html.ActionLink("Cancelar", "Despachados", null, null, new { @class = "btn btn-primary" })
-            <input type="submit" value="Guardar Cambios" class="btn btn-success btn-lg btn-default" />
+            <input type="submit" value="Guardar Cambio de Fecha" class="btn btn-success btn-lg btn-default" />
         </div>
     </div>
 }

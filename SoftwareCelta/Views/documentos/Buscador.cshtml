@@ -1,6 +1,8 @@
 ﻿@model IEnumerable<SoftwareCelta.Models.dw_movin>
 @{
-    ViewBag.Title = "Buscar Documento Registrado";   
+    ViewBag.Title = "Buscar Documento Registrado";
+    
+    //List<SoftwareCelta.Models.dw_ciudades_despacho> ciudades = (List<SoftwareCelta.Models.dw_ciudades_despacho>)ViewData["ciudad"];
 
 }
 <br /><br /><br />
@@ -30,18 +32,38 @@
             <input class="form-control fecha" id="fechaFinal" name="fechaFinal" data-val-date="Ingrese por favor una fecha." data-val-required="El campo fecha es obligatorio."
                data-date-format="DD/MM/YYYY" pattern="[0-9][0-9]/[0-9][0-9]/[0-9][0-9][0-9][0-9]"
                type="text" value="@ViewBag.fechaFinal">
+        </div>                           
+        <div class="col-md-3">
+            <label class="control-label">Ciudad Despacho</label>
+            <select class="form-control" id="ciudad">
+                <option value="todas">Todas</option>
+
+                   @foreach (SoftwareCelta.Models.dw_ciudades_despacho ciudad in (List<SoftwareCelta.Models.dw_ciudades_despacho>)ViewData["ciudades"])
+                   {
+                        <option value="@ciudad.nombre" @if (System.Convert.ToString(ViewBag.ciudad) == ciudad.nombre) { <text>selected</text> }>@ciudad.nombre</option>
+                   }    
+            </select>
         </div>
     
         <div class="col-md-3">
+            <label class="control-label">Tipo Documento</label>
+            <select class="form-control" id="tipoDocumento">
+                
+                <option value="todos" @if (System.Convert.ToString(ViewBag.tipo) == "todos") { <text>selected</text> }>Todos</option>
+                <option value="BOLETA" @if (System.Convert.ToString(ViewBag.tipo) == "BOLETA") { <text>selected</text> }>Boleta</option>
+                <option value="FACTURA" @if (System.Convert.ToString(ViewBag.tipo) == "FACTURA") { <text>selected</text> }>Factura</option>
+            </select>
+        </div>
+        <div class="col-md-3">
             <label class="control-label">Numero Documento</label>
             <input class="form-control numDoc" name="numDoc" id="numDoc" type="number" />
-        </div>        
+        </div>
         <div class="col-md-3">
             <br />
             <input class="btn btn-primary btn-block" id="Boton" value="Buscar" type="button" onclick="return false;"/>
         </div>
 </div>
-<span>*Al buscar por numero de documento se omiten las fechas</span>
+<span>*Al buscar por numero de documento se omiten los otros filtros</span>
 <br />
 <br />
 <h2>Documentos Registrados</h2>
@@ -100,6 +122,9 @@
                 var fechaInicial = $("#fechaInicial").val();
                 var fechaFinal = $("#fechaFinal").val();
                 var numDoc = $("#numDoc").val();
+                var ciudad = $("#ciudad").val();
+                var tipoDocumento = $("#tipoDocumento").val();
+
                 fechaInicial = fechaInicial.replace("/", "-").replace("/", "-");
                 fechaFinal = fechaFinal.replace("/", "-").replace("/", "-");
 
@@ -123,7 +148,15 @@
                         alert("Debe ingresar ambas fechas");
                     }
                     else {
-                        ruta = window.location.pathname+"?strFechaInicial=" + fechaInicial + "&strFechaFinal=" + fechaFinal;
+                        if (ciudad == "todas" && tipoDocumento=="todos") {
+                            ruta = window.location.pathname+"?strFechaInicial=" + fechaInicial + "&strFechaFinal=" + fechaFinal;                            
+                        } else if(ciudad!="todas" && tipoDocumento=="todos") {
+                            ruta = window.location.pathname + "?strFechaInicial=" + fechaInicial + "&strFechaFinal=" + fechaFinal + "&ciudad=" + ciudad;
+                        } else if (ciudad == "todas" && tipoDocumento != "todos") {
+                            ruta = window.location.pathname + "?strFechaInicial=" + fechaInicial + "&strFechaFinal=" + fechaFinal + "&tipo=" + tipoDocumento;
+                        } else {
+                            ruta = window.location.pathname + "?strFechaInicial=" + fechaInicial + "&strFechaFinal=" + fechaFinal + "&ciudad=" + ciudad + "&tipo=" + tipoDocumento;
+                        }
                         window.location.href = ruta
                     }
                 }

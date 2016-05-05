@@ -34,7 +34,7 @@
                             </a>
                             <ul class="dropdown-menu">
                                 @if (permisos.Contains(1) || permisos.Contains(2)) { 
-                                    <li>@Html.ActionLink("Ver Documentos de Hoy", "Index", "documentos")</li>
+                                    <li>@Html.ActionLink("Ver Documentos", "Index", "documentos")</li>
                                     <li>@Html.ActionLink("Asignar Area Internas a Despachos", "despachoDomicilio", "documentos")</li>
                                     <li class="divider"></li>
                                 }
@@ -48,44 +48,55 @@
                                 <a href="#" class="dropdown-toggle" data-toggle="dropdown">
                                     Despachos<b class="caret"></b>
                                 </a>
-                                <ul class="dropdown-menu">                                
-                                    <li>@Html.ActionLink("Boletas Despachar Mañana", "noDespachados", "listadoDespacho")</li>                                
-                                    <li>@Html.ActionLink("Boletas Despachar Hoy", "porDespachar", "listadoDespacho")</li>
+                                <ul class="dropdown-menu">                                                                    
+                                    <li>@Html.ActionLink("Documentos para Despachar", "porDespachar", "listadoDespacho")</li>
                                     <li class="divider"></li>
                                     <li>@Html.ActionLink("Historico Boletas Despachadas", "Despachados", "listadoDespacho")</li>                                
                                 </ul>
                             </li>
                         }
-                        <li>@Html.ActionLink("Bodegas/Areas Internas", "Index", "bodegas") </li>
+                        @if (permisos.Contains(1) || permisos.Contains(4))
+                        {
+                            <li>@Html.ActionLink("Registrar Datos Despacho (Venta)", "Index", "Envio")</li>
+                        }
+                        @if (permisos.Contains(1) || permisos.Contains(5))
+                        {
+                            <li>@Html.ActionLink("Validar Productos a Despachar", "Index", "validarProductosDespacho")</li>
+                        }
+                        <li>@Html.ActionLink("Bodegas", "Index", "bodegas") </li>
                         @if (permisos.Contains(1) || permisos.Contains(3)) { 
                             <li>@Html.ActionLink("Transportistas", "Index", "Transportista") </li>
                         }
                         
                         @if (permisos.Contains(1))
                         {
-                            <li>@Html.ActionLink("Registro de Acciones", "Index", "log")</li>
+                            
                             <li class="dropdown">
                                 <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-                                    Usuarios<b class="caret"></b>
+                                    Admin<b class="caret"></b>
                                 </a>
                                 <ul class="dropdown-menu">
-                                    <li>@Html.ActionLink("Todos", "Index", "Users")</li>
-                                    <li>@Html.ActionLink("Crear", "Create", "Users")</li>                                    
+                                    <li>@Html.ActionLink("Ver Usuarios", "Index", "Users")</li>
+                                    <li>@Html.ActionLink("Crear", "Create", "Users")</li>                                                                        
+                                    <li class="divider"></li>   
+                                    <li>@Html.ActionLink("Lista Responsabilidad Usuarios Producos", "listResponsabilidad", "validarProductosDespacho")</li>
+                                    <li class="divider"></li>
+                                    <li>@Html.ActionLink("Registro de Acciones", "Index", "log")</li>
+                                    <li>@Html.ActionLink("Estadisticas Bodegas", "bodega", "Estadisticas")</li>
+                                    <li>@Html.ActionLink("Estadisticas Ciudades Despacho", "ciudad", "Estadisticas")</li>
+                                    <li>@Html.ActionLink("Estadisticas Transportistas", "transportista", "Estadisticas")</li>
+                                    
                                 </ul>
                             </li>
                         }
-                        <li>@Html.ActionLink("Registrar Datos Despacho", "Index", "Envio")</li>
+                        
                     </ul>
-
                     <ul class="nav navbar-nav navbar-right">
                         <li class="dropdown">
                             <a href="#" class="dropdown-toggle" data-toggle="dropdown">
                                 Mi Sesion<b class="caret"></b>
                             </a>
-                            <ul class="dropdown-menu">
-                                    
-
-                            
+                            <ul class="dropdown-menu">                                                                
                                 <li><a href="@Url.Action("cambiarDatos", "Users")">Cambiar Datos</a></li>
                                 <li class="divider"></li>                               
                                 <li><a href="@Url.Action("Logout", "Users")">Cerrar Sesión</a></li>

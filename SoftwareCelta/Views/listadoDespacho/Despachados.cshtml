@@ -66,7 +66,15 @@
             <option value="0">Todos</option>
             @foreach (var transp in (List<SoftwareCelta.Models.dw_datosTransportista>)ViewData["transportistas"])
             {
-                <option value="@transp.dw_datosTransportistaID">@transp.nombreCompleto | @transp.patente</option>
+                if (ViewBag.idTransportista != null && transp.dw_datosTransportistaID == System.Convert.ToInt32(ViewBag.idTransportista))
+                {
+                    <option value="@transp.dw_datosTransportistaID" selected>@transp.nombreCompleto | @transp.patente</option>
+                }
+                else
+                {
+                    <option value="@transp.dw_datosTransportistaID">@transp.nombreCompleto | @transp.patente</option>
+                }
+
             }
         </select>
     </div>
@@ -76,7 +84,14 @@
             <option value="0">Todas</option>
             @foreach (var bodega in (List<SoftwareCelta.Models.dw_areaInterna>)ViewData["bodegas"])
             {
-                <option value="@bodega.dw_areaInternaID">@bodega.nombre</option>
+                if (ViewBag.idBodega != null && bodega.dw_areaInternaID == System.Convert.ToInt32(ViewBag.idBodega))
+                {
+                    <option value="@bodega.dw_areaInternaID" selected>@bodega.nombre</option>
+                }
+                else
+                {
+                    <option value="@bodega.dw_areaInternaID">@bodega.nombre</option>
+                }
             }
         </select>
     </div>
@@ -104,7 +119,7 @@
                 <th>
                     Fecha Despacho
                 </th>
-                <th class="col-md-5">Productos a Despachar</th>
+                <th class="col-md-5">Productos Despachados</th>
                 <th></th>
                 <th></th>
 
@@ -116,16 +131,16 @@
             {
                 string nameDiv = "divProd" + i;
                 <tr>
-                    <td>
+                    <td class="col-md-1">
                         @Html.DisplayFor(modelItem => item.numeroDocumento)
                     </td>
-                    <td>
+                    <td class="col-md-1">
                         @SoftwareCelta.Models.Formateador.fechaCompletaToString(item.fechaEmision)
                     </td>
-                    <td>
+                    <td class="col-md-1">
                         @SoftwareCelta.Models.Formateador.fechaCompletaToString(datosEnvio[i].fechaDespacho)
                     </td>
-                    <td col-xs-4>
+                    <td class="col-md-7">
                         <div class="col-xs-2">
                             <button data-toggle="collapse" data-target="#@nameDiv" class="btn btn-success">+</button>
                         </div>
@@ -138,15 +153,23 @@
                             <input class="hidden idDetalleLista" name="idDetalleLista" value="@listaDeListaDetalle[i]" />
                             @foreach (var detalle in listaDeListaDetalle[i])
                             {
-                                <text><div class="col-xs-3">@detalle.codigoProducto</div><div class="col-xs-6">@detalle.descripcionProducto</div><div class="col-xs-3">@detalle.cantidadProducto</div></text>
+                                <text><div class="col-xs-3">@detalle.codigoProducto</div><div class="col-xs-8">@detalle.descripcionProducto</div><div class="col-xs-1">@detalle.cantidadProducto</div></text>
                                 <text><br /></text>
+                                if (detalle.descripcionProducto.Length > 40)
+                                {
+                                    <text><br /></text>
+                                } if (detalle.descripcionProducto.Length > 70)
+                                {
+                                    <text><br /></text>
+                                }
+
                             }
                         </div>
                     </td>
-                    <td>
+                    <td class="col-md-1">
                         <a href="@Url.Action("DocumentoRegistrado", "documentos", new { documentoID = item.dw_movinID })">Ver</a>
                     </td>
-                    <td>
+                    <td class="col-md-1">
                         @Html.ActionLink("Despacho Devuelto", "despachoDevuelto", null, new { documentoID = item.dw_movinID }, new { @class = "btn btn-danger" })
                     </td>
                 </tr>

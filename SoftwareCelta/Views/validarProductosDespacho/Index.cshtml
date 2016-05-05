@@ -1,0 +1,165 @@
+﻿@model IEnumerable<SoftwareCelta.Models.dw_movin>
+
+@{
+    ViewBag.Title = "Por Despachar";
+    int i = 0;
+
+    List<List<SoftwareCelta.Models.dw_detalle>> listaDeListaDetalle = (List<List<SoftwareCelta.Models.dw_detalle>>)ViewData["listaDeListaDetalle"];
+    List<int> cantidadProductosPorDespachar = (List<int>)ViewData["cantidadProductosPorDespachar"];
+    //System.Collections.Hashtable hashAreaInterna = (System.Collections.Hashtable)ViewData["hashBodegas"];
+}
+
+<br /><br /><br />
+@if (TempData["Success"] != null)
+{   <br /><br /><br />
+    <div class="col-md-12">
+        <div class="alert alert-success">
+            <button type="button" class="close" data-dismiss="alert"
+                    aria-hidden="true">
+                &times;
+            </button>
+            @TempData["Success"]
+        </div>
+    </div>
+}
+<div class="col-md-12">
+    <div class="col-md-12">
+        <h4>Filtros:</h4>
+    </div>
+    <div class="col-md-3">
+        <label class="control-label">Bodegas</label>
+        <select class="form-control" name="bodega" id="bodega">
+            <option value="todas">Todas</option>            
+            @foreach (SoftwareCelta.Models.dw_areaInterna bodega in (List<SoftwareCelta.Models.dw_areaInterna>)ViewData["bodegas"])
+            {
+                if (ViewBag.bodega != null && System.Convert.ToString(ViewBag.bodega) != "todas" && System.Convert.ToInt32(ViewBag.bodega) == bodega.dw_areaInternaID)
+                {
+                    <option value="@bodega.dw_areaInternaID" selected>@bodega.nombre</option>
+                }
+                else
+                {
+                    <option value="@bodega.dw_areaInternaID">@bodega.nombre</option>                
+                }
+            }
+        </select>
+    </div>
+    <div class="col-md-3 fechaInicio">
+        <label class="control-label">Desde:</label>
+        <input class="form-control fecha" id="fechaInicial" name="fechaInicial" data-val-date="Ingrese por favor una fecha." data-val-required="El campo fecha es obligatorio."
+               data-date-format="DD/MM/YYYY" pattern="[0-9][0-9]/[0-9][0-9]/[0-9][0-9][0-9][0-9]"
+               type="text" value="@ViewBag.fechaInicial">
+
+    </div>
+    <div class="col-md-3 fechaFinal">
+        <label class="control-label">Hasta:</label>
+        <input class="form-control fecha" id="fechaFinal" name="fechaFinal" data-val-date="Ingrese por favor una fecha." data-val-required="El campo fecha es obligatorio."
+               data-date-format="DD/MM/YYYY" pattern="[0-9][0-9]/[0-9][0-9]/[0-9][0-9][0-9][0-9]"
+               type="text" value="@ViewBag.fechaFinal">
+    </div>
+    <div class="col-md-3">
+        <br />
+        <input class="btn btn-primary btn-block" id="Boton" value="Filtrar" type="button" />
+    </div>
+</div>
+
+<br /><br /><br />
+<br />
+
+<div class="table-responsive">
+    <table class="table table-hover">
+        <thead>
+            <tr>
+                <th>
+                    Numero Boleta
+                </th>
+                <th>
+                    Cant. Prod. por despachar
+                </th>
+                <th>Productos a Despachar</th>                
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+
+            @foreach (var item in Model)
+            {
+                string nameDiv = "divProd" + @i;
+                <tr>
+                    <td class="col-xs-2">
+                        @Html.DisplayFor(modelItem => item.numeroDocumento)
+                        <input class="hidden idMovin" name="idMovin" value="@item.dw_movinID" />
+                        <input class="hidden numeroDocumento" value="@item.numeroDocumento" />
+                    </td>
+                    <td class="col-xs-1">
+                        @cantidadProductosPorDespachar[i]
+                    </td>
+                    <td class="col-xs-7">
+                        <div class="col-xs-2">
+                            <button data-toggle="collapse" data-target="#@nameDiv" class="btn">+</button>
+                        </div>
+                        <div class="col-xs-10 divTextAjax">
+
+                        </div>
+                        <br /><br />
+
+                        <div class="collapse col-xs-12" id="@nameDiv">
+                            <input class="hidden idDetalleLista" name="idDetalleLista" value="@listaDeListaDetalle[i]" />
+                            @foreach (var detalle in listaDeListaDetalle[i])
+                            {
+                                <text><div class="col-xs-1">@detalle.codigoProducto</div><div class="col-xs-7">@detalle.descripcionProducto</div><div class="col-xs-1">@detalle.cantidadProducto</div><div class="col-xs-3">@if (detalle.validado.Equals(0)) { <text>No Validado</text>}else{<text>Validado</text> }</div></text>
+                                <text><br /></text>
+                                if (detalle.descripcionProducto.Length > 20)
+                                {
+                                    <text><br /></text>
+                                }
+                                if (detalle.descripcionProducto.Length > 40)
+                                {
+                                    <text><br /></text>
+                                }
+                            }
+                        </div>
+                    </td>                    
+                    <td class="col-xs-2">
+                        @Html.ActionLink("Habilitar", "documento", new { documentoID = item.dw_movinID }, new { @class = "btn btn-success" })
+
+                    </td>
+                </tr>
+                                i++;
+            }
+        </tbody>
+    </table>
+</div>
+@section Scripts {
+    @Styles.Render("~/Content/bootstrap-datetimepicker.css")
+    @Scripts.Render("~/Scripts/datetimepicker/moment.js")
+    @Scripts.Render("~/Scripts/datetimepicker/bootstrap-datetimepicker.js")
+    <script>
+        $(document).ready(function () {
+            $(".fecha").datetimepicker({
+                viewMode: 'days',
+                format: 'DD/MM/YYYY'
+            });
+
+            $("#Boton").click(function () {
+                var bodega= $("#bodega").val();
+                var fechaInicial=$("#fechaInicial").val();
+                var fechaFinal=$("#fechaFinal").val();
+                var ruta = "";
+                if (bodega == "todas" && (fechaInicial == "" || fechaFinal == "")) {
+                    ruta = window.location.pathname;
+                }
+                else if (fechaInicial == "" || fechaFinal == "") {
+                    ruta = window.location.pathname + "?bodega=" + bodega;
+                }
+                else {
+                    ruta = window.location.pathname + "?bodega=" + bodega + "&fechaDesde=" + fechaInicial + "&fechaHasta="+fechaFinal;
+                }
+
+                window.location.href = ruta
+
+            });
+        });
+
+
+    </script>
+}

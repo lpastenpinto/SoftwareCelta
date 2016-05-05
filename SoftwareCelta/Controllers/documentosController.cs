@@ -9,6 +9,7 @@ using SoftwareCelta.DAL;
 using System.Data.SqlClient;
 using System.Data;
 using SoftwareCelta.Filters;
+using System.Collections;
 
 namespace SoftwareCelta.Controllers
 {
@@ -108,7 +109,7 @@ namespace SoftwareCelta.Controllers
 
 
         [Permissions]
-        public ActionResult Buscador(string strFechaInicial, string strFechaFinal, string numDoc) {
+        public ActionResult Buscador(string strFechaInicial, string strFechaFinal, string numDoc,string ciudad, string tipo) {
             DateTime fechaInicial= new DateTime();
             DateTime fechaFinal = new DateTime();
             if(strFechaFinal==null || strFechaInicial==null){
@@ -118,7 +119,12 @@ namespace SoftwareCelta.Controllers
                 fechaInicial=Formateador.formatearFechaCompleta(strFechaInicial);
                 fechaFinal=Formateador.formatearFechaCompleta(strFechaFinal);
             }
-
+            if (ciudad == null) {
+                ciudad = "todas";
+            }
+            if (tipo == null) {
+                tipo = "todos";
+            }
             List<dw_movin> listDocumentos = new List<dw_movin>();
             if (numDoc != null)
             {
@@ -128,11 +134,45 @@ namespace SoftwareCelta.Controllers
             }
             else
             {
-                listDocumentos = db.Movins.Where(s => s.fechaEmision >= fechaInicial & s.fechaEmision <= fechaFinal).ToList();
+                if (ciudad == "todas" && tipo == "todos")
+                {
+                    listDocumentos = db.Movins.Where(s => s.fechaEmision >= fechaInicial & s.fechaEmision <= fechaFinal).ToList();    
+                }
+                else if (ciudad != "todas" && tipo== "todos")
+                {
+                    List<dw_movin> listDocumentosTemp = db.Movins.Where(s => s.fechaEmision >= fechaInicial & s.fechaEmision <= fechaFinal).ToList();
+                    foreach (var doc in listDocumentosTemp)
+                    {
+                        dw_envio envio = db.DatosEnvio.SingleOrDefault(s => s.dw_movinID==doc.dw_movinID);
+                        if (envio.ciudad == ciudad) {
+                            listDocumentos.Add(doc);
+                        }                        
+                    }
+                }
+
+                else if (ciudad == "todas" && tipo != "todos")
+                {
+                    listDocumentos = db.Movins.Where(s => s.fechaEmision >= fechaInicial & s.fechaEmision <= fechaFinal & s.tipoDocumento==tipo).ToList();
+                }
+                else {
+                    List<dw_movin> listDocumentosTemp = db.Movins.Where(s => s.fechaEmision >= fechaInicial & s.fechaEmision <= fechaFinal & s.tipoDocumento == tipo).ToList();
+                    foreach (var doc in listDocumentosTemp)
+                    {
+                        dw_envio envio = db.DatosEnvio.SingleOrDefault(s => s.dw_movinID == doc.dw_movinID);
+                        if (envio.ciudad == ciudad)
+                        {
+                            listDocumentos.Add(doc);
+                        }
+                    }
+                }                
             }
 
             ViewBag.fechaInicial = Formateador.fechaCompletaToString(fechaInicial);
             ViewBag.fechaFinal = Formateador.fechaCompletaToString(fechaFinal);
+            List<dw_ciudades_despacho> listCiudades = dw_ciudades_despacho.listaCiudades();
+            ViewData["ciudades"] = dw_ciudades_despacho.listaCiudades();
+            ViewBag.ciudad = ciudad;
+            ViewBag.tipo = tipo;
             return View(listDocumentos);
         }
 
@@ -248,80 +288,7 @@ namespace SoftwareCelta.Controllers
             return View(dw_movin);
         }
 
-      /*
-        [Permissions]
-        public ActionResult Editar(int documentoID)
-        {
-
-            dw_movin dw_movin = db.Movins.Find(documentoID);
-            dw_envio datosEnvio = db.DatosEnvio.SingleOrDefault(s => s.dw_movinID == documentoID);
-            List<dw_detalle> listDetalleDocumento = db.DetalleMovin.Where(s => s.dw_movinID == documentoID).ToList();
-            ViewData["detalleDocumento"] = listDetalleDocumento;
-            ViewData["datosEnvio"] = datosEnvio;
-            ViewData["bodegas"] = db.Bodegas.ToList();
-            ViewData["dw_movin"] = dw_movin;
-            return View(dw_movin);
-        }
-
-
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        [Permissions]
-        public ActionResult Editar(FormCollection form)
-        {
-            int dw_movinID = Convert.ToInt32((string)form["dw_movinID"]);
-            dw_movin dw_movin = db.Movins.Find(dw_movinID);
-            string nombreCliente = (string)form["nombreCliente"];
-            string rutCliente = (string)form["rutCliente"];
-            string ciudad = (string)form["ciudad"];
-            string telefono = (string)form["telefono"];
-            string direccion = (string)form["direccion"];
-            string observacion = (string)form["observacion"];
-            DateTime fechaDespacho = Formateador.fechaStringToDateTime((string)form["fechaDespacho"]);
-
-            dw_envio datosEnvio = db.DatosEnvio.SingleOrDefault(s => s.dw_movinID == dw_movinID);
-            datosEnvio.ciudad = ciudad;
-            datosEnvio.direccion = direccion;
-            datosEnvio.dw_movinID = dw_movinID;
-            datosEnvio.fechaDespacho = fechaDespacho;
-            datosEnvio.nombreCliente = nombreCliente;
-            datosEnvio.observacion = observacion;
-            datosEnvio.rutCliente = rutCliente;
-            datosEnvio.telefono = telefono;
-            db.Entry(datosEnvio).State = EntityState.Modified;
-            db.SaveChanges();
-            string[] areaInterna = Request.Form.GetValues("areaInterna");
-            string[] dw_detalleID = Request.Form.GetValues("dw_detalleID");
-
-            for (int i = 0; i < areaInterna.Length; i++)
-            {
-                dw_detalle detalle = db.DetalleMovin.Find(Convert.ToInt32(dw_detalleID[i]));                
-
-                string estadoDespacho = (string)form["estadoDespacho" + (i + 1)];
-
-                detalle.estadoDespacho = Convert.ToInt32(estadoDespacho);
-                if (estadoDespacho.Equals("0"))
-                {
-                    detalle.dw_areaInternaID = 0;
-                }
-                else
-                {
-                    detalle.dw_areaInternaID = Convert.ToInt32(areaInterna[i]);
-                }
-
-                db.Entry(detalle).State = EntityState.Modified;
-                try {
-                    db.SaveChanges();
-                    dw_log.registrarLog(Convert.ToInt32(Session["userID"]), Session["userName"].ToString(), "Edicion de documento numero:" + dw_movin.numeroDocumento);
-                }
-                catch (Exception e) {
-                    bool error = true; 
-                }                
-            }           
-            
-            return RedirectToAction("Index");
-        }
-        */
+      
         [HttpPost]
         [Permissions(Permission1 = 1, Permission2 = 2)]
         public ActionResult registrarNuevoDocumento(FormCollection form) {
@@ -381,7 +348,7 @@ namespace SoftwareCelta.Controllers
         }
          
         [HttpPost]
-        [Permissions]
+        [Permissions(Permission1 = 1, Permission2 = 2)]
         public string guardarAreaInteraMovin(List<string> idsDetalles, List<string> areasInternas,string idMovin)
         {
             try
@@ -480,14 +447,16 @@ namespace SoftwareCelta.Controllers
             return retorno;
         }
 
+        
         [HttpGet]
-
+        [Permissions]
         public JsonResult getNewDocuments(string fechaDesde,string fechaHasta)
         {
             SqlDataReader dr;// = new SqlDataReader();
             DateTime fecha = DateTime.Now.AddDays(-1);
             SqlConnection cnx = Connection.getConection();
             List<int> foliosGuardados = new List<int>();
+            Hashtable hashEnvio= new Hashtable();
             if (fechaDesde == null && fechaHasta == null)
             {
                 foliosGuardados = generateStringQuery(fecha);
@@ -499,6 +468,8 @@ namespace SoftwareCelta.Controllers
                 cmd.Parameters.Add("@fecha", SqlDbType.DateTime).Value = fecha;
                 cmd.Parameters.Add("@anioActual", SqlDbType.Int).Value = fecha.Year;
                 dr = cmd.ExecuteReader();
+
+                hashEnvio = Formateador.listToHash(db.DatosEnvio.Where(s=>s.fechaValeVenta==fecha).ToList());
             }
             else {
 
@@ -513,6 +484,7 @@ namespace SoftwareCelta.Controllers
                 cmd.Parameters.Add("@fechaFinal", SqlDbType.DateTime).Value = fechaFinal;                
                 dr = cmd.ExecuteReader();
 
+                hashEnvio = Formateador.listToHash(db.DatosEnvio.Where(s => s.fechaValeVenta >= fechaInicio & s.fechaValeVenta<=fechaFinal).ToList());
             }
             
             int x = 0;
@@ -521,6 +493,7 @@ namespace SoftwareCelta.Controllers
             dw_movin mov = new dw_movin();
             List<dw_movin> documentosRegistrados = new List<dw_movin>();
             List<dw_detalle> listDetalle = new List<dw_detalle>();
+            
             double totalDoc = 0;
             while (dr.Read())
             {
@@ -556,10 +529,10 @@ namespace SoftwareCelta.Controllers
                         }
 
                         string valeVentaString=Convert.ToInt32(dr["NroVale"]).ToString();
-                        dw_envio dw_envio = db.DatosEnvio.SingleOrDefault(s => s.valeVenta == valeVentaString);
-                        if (dw_envio != null)
+                        //dw_envio dw_envio = db.DatosEnvio.SingleOrDefault(s => s.valeVenta == valeVentaString);
+                        if (hashEnvio.ContainsKey(valeVentaString))
                         {
-                            mov.nombreCliente = nomAux + " /" + dw_envio.direccion;
+                            mov.nombreCliente = nomAux + " /" + hashEnvio[valeVentaString].ToString();
                         }
                         else {
                             mov.nombreCliente = nomAux + " / ";

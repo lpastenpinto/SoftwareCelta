@@ -126,10 +126,14 @@
                                     Entregado en tienda
                                 </text> 
                             }
-                            else { 
+                            else if (detalle.estadoDespacho.Equals(2)){
+                                <text> 
+                                    Despachado a Domicilio
+                                </text> 
+                            }
+                            else {
                                 <text>
-                                    <input type="checkbox" name="estadoDespacho" class="form-control hidden" value="@detalle.dw_detalleID" checked/>
-                                    Despacho Domicilio
+                                    Despachar   <input type="checkbox" name="estadoDespacho" class="" value="@detalle.dw_detalleID"/>
                                 </text>
                             }
                         </td>

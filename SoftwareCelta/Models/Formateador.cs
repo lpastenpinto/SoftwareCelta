@@ -166,5 +166,43 @@ namespace SoftwareCelta.Models
             }
             return hash;
         }
+
+        public static Hashtable listToHash(List<dw_envio> listaEnvio)
+        {
+            Hashtable hash = new Hashtable();
+            foreach (var env in listaEnvio)
+            {
+                hash.Add(env.valeVenta, env.direccion);
+            }
+            return hash;
+        }
+        public static Hashtable listToHash(List<permisosBodegas> permisosBodegas)
+        {
+            Hashtable hash = new Hashtable();
+            foreach (var perm in permisosBodegas)
+            {
+                hash.Add(perm.bodegaID, perm.userID);
+            }
+            return hash;
+        }
+        public static Hashtable listToHash(List<dw_datosTransportista> Transportista)
+        {
+            Hashtable hash = new Hashtable();
+            foreach (var perm in Transportista)
+            {
+                hash.Add(perm.dw_datosTransportistaID, perm.nombreCompleto);
+            }
+            return hash;
+        }
+
+        public static List<int> listToInt(List<permisosBodegas> permisosBodegas)
+        {
+            List<int> list = new List<int>();
+            foreach (var perm in permisosBodegas)
+            {
+                list.Add(perm.bodegaID);
+            }
+            return list;
+        }
     }
 }

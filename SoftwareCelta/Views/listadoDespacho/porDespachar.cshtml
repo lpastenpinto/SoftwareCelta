@@ -52,7 +52,15 @@
         <input class="form-control fecha" id="fechaFinal" name="fechaFinal" data-val-date="Ingrese por favor una fecha." data-val-required="El campo fecha es obligatorio."
                data-date-format="DD/MM/YYYY" pattern="[0-9][0-9]/[0-9][0-9]/[0-9][0-9][0-9][0-9]"
                type="text" value="@ViewBag.fechaFinal">
-    </div>   
+    </div>     
+    <div class="col-md-3">
+        <label class="control-label">Estado Documentos</label>
+        <select class="form-control" name="estadoDocumentos" id="estadoDocumentos">
+            <option value="todas" @if (System.Convert.ToString(ViewBag.estado)=="todas") { <text>selected</text> }>Todas</option>
+            <option value="1" @if (System.Convert.ToString(ViewBag.estado) == "1") { <text> selected</text> }>Validados</option>
+            <option value="0" @if (System.Convert.ToString(ViewBag.estado) == "0") { <text> selected</text> }>No Validados</option>
+        </select>
+    </div>  
     <div class="col-md-3">
         <br />
         <input class="btn btn-primary btn-block" id="Boton" value="Filtrar" type="button" />
@@ -70,7 +78,7 @@
                     Numero Boleta
                 </th>
                 <th>
-                    Cantidad Productos por despachar
+                    Fecha Emision
                 </th>
                 <th>Productos a Despachar</th>
                 <th>Transportista</th>
@@ -83,15 +91,15 @@
             {
                 string nameDiv = "divProd" + @i;
                 <tr>
-                    <td>
+                    <td class="col-md-1">
                         @Html.DisplayFor(modelItem => item.numeroDocumento)
                         <input class="hidden idMovin" name="idMovin" value="@item.dw_movinID" />
                         <input class="hidden numeroDocumento" value="@item.numeroDocumento" />
                     </td>
-                    <td class="col-xs-2">
-                        @cantidadProductosPorDespachar[i]
+                    <td class="col-md-1">
+                        @SoftwareCelta.Models.Formateador.fechaCompletaToString(item.fechaEmision)
                     </td>
-                    <td class="col-xs-4">
+                    <td class="col-md-6">
                         <div class="col-xs-2">
                             <button data-toggle="collapse" data-target="#@nameDiv" class="btn btn-success">+</button>
                         </div>
@@ -104,7 +112,20 @@
                             <input class="hidden idDetalleLista" name="idDetalleLista" value="@listaDeListaDetalle[i]" />
                             @foreach (var detalle in listaDeListaDetalle[i])
                             {
-                                <text><div class="col-xs-2">@detalle.codigoProducto</div><div class="col-xs-8">@detalle.descripcionProducto</div><div class="col-xs-1">@detalle.cantidadProducto</div></text>
+                                <text>
+                                    <div class="col-xs-2">@detalle.codigoProducto</div>
+                                    <div class="col-xs-7">@detalle.descripcionProducto</div>
+                                    <div class="col-xs-1">@detalle.cantidadProducto</div>
+                                    @if (detalle.validado.Equals(0))
+                                    {
+                                        <div class="col-xs-1 text-warning"><b>NV</b></div>
+                                    }
+                                    else
+                                    {
+                                        <div class="col-xs-1 text-success"><b>V</b></div>
+                                    }
+                            
+                                </text>
                                 <text><br /></text>
                                 if (detalle.descripcionProducto.Length > 20) { 
                                     <text><br /></text>
@@ -117,25 +138,32 @@
                         </div>
                     </td>
 
-                    <td>
+                    <td class="col-md-2">
                         <div class="col-xs-6">
-                            <select class="form-control idTransportista">
-                                @foreach (var transportista in (List<SoftwareCelta.Models.dw_datosTransportista>)ViewData["transportistas"])
-                                {
-                                    <option value="@transportista.dw_datosTransportistaID">@transportista.nombreCompleto | @transportista.patente</option>
-                                }
-
-                            </select>
-
+                            @if (System.Convert.ToString(ViewBag.estado) == "1")
+                            {
+                                <select class="form-control idTransportista">
+                                    @foreach (var transportista in (List<SoftwareCelta.Models.dw_datosTransportista>)ViewData["transportistas"])
+                                    {
+                                        <option value="@transportista.dw_datosTransportistaID">@transportista.nombreCompleto | @transportista.patente</option>
+                                    }
+                                </select>
+                            }
                         </div>
                         <div class="col-xs-6">
-                            <a href="#" class="btn btn-block btn-success btnDespachar"> Despachar</a>
+                            @if (System.Convert.ToString(ViewBag.estado) == "1")
+                            {
+                                <a href="#" class="btn btn-block btn-success btnDespachar"> Despachar</a>
+                            }
+                            
                         </div>
 
                     </td>
-                    <td>
-                        @Html.ActionLink("Ver detalle y Despachar", "Despachar", new { documentoID = item.dw_movinID })
-
+                    <td class="col-md-2">
+                        @if (System.Convert.ToString(ViewBag.estado) == "1")
+                        { 
+                            @Html.ActionLink("Ver detalle y Despachar", "Despachar", new { documentoID = item.dw_movinID })
+                        }                        
                     </td>
                 </tr>
                                 i++;
@@ -157,13 +185,14 @@
             $("#Boton").click(function () {
                 var ciudad= $("#ciudad").val();
                 var fechaInicial=$("#fechaInicial").val();
-                var fechaFinal=$("#fechaFinal").val();
+                var fechaFinal = $("#fechaFinal").val();
+                var estado = $("#estadoDocumentos").val();
                 var ruta = "";
                 if (fechaInicial == "" || fechaFinal == "") {
-                    ruta = window.location.pathname + "?ciudad=" + ciudad;
+                    ruta = window.location.pathname + "?ciudad=" + ciudad+"&estado="+estado;
                 }
                 else {
-                    ruta = window.location.pathname + "?ciudad=" + ciudad + "&fechaDesde=" + fechaInicial + "&fechaHasta="+fechaFinal;
+                    ruta = window.location.pathname + "?ciudad=" + ciudad + "&fechaDesde=" + fechaInicial + "&fechaHasta="+fechaFinal+"&estado="+estado;
                 }
                 
                 window.location.href = ruta

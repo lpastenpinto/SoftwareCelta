@@ -13,17 +13,17 @@
 <br /><br />
 <h2>Documento @Model.numeroDocumento / @SoftwareCelta.Models.Formateador.fechaCompletaToString(Model.fechaEmision)</h2>
 <br />
-@Html.ActionLink("Agregar Datos Envio", "datosEnvio", new { documentoID = Model.dw_movinID })
+@Html.ActionLink("Editar Datos Envio", "datosEnvio", new { documentoID = Model.dw_movinID })
 
 <br />
+    <p>Direccion</p>
     <p>@dw_envio.direccion/@dw_envio.ciudad</p>
-<br />
+
 <form role="form" method="post" action="@Url.Action("paraDespacharADomicilio", "documentos" )">
     <input type="text" class="hidden" value="@SoftwareCelta.Models.Formateador.fechaCompletaToString(Model.fechaEmision)" name="fechaEmision" />
     <input type="text" class="hidden" value="@Model.tipoDocumento" name="tipoDocumento" />
     <input type="text" class="hidden" value="@dw_envio.dw_envioID" name="dw_envioID"/>
-    <br />
-    <br />
+    
 
     <h3>Productos Comprados</h3>
     <br />

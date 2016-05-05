@@ -1,0 +1,115 @@
+﻿@model SoftwareCelta.Models.dw_movin
+@{
+    ViewBag.Title = "Documento a Validar";
+    int contadorProductos = 1;
+    string despacho = "estadoDespacho";
+    string nombreBodega = "";
+    
+    SoftwareCelta.Models.dw_envio datosEnvio = (SoftwareCelta.Models.dw_envio)ViewData["datosEnvio"];
+    SoftwareCelta.DAL.ContextBDCelta db = new SoftwareCelta.DAL.ContextBDCelta();
+
+}
+<br /><br />
+<br />
+<h2>Documento @Model.numeroDocumento  | @SoftwareCelta.Models.Formateador.fechaCompletaToString(Model.fechaEmision)</h2>
+<br />
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+    @Html.HiddenFor(model => model.dw_movinID)
+   <input class="hidden" name="numDoc" value="@Model.numeroDocumento" />
+    <h3>Productos Comprados</h3>
+    <br />
+    <div class="table-responsive">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>
+                        Codigo Producto
+                    </th>
+                    <th>
+                        Descripcion Producto
+                    </th>
+                    <th>
+                        Cantidad Producto
+                    </th>
+                    <th>
+                        Area Interna /Bodega
+                    </th>
+                    <th>Validar?</th>
+                </tr>
+            </thead>
+            <tbody>
+
+                @foreach (SoftwareCelta.Models.dw_detalle detalle in (List<SoftwareCelta.Models.dw_detalle>)ViewData["detalleDocumento"])
+                {
+                    string nameDespacho = despacho + contadorProductos;
+                    <tr>
+                        <td>
+                            <input class="hidden" name="dw_detalleID" value="@detalle.dw_detalleID" />
+                            @detalle.codigoProducto
+                        </td>
+                        <td>
+                            @detalle.descripcionProducto
+                        </td>
+                        <td>
+                            @detalle.cantidadProducto
+                        </td>
+                        <td>
+                            @if (!detalle.dw_areaInternaID.Equals(0))
+                            {
+
+                                nombreBodega = db.Bodegas.Find(@detalle.dw_areaInternaID).nombre;
+
+                            }
+                            else
+                            {
+                                nombreBodega = "";
+                            }
+                            @nombreBodega
+                        </td>
+                        <td>
+                            @if (!detalle.validado.Equals(0))
+                            {
+                                <text>
+                                    Validado
+                                </text>
+                            }                           
+                            else
+                            {
+                                <text>
+                                    <input type="checkbox" name="validarDespacho" value="@detalle.dw_detalleID" />
+                                </text>
+                            }
+                        </td>
+                    </tr>
+                            contadorProductos++;
+                }
+            </tbody>
+        </table>
+        <br />
+        <div class="clearfix"></div>
+        <div class="modal-footer">
+            @Html.ActionLink("Cancelar", "Index", null, null, new { @class = "btn btn-primary" })
+            <input type="submit" value="Validar" class="btn btn-success btn-lg btn-default" />
+        </div>
+    </div>
+}
+<br />
+@section Scripts {
+    @Styles.Render("~/Content/bootstrap-datetimepicker.css")
+    @Scripts.Render("~/Scripts/datetimepicker/moment.js")
+    @Scripts.Render("~/Scripts/datetimepicker/bootstrap-datetimepicker.js")
+    <script>
+        $(document).ready(function () {
+            $(".fecha").datetimepicker({
+                viewMode: 'days',
+                format: 'DD/MM/YYYY'
+            });
+        });
+    </script>
+}
+
+

@@ -100,6 +100,8 @@ namespace SoftwareCelta.Controllers
             ViewBag.fechaFinal = Formateador.fechaCompletaToString(fechaFinal);
             ViewBag.filtroDoc = estadoFiltroDoc;
             ViewBag.filtroFecha = estadoFiltroFecha;
+            ViewBag.idTransportista=idTransport;
+            ViewBag.idBodega=idBodega;            
             return View(dw_movinList);
         }
 
@@ -191,7 +193,7 @@ namespace SoftwareCelta.Controllers
         }
 
         [Permissions(Permission1 = 1, Permission3 = 3)]
-        public ActionResult porDespachar(string ciudad,string fechaDesde, string fechaHasta) {
+        public ActionResult porDespachar(string ciudad,string fechaDesde, string fechaHasta,string estado) {
 
             //int areaInternaID=Convert.ToInt32(arInt);
             DateTime fDesde = new DateTime();
@@ -210,24 +212,77 @@ namespace SoftwareCelta.Controllers
             List<int> cantidadProductosPorDespachar = new List<int>();
             List<List<dw_detalle>> listaDeListaDetalle = new List<List<dw_detalle>>();
             List<dw_envio> datosEnvio = new List<dw_envio>();
+            
             if (ciudad == null || ciudad.Equals("todas")) {
                 ViewBag.ciudad = "";
-                datosEnvio = db.DatosEnvio.Where(s => s.fechaDespacho <= fHasta & s.fechaDespacho >= fDesde & s.dw_datosTransportistaID == 0).ToList();
+                datosEnvio = db.DatosEnvio.Where(s => s.fechaDespacho <= fHasta & s.fechaDespacho >= fDesde).ToList();
             }else {
                 ViewBag.ciudad = ciudad;
-                datosEnvio = db.DatosEnvio.Where(s => s.fechaDespacho <= fHasta  & s.fechaDespacho >= fDesde & s.dw_datosTransportistaID == 0 & s.ciudad == ciudad).ToList();
+                datosEnvio = db.DatosEnvio.Where(s => s.fechaDespacho <= fHasta  & s.fechaDespacho >= fDesde & s.ciudad == ciudad).ToList();
             }
             
 
             foreach (var datoEnvio in datosEnvio)
             {
                 dw_movin dw_movin = db.Movins.Find(datoEnvio.dw_movinID);
-                List<dw_detalle> dw_detalleList = db.DetalleMovin.Where(s => s.dw_movinID == dw_movin.dw_movinID &s.estadoDespacho==1).ToList();
-                int cantidadProductosMovin = dw_detalleList.Count;
-                cantidadProductosPorDespachar.Add(cantidadProductosMovin);
-                                
-                dw_movinList.Add(dw_movin);
-                listaDeListaDetalle.Add(dw_detalleList);
+                List<dw_detalle> dw_detalleListTotal = new List<dw_detalle>();// db.DetalleMovin.Where(s => s.dw_movinID == dw_movin.dw_movinID & s.estadoDespacho == 1 ).ToList();
+                List<dw_detalle> dw_detalleList = new List<dw_detalle>();//db.DetalleMovin.Where(s => s.dw_movinID == dw_movin.dw_movinID &s.estadoDespacho==1 & s.validado!=0).ToList();
+
+                if (estado == null) {
+                    estado = "1";
+                }
+                if (estado == "todas") {
+
+                    dw_detalleList = db.DetalleMovin.Where(s => s.dw_movinID == dw_movin.dw_movinID & s.estadoDespacho == 1).ToList();                    
+                    int cantidadProductosMovin = dw_detalleList.Count;
+                    if (cantidadProductosMovin > 0)
+                    {
+                        cantidadProductosPorDespachar.Add(cantidadProductosMovin);
+                        dw_movinList.Add(dw_movin);
+                        listaDeListaDetalle.Add(dw_detalleList);
+                    }
+                }
+                else  if(estado=="0"){
+                    dw_detalleListTotal = db.DetalleMovin.Where(s => s.dw_movinID == dw_movin.dw_movinID & s.estadoDespacho == 1).ToList();
+                    dw_detalleList = db.DetalleMovin.Where(s => s.dw_movinID == dw_movin.dw_movinID & s.estadoDespacho == 1 & s.validado == 0).ToList();
+                    
+                    int cantidadTotalProdDoc = dw_detalleListTotal.Count;
+                    int cantidadProductosMovin = dw_detalleList.Count;
+                    if (cantidadProductosMovin > 0)
+                    {
+                        cantidadProductosPorDespachar.Add(cantidadProductosMovin);
+                        dw_movinList.Add(dw_movin);
+                        listaDeListaDetalle.Add(dw_detalleListTotal);
+                    }
+
+                }
+                else if (estado =="1") {
+                    dw_detalleListTotal = db.DetalleMovin.Where(s => s.dw_movinID == dw_movin.dw_movinID & s.estadoDespacho == 1).ToList();
+                    dw_detalleList = db.DetalleMovin.Where(s => s.dw_movinID == dw_movin.dw_movinID & s.estadoDespacho == 1 & s.validado == 1).ToList();
+                    int cantidadTotalProdDoc = dw_detalleListTotal.Count;
+                    int cantidadProductosMovin = dw_detalleList.Count;
+                    if (cantidadProductosMovin > 0 && cantidadTotalProdDoc == cantidadProductosMovin)
+                    {
+                        cantidadProductosPorDespachar.Add(cantidadProductosMovin);
+                        dw_movinList.Add(dw_movin);
+                        listaDeListaDetalle.Add(dw_detalleList);
+                    }
+                }
+                
+                /*int estadoInt = Convert.ToInt32(estado);
+                    dw_detalleListTotal = db.DetalleMovin.Where(s => s.dw_movinID == dw_movin.dw_movinID & s.estadoDespacho == 1).ToList();
+                    dw_detalleList = db.DetalleMovin.Where(s => s.dw_movinID == dw_movin.dw_movinID & s.estadoDespacho == 1 & s.validado != 0).ToList();
+
+                    int cantidadTotalProdDoc = dw_detalleListTotal.Count;
+                    int cantidadProductosMovin = dw_detalleList.Count;
+                    if (cantidadProductosMovin > 0 && cantidadTotalProdDoc == cantidadProductosMovin)
+                    {
+                        cantidadProductosPorDespachar.Add(cantidadProductosMovin);
+
+                        dw_movinList.Add(dw_movin);
+                        listaDeListaDetalle.Add(dw_detalleList);
+                    }*/
+               
             }
 
 
@@ -241,6 +296,7 @@ namespace SoftwareCelta.Controllers
             ViewBag.fechaInicial = Formateador.fechaCompletaToString(fDesde);
             ViewBag.fechaFinal = Formateador.fechaCompletaToString(fHasta);
             ViewBag.ciudad = ciudad;
+            ViewBag.estado = estado;
             return View(dw_movinList);
         }
 
@@ -261,7 +317,7 @@ namespace SoftwareCelta.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [Permissions]
+        [Permissions(Permission1 = 1, Permission3 = 3)]
         public ActionResult Despachar(FormCollection form) {
             
             DateTime fechaDespacho = Formateador.fechaStringToDateTime((string)form["fechaDespacho"]);
@@ -288,7 +344,8 @@ namespace SoftwareCelta.Controllers
         }
 
         [HttpPost]
-        [Permissions]
+        
+        [Permissions(Permission1 = 1, Permission3 = 3)]
         public string despacharSinEditar(string idDetalleMovin, string idTransportista ) {
             int dw_movinID = Convert.ToInt32(idDetalleMovin);
             int dw_transportistaID=Convert.ToInt32(idTransportista);
@@ -331,25 +388,40 @@ namespace SoftwareCelta.Controllers
         }
 
         [HttpPost]
-        [Permissions]
+
         [ValidateAntiForgeryToken]
+        [Permissions(Permission1 = 1, Permission3 = 3)]
         public ActionResult despachoDevuelto(FormCollection form)
         {
+
             int dw_movinID = Convert.ToInt32((string)form["dw_movinID"]);
             string numeroBoleta= (string)form["numeroBoleta"];
             DateTime fechaDespacho = Formateador.fechaStringToDateTime((string)form["fechaDespacho"]);
-
+            string[] despachoDevuelto = Request.Form.GetValues("despachoDevuelto");
             dw_envio datosEnvio = db.DatosEnvio.SingleOrDefault(s => s.dw_movinID == dw_movinID);
             datosEnvio.dw_datosTransportistaID = 0;
             datosEnvio.fechaDespacho=fechaDespacho;
             db.Entry(datosEnvio).State = EntityState.Modified;
+            
+            //datos anterior despacho
+            historicoTransportista histTrans = new historicoTransportista();
+            histTrans.fechaAnteriorDespacho=Formateador.fechaStringToDateTime((string)form["fechaAnteriorDespacho"]);
+            histTrans.dw_movinID = dw_movinID;
+            histTrans.idTransportistaAnterior=Convert.ToInt32((string)form["idTransportistaAnterior"]);
+
+            db.historicosTransportistas.Add(histTrans);
             db.SaveChanges();
-            List<dw_detalle> listDetalleDocumento = db.DetalleMovin.Where(s => s.dw_movinID == dw_movinID && s.estadoDespacho == 1 || s.estadoDespacho == 2).ToList();
-            foreach (var detalle in listDetalleDocumento) {
+            
+            //List<dw_detalle> listDetalleDocumento = db.DetalleMovin.Where(s => s.dw_movinID == dw_movinID && s.estadoDespacho == 1 || s.estadoDespacho == 2).ToList();
+            for (int x = 0; x < despachoDevuelto.Length; x++) {
+                int detalleID = Convert.ToInt32(despachoDevuelto[x]);
+                dw_detalle detalle = db.DetalleMovin.Find(detalleID);
+                detalle.validado = 0;
                 detalle.estadoDespacho = 1;
                 db.Entry(detalle).State = EntityState.Modified;
                 db.SaveChanges();
             }
+
             TempData["Success"] = "Cambio guardado con Exito. Su boleta con numero " + numeroBoleta + " tiene fecha de despacho " + Formateador.fechaCompletaToString(fechaDespacho);
             dw_log.registrarLog(Convert.ToInt32(Session["userID"]), Session["userName"].ToString(), "Se cambia fecha de despacho de documento:" + numeroBoleta+" ya que fue devuelto.");
             

@@ -4,38 +4,15 @@
     ViewBag.Title = "Details";
 }
 
-<h2>Details</h2>
+<h2>Detalle</h2>
 
 <div>
-    <h4>dw_envio</h4>
+    <h4>Datos Envio</h4>
     <hr />
-    <dl class="dl-horizontal">
-        <dt>
-            @Html.DisplayNameFor(model => model.dw_movinID)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.dw_movinID)
-        </dd>
+    <dl class="dl-horizontal">       
 
         <dt>
-            @Html.DisplayNameFor(model => model.dw_datosTransportistaID)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.dw_datosTransportistaID)
-        </dd>
-
-        <dt>
-            @Html.DisplayNameFor(model => model.userID)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.userID)
-        </dd>
-
-        <dt>
-            @Html.DisplayNameFor(model => model.valeVenta)
+            Vale Venta
         </dt>
 
         <dd>
@@ -43,7 +20,7 @@
         </dd>
 
         <dt>
-            @Html.DisplayNameFor(model => model.nombreCliente)
+            Nombre de Cliente
         </dt>
 
         <dd>
@@ -51,7 +28,7 @@
         </dd>
 
         <dt>
-            @Html.DisplayNameFor(model => model.rutCliente)
+            Rut Cliente
         </dt>
 
         <dd>
@@ -59,7 +36,7 @@
         </dd>
 
         <dt>
-            @Html.DisplayNameFor(model => model.ciudad)
+            Ciudad
         </dt>
 
         <dd>
@@ -67,7 +44,7 @@
         </dd>
 
         <dt>
-            @Html.DisplayNameFor(model => model.telefono)
+            Telefono
         </dt>
 
         <dd>
@@ -75,48 +52,32 @@
         </dd>
 
         <dt>
-            @Html.DisplayNameFor(model => model.direccion)
+            Direccion
         </dt>
 
         <dd>
             @Html.DisplayFor(model => model.direccion)
         </dd>
-
+       
         <dt>
-            @Html.DisplayNameFor(model => model.perimetroDespacho)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.perimetroDespacho)
-        </dd>
-
-        <dt>
-            @Html.DisplayNameFor(model => model.observacion)
+            Observacion
         </dt>
 
         <dd>
             @Html.DisplayFor(model => model.observacion)
         </dd>
-
+       
         <dt>
-            @Html.DisplayNameFor(model => model.cantidadVisitasDespacho)
+            Fecha de Venta
         </dt>
 
         <dd>
-            @Html.DisplayFor(model => model.cantidadVisitasDespacho)
-        </dd>
-
-        <dt>
-            @Html.DisplayNameFor(model => model.fechaDespacho)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.fechaDespacho)
+            @SoftwareCelta.Models.Formateador.fechaCompletaToString(@Model.fechaValeVenta)
         </dd>
 
     </dl>
 </div>
 <p>
-    @Html.ActionLink("Edit", "Edit", new { id = Model.dw_envioID }) |
-    @Html.ActionLink("Back to List", "Index")
+    @Html.ActionLink("Editar", "Edit", new { id = Model.dw_envioID }) |
+    @Html.ActionLink("Volver a la Lista", "Index")
 </p>

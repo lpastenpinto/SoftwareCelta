@@ -15,5 +15,6 @@ namespace SoftwareCelta.Models
         public int valorProducto { set; get; }
         public double cantidadProducto { set; get; }
         public int estadoDespacho { set; get; }
+        public int validado { set; get; }
     }
 }
