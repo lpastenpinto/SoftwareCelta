@@ -30,14 +30,14 @@ namespace SoftwareCelta.Controllers
             if (fechaFinal == null || fechaInicial == null)
             {
                 DateTime fechaActual = DateTime.Today;
-                documetosRegistrados = db.Movins.Where(s => s.fechaEmision == fechaActual).OrderBy(s=>s.tipoDocumento).OrderBy(s=>s.numeroDocumento).ToList();
+                documetosRegistrados = db.Movins.Where(s => s.fechaEmision == fechaActual).OrderByDescending(s=>s.numeroDocumento).ToList();
                 ViewBag.fechaDesde=Formateador.fechaCompletaToString(fechaActual);
                 ViewBag.fechaHasta = Formateador.fechaCompletaToString(fechaActual);
             }
             else {
                 DateTime desde = Formateador.fechaStringToDateTime(fechaInicial);
                 DateTime hasta = Formateador.fechaStringToDateTime(fechaFinal);
-                documetosRegistrados = db.Movins.Where(s => s.fechaEmision >= desde & s.fechaEmision<=hasta).OrderBy(s=>s.tipoDocumento).OrderBy(s=>s.numeroDocumento).ToList();
+                documetosRegistrados = db.Movins.Where(s => s.fechaEmision >= desde & s.fechaEmision <= hasta).OrderByDescending(s => s.numeroDocumento).ToList();
                 ViewBag.fechaDesde = fechaInicial;
                 ViewBag.fechaHasta = fechaFinal;
             }
@@ -299,7 +299,7 @@ namespace SoftwareCelta.Controllers
             DateTime fechaEmision = Formateador.fechaFormatoGuardar((string)form["fechaEmision"]);
             
             dw_movin documento = new dw_movin();
-            documento.fechaEmision = fechaEmision;
+            documento.fechaEmision = fechaEmision;            
             documento.numeroDocumento = numeroDocumento;
             documento.numeroVale = numeroVale;
             documento.nombreVendedor = nombreVendedor;
@@ -338,6 +338,7 @@ namespace SoftwareCelta.Controllers
             string valeVentaString= numeroVale.ToString();
             dw_envio dw_envio = db.DatosEnvio.SingleOrDefault(s => s.valeVenta == valeVentaString);
             dw_envio.dw_movinID = documento.dw_movinID;
+            dw_envio.fechaDespacho = documento.fechaEmision.AddDays(2);
 
             db.Entry(dw_envio).State = EntityState.Modified;
             db.SaveChanges();

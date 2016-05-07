@@ -131,7 +131,7 @@
                 if (numDoc != "") {
                     $.ajax({
                         method: "POST",
-                        url: "/documentos/BuscarDocumentoPorNumero", data: { "numDoc": numDoc},
+                        url: "/Despacho/documentos/BuscarDocumentoPorNumero", data: { "numDoc": numDoc},
                         success: function (retorno) {
                             if (retorno == "true") {
                                 ruta = window.location.pathname + "?numDoc=" + numDoc;

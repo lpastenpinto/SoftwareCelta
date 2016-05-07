@@ -220,8 +220,8 @@ namespace SoftwareCelta.Controllers
                 ViewBag.ciudad = ciudad;
                 datosEnvio = db.DatosEnvio.Where(s => s.fechaDespacho <= fHasta  & s.fechaDespacho >= fDesde & s.ciudad == ciudad).ToList();
             }
-            
 
+            List<dw_envio> listaFinalEnvios = new List<dw_envio>();
             foreach (var datoEnvio in datosEnvio)
             {
                 dw_movin dw_movin = db.Movins.Find(datoEnvio.dw_movinID);
@@ -240,6 +240,7 @@ namespace SoftwareCelta.Controllers
                         cantidadProductosPorDespachar.Add(cantidadProductosMovin);
                         dw_movinList.Add(dw_movin);
                         listaDeListaDetalle.Add(dw_detalleList);
+                        listaFinalEnvios.Add(datoEnvio);
                     }
                 }
                 else  if(estado=="0"){
@@ -253,6 +254,7 @@ namespace SoftwareCelta.Controllers
                         cantidadProductosPorDespachar.Add(cantidadProductosMovin);
                         dw_movinList.Add(dw_movin);
                         listaDeListaDetalle.Add(dw_detalleListTotal);
+                        listaFinalEnvios.Add(datoEnvio);
                     }
 
                 }
@@ -266,6 +268,7 @@ namespace SoftwareCelta.Controllers
                         cantidadProductosPorDespachar.Add(cantidadProductosMovin);
                         dw_movinList.Add(dw_movin);
                         listaDeListaDetalle.Add(dw_detalleList);
+                        listaFinalEnvios.Add(datoEnvio);
                     }
                 }
                 
@@ -293,6 +296,7 @@ namespace SoftwareCelta.Controllers
             ViewData["transportistas"]=db.Transportistas.ToList();
             ViewData["hashBodegas"] = Formateador.listToHash(dw_areaInternaList);
             ViewData["ciudades"] = dw_ciudades_despacho.listaCiudades();
+            ViewData["envios"] = listaFinalEnvios;
             ViewBag.fechaInicial = Formateador.fechaCompletaToString(fDesde);
             ViewBag.fechaFinal = Formateador.fechaCompletaToString(fHasta);
             ViewBag.ciudad = ciudad;
@@ -329,6 +333,14 @@ namespace SoftwareCelta.Controllers
             dw_envio.cantidadVisitasDespacho = dw_envio.cantidadVisitasDespacho + 1;
             dw_envio.dw_datosTransportistaID = Convert.ToInt32((string)form["datosTransportista"]);
             db.Entry(dw_envio).State = EntityState.Modified;
+
+            historicoTransportista histTrans = new historicoTransportista();
+            histTrans.fechaAnteriorDespacho = fechaDespacho;
+            histTrans.dw_movinID = dw_movinID;
+            histTrans.idTransportistaAnterior = dw_envio.dw_datosTransportistaID;
+            histTrans.ciudad = dw_envio.ciudad;
+            histTrans.tipo = "despacho";
+            db.historicosTransportistas.Add(histTrans);
             db.SaveChanges();
 
             string[] checkeoDespacho = Request.Form.GetValues("estadoDespacho");
@@ -358,6 +370,16 @@ namespace SoftwareCelta.Controllers
                 dw_envio.cantidadVisitasDespacho = dw_envio.cantidadVisitasDespacho + 1;
                 dw_envio.fechaDespacho= Formateador.fechaStringToDateTime(Formateador.fechaCompletaToString(DateTime.Now));           
                 db.Entry(dw_envio).State = EntityState.Modified;
+
+
+                historicoTransportista histTrans = new historicoTransportista();
+                histTrans.fechaAnteriorDespacho =dw_envio.fechaDespacho;
+                histTrans.dw_movinID = dw_movinID;
+                histTrans.idTransportistaAnterior = dw_envio.dw_datosTransportistaID;
+                histTrans.ciudad = dw_envio.ciudad;
+                histTrans.tipo = "despacho";
+                db.historicosTransportistas.Add(histTrans);
+
                 db.SaveChanges();
 
                 foreach (var detalle in listDetalle)
@@ -408,7 +430,8 @@ namespace SoftwareCelta.Controllers
             histTrans.fechaAnteriorDespacho=Formateador.fechaStringToDateTime((string)form["fechaAnteriorDespacho"]);
             histTrans.dw_movinID = dw_movinID;
             histTrans.idTransportistaAnterior=Convert.ToInt32((string)form["idTransportistaAnterior"]);
-
+            histTrans.ciudad = datosEnvio.ciudad;
+            histTrans.tipo = "devolucion";
             db.historicosTransportistas.Add(histTrans);
             db.SaveChanges();
             

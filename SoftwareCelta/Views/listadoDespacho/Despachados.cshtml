@@ -5,6 +5,8 @@
     List<SoftwareCelta.Models.dw_envio> datosEnvio = (List<SoftwareCelta.Models.dw_envio>)ViewData["datosEnvio"];
     List<List<SoftwareCelta.Models.dw_detalle>> listaDeListaDetalle = (List<List<SoftwareCelta.Models.dw_detalle>>)ViewData["listaDeListaDetalle"];
     int i = 0;
+    List<int> permisos= (List<int>)Session["permisosUser"];
+    
 }
 @if (TempData["Success"] != null)
 {   <br /><br /><br /> 
@@ -170,7 +172,10 @@
                         <a href="@Url.Action("DocumentoRegistrado", "documentos", new { documentoID = item.dw_movinID })">Ver</a>
                     </td>
                     <td class="col-md-1">
-                        @Html.ActionLink("Despacho Devuelto", "despachoDevuelto", null, new { documentoID = item.dw_movinID }, new { @class = "btn btn-danger" })
+                        
+                        @if (permisos.Contains(1) || permisos.Contains(3)) { 
+                            @Html.ActionLink("Despacho Devuelto", "despachoDevuelto", null, new { documentoID = item.dw_movinID }, new { @class = "btn btn-danger" })
+                        }                        
                     </td>
                 </tr>
                 i++;
@@ -215,7 +220,7 @@
                     var numeroDoc = $(".docNum").val();
                     $.ajax({
                         method: "POST",
-                        url: "/listadoDespacho/BuscarDocumentoPorNumero", data: { "numDoc": numeroDoc, "tipo": "1" },
+                        url: "/Despacho/listadoDespacho/BuscarDocumentoPorNumero", data: { "numDoc": numeroDoc, "tipo": "1" },
                         success: function (retorno) {
                             if (retorno == "true") {
                                 ruta = window.location.pathname + "?numDoc=" + numeroDoc;

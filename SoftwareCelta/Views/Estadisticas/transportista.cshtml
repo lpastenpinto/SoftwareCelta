@@ -44,6 +44,17 @@
             <option value="devolucion" @if ((System.Convert.ToString(ViewBag.tipo) == "devolucion")) { <text> selected</text> }>Devolucion</option>
         </select>
     </div>
+
+    <div class="col-md-3">
+        <label class="control-label">Ciudades Despacho</label>
+        <select class="form-control" id="ciudad">
+            <option value="todas">Todas</option>
+            @foreach (SoftwareCelta.Models.dw_ciudades_despacho ciudad in (List<SoftwareCelta.Models.dw_ciudades_despacho>)ViewData["ciudades"])
+            {
+                <option value="@ciudad.nombre" @if ((System.Convert.ToString(ViewBag.ciudad) == ciudad.nombre)) { <text> selected</text> }>@ciudad.nombre</option>
+            }
+        </select>
+    </div>
     <div class="col-md-3">
         <br />
         <input class="btn btn-primary btn-block" id="Boton" value="Buscar" type="button" onclick="return false;" />
@@ -62,15 +73,17 @@
                     Numero Documento
                 </th>
                 <th>
+                    Tipo
+                </th>
+                <th>
                     Fecha
                 </th>
+                <th>Ciudad</th>
                 <th>
                     Transportista
                 </th>
-                <th>
-                    Tipo
-                </th>
-
+                
+               
             </tr>
         </thead>
         <tbody>
@@ -81,13 +94,7 @@
                         @item.numeroDocumento
                     </td>
                     <td>
-                        @SoftwareCelta.Models.Formateador.fechaCompletaToString(item.fechaEmision)
-                    </td>
-                    <td>
-                        @hashTransp[envios[x].dw_datosTransportistaID].ToString()
-                    </td>
-                    <td>
-                        @if (envios[x].nombreCliente.ToString().Equals("Devolucion"))
+                        @if (envios[x].nombreCliente.ToString().Equals("devolucion"))
                         {
                             <text>DEVOLUCION</text>
                         }
@@ -95,10 +102,20 @@
                         {
                             <text>DESPACHO</text>
                         }
+                    </td> 
+                    <td>
+                        @SoftwareCelta.Models.Formateador.fechaCompletaToString(item.fechaEmision)
                     </td>
+                    <td>
+                        @envios[x].ciudad
+                    </td>
+                    <td>
+                        @hashTransp[envios[x].dw_datosTransportistaID].ToString()
+                    </td>
+                                      
                 </tr>
 
-                        x++;
+                x++;
             }
 
             <tr>
@@ -128,6 +145,7 @@
                 var fechaFinal = $("#fechaFinal").val();
                 var transportista = $("#transportista").val();
                 var tipo = $("#tipo").val();
+                var ciudad = $("#ciudad").val();
 
                 fechaInicial = fechaInicial.replace("/", "-").replace("/", "-");
                 fechaFinal = fechaFinal.replace("/", "-").replace("/", "-");
@@ -136,7 +154,7 @@
                         alert("Debe ingresar ambas fechas");
                     }
                     else {
-                        if (transportista == "todos" && tipo=="todos") {
+                        /*if (transportista == "todos" && tipo=="todos") {
                             ruta = window.location.pathname+"?strFechaInicial=" + fechaInicial + "&strFechaFinal=" + fechaFinal;
                         } else if(transportista!="todos" && tipo=="todos") {
                             ruta = window.location.pathname + "?strFechaInicial=" + fechaInicial + "&strFechaFinal=" + fechaFinal + "&transportista=" + transportista;
@@ -145,7 +163,8 @@
                             ruta = window.location.pathname + "?strFechaInicial=" + fechaInicial + "&tipo=" + tipo;
                         } else {
                             ruta = window.location.pathname + "?strFechaInicial=" + fechaInicial + "&strFechaFinal=" + fechaFinal + "&tipo=" + tipo + "&transportista=" + transportista;
-                        }
+                        }*/
+                        ruta = window.location.pathname + "?strFechaInicial=" + fechaInicial + "&strFechaFinal=" + fechaFinal + "&tipo=" + tipo + "&transportista=" + transportista + "&ciudad=" + ciudad;
                         window.location.href = ruta
                     }
 

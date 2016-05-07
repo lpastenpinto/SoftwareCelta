@@ -1036,7 +1036,6 @@
     <Content Include="Views\validarProductosDespacho\Index.cshtml" />
     <Content Include="Views\validarProductosDespacho\documento.cshtml" />
     <Content Include="Views\Estadisticas\bodega.cshtml" />
-    <Content Include="Views\Estadisticas\ciudad.cshtml" />
     <Content Include="Views\Estadisticas\transportista.cshtml" />
   </ItemGroup>
   <ItemGroup>

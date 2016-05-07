@@ -5,7 +5,7 @@
     string verifNull = "";
 
     fechaDespacho = SoftwareCelta.Models.Formateador.fechaCompletaToStringS0(Model.fechaDespacho);
-    if (fechaDespacho.Equals("1/1/1"))
+    if (fechaDespacho.Equals("1/1/2000"))
     {
         fechaDespacho = SoftwareCelta.Models.Formateador.fechaCompletaToStringS0(DateTime.Now.AddDays(2));
         verifNull = "Ys";
@@ -65,7 +65,8 @@
         </div>
         <br />
         <div class="col-md-6">
-            <label class="control-label">Fecha Despacho</label>
+            <h3>Fecha Despacho</h3>
+            
             <input class="form-control fecha" id="fechaDespacho" name="fechaDespacho" data-val-date="Ingrese por favor una fecha." data-val-required="El campo fecha es obligatorio."
                    data-date-format="DD/MM/YYYY" pattern="[0-9][0-9]/[0-9][0-9]/[0-9][0-9][0-9][0-9]"
                    type="text" value="@fechaDespacho">

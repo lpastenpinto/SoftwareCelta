@@ -66,13 +66,13 @@
     <table class="table table-hover">
         <thead>
             <tr>
-                <th class="col-md-2">
+                <th class="col-md-1">
                     Numero Boleta
                 </th>          
-                <th class="col-md-2">
+                <th class="col-md-1">
                     Tipo documento
                 </th>                
-                <th class="col-md-6">
+                <th class="col-md-8">
                     <div class="col-md-12">Productos para Despacho</div>
                     <div class="col-md-12">
                         <div class="col-md-2">Codigo</div>
@@ -101,7 +101,7 @@
                         @{string nameDiv = "prod" + i;}
                         @{string nameDivSucces = "divSucces" + i;}
                         <div class="col-xs-2">
-                            <button data-toggle="collapse" data-target="#@nameDiv" class="btn btn-collapse">Mostrar</button>
+                            <button data-toggle="collapse" data-target="#@nameDiv" class="btn btn-primary btn-collapse">+</button>
                         </div>
                         <div class="col-xs-10 divSucces"></div>
                         <br /><br />
@@ -114,7 +114,7 @@
                                 <text><div class="col-xs-2">@detalle.codigoProducto</div><div class="col-xs-4">@detalle.descripcionProducto</div><div class="col-xs-1">@detalle.cantidadProducto</div></text>
                                 <text>
                                     <div class="col-xs-5">
-                                    <select class="form-control areaInterna" name="areaInterna" disabled>
+                                    <select class="form-control areaInterna" name="areaInterna">
                                         <option value="0">Sin Asignar</option>
                                         @foreach (var areaInt in (List<SoftwareCelta.Models.dw_areaInterna>)ViewData["bodegas"])
                                         {
@@ -134,15 +134,15 @@
                                     <text><br /></text>
                                 }
                             }
-                            <button class="btn btn-success guardarAreaInternaProd hidden">Guardar</button>
+                            <button class="btn btn-success guardarAreaInternaProd col-sm-offset-10">Guardar</button>
                         </div>
 
                     </td>
                     <td>
-                        
+                        <!--
                         @Html.ActionLink("Asignacion Despacho +", "paraDespacharADomicilio", new { documentoID = item.dw_movinID }, new { @class = "btn btn-primary" })
-                        
-                        @Html.ActionLink("Editar Datos Envio", "datosEnvio", new { documentoID = item.dw_movinID })                    
+                        !-->
+                        @Html.ActionLink("Asignar Fecha Despacho", "datosEnvio", new { documentoID = item.dw_movinID }, new { @class = "btn btn-primary" })                    
                        
                     </td>
                 </tr>
@@ -169,7 +169,8 @@
                 console.log(areasInternas);
                 var div = $(this).closest('tr');
                 $.ajax({
-                    method: "POST",			
+                    method: "POST",
+                    ///Despacho
                     url: "/Despacho/documentos/guardarAreaInteraMovin", data: { "idsDetalles": idsDetalles, "areasInternas": areasInternas, "idMovin": idMovin },
                     beforeSend: function () {
                         div.find('.divSucces').html("GUARDANDO...");

@@ -86,6 +86,7 @@ namespace SoftwareCelta.Controllers
             ViewData["cantidadProductosPorDespachar"] = cantidadProductosPorDespachar;
             ViewData["listaDeListaDetalle"] = listaDeListaDetalle;
             ViewData["bodegas"] = dw_areaInternaList;
+            ViewData["bodegasTodas"] = db.Bodegas.ToList();
                         
             ViewBag.fechaInicial = Formateador.fechaCompletaToString(fDesde);
             ViewBag.fechaFinal = Formateador.fechaCompletaToString(fHasta);

@@ -11,5 +11,7 @@ namespace SoftwareCelta.Models
         public DateTime fechaAnteriorDespacho { set; get;}
         public int idTransportistaAnterior { set; get;}
         public int dw_movinID { set; get; }
+        public string ciudad { set; get; }
+        public string tipo { set; get; }
     }
 }

@@ -6,6 +6,7 @@
 
     List<List<SoftwareCelta.Models.dw_detalle>> listaDeListaDetalle = (List<List<SoftwareCelta.Models.dw_detalle>>)ViewData["listaDeListaDetalle"];
     List<int> cantidadProductosPorDespachar = (List<int>)ViewData["cantidadProductosPorDespachar"];
+    List<int> permisos = (List<int>)Session["permisosUser"];
     //System.Collections.Hashtable hashAreaInterna = (System.Collections.Hashtable)ViewData["hashBodegas"];
 }
 
@@ -29,18 +30,37 @@
     <div class="col-md-3">
         <label class="control-label">Bodegas</label>
         <select class="form-control" name="bodega" id="bodega">
-            <option value="todas">Todas</option>            
-            @foreach (SoftwareCelta.Models.dw_areaInterna bodega in (List<SoftwareCelta.Models.dw_areaInterna>)ViewData["bodegas"])
+            <option value="todas">Todas</option>
+            @if (permisos.Contains(1))
             {
-                if (ViewBag.bodega != null && System.Convert.ToString(ViewBag.bodega) != "todas" && System.Convert.ToInt32(ViewBag.bodega) == bodega.dw_areaInternaID)
+                foreach (SoftwareCelta.Models.dw_areaInterna bodega in (List<SoftwareCelta.Models.dw_areaInterna>)ViewData["bodegasTodas"])
                 {
-                    <option value="@bodega.dw_areaInternaID" selected>@bodega.nombre</option>
+                    if (ViewBag.bodega != null && System.Convert.ToString(ViewBag.bodega) != "todas" && System.Convert.ToInt32(ViewBag.bodega) == bodega.dw_areaInternaID)
+                    {
+                        <option value="@bodega.dw_areaInternaID" selected>@bodega.nombre</option>
+                    }
+                    else
+                    {
+                        <option value="@bodega.dw_areaInternaID">@bodega.nombre</option>
+                    }
                 }
-                else
+
+            }
+            else
+            {
+                foreach (SoftwareCelta.Models.dw_areaInterna bodega in (List<SoftwareCelta.Models.dw_areaInterna>)ViewData["bodegas"])
                 {
-                    <option value="@bodega.dw_areaInternaID">@bodega.nombre</option>                
+                    if (ViewBag.bodega != null && System.Convert.ToString(ViewBag.bodega) != "todas" && System.Convert.ToInt32(ViewBag.bodega) == bodega.dw_areaInternaID)
+                    {
+                        <option value="@bodega.dw_areaInternaID" selected>@bodega.nombre</option>
+                    }
+                    else
+                    {
+                        <option value="@bodega.dw_areaInternaID">@bodega.nombre</option>
+                    }
                 }
             }
+            
         </select>
     </div>
     <div class="col-md-3 fechaInicio">
