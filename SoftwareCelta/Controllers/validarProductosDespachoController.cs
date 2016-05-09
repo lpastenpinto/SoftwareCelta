@@ -98,7 +98,14 @@ namespace SoftwareCelta.Controllers
         [Permissions(Permission1 = 1)]
         public ActionResult listResponsabilidad() {
             ViewData["bodegas"] = db.Bodegas.ToList();
-            ViewData["users"] = db.Users.ToList();
+            List<permisoUser> listadoPermisos = db.PermisosUser.Where(s => s.rolesID == 1 || s.rolesID == 5).ToList();
+            List<user> usersConPermisos = new List<user>();
+            foreach (var perm in listadoPermisos) {
+                user user = db.Users.Find(perm.userID);
+                usersConPermisos.Add(user);            
+            }
+
+            ViewData["users"] = usersConPermisos;
             ViewData["permisosBodegas"] = Formateador.listToHash(db.permisosUserBodegas.ToList());
             return View();
         }
