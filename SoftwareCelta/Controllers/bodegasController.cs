@@ -16,14 +16,14 @@ namespace SoftwareCelta.Controllers
         private ContextBDCelta db = new ContextBDCelta();
 
         // GET: bodegas
-        [Permissions]
+        [Permissions(Permission1 = 1, Permission2 = 8)]
         public ActionResult Index()
         {   //db.Bodegas.ToList()
             return View(db.Bodegas.ToList());
         }
 
         // GET: bodegas/Details/5
-        [Permissions]
+        [Permissions(Permission1 = 1, Permission2 = 8)]
         public ActionResult Details(int? id)
         {
             if (id == null)
@@ -39,7 +39,7 @@ namespace SoftwareCelta.Controllers
         }
 
         // GET: bodegas/Create
-        [Permissions]
+        [Permissions(Permission1 = 1, Permission2 = 8)]
         public ActionResult Create()
         {
             return View();
@@ -50,7 +50,7 @@ namespace SoftwareCelta.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [Permissions]
+        [Permissions(Permission1 = 1, Permission2 = 8)]
         public ActionResult Create([Bind(Include = "dw_areaInternaID,nombre")] dw_areaInterna bodega)
         {
             if (ModelState.IsValid)
@@ -65,7 +65,7 @@ namespace SoftwareCelta.Controllers
         }
 
         // GET: bodegas/Edit/5
-        [Permissions]
+        [Permissions(Permission1 = 1, Permission2 = 8)]
         public ActionResult Edit(int? id)
         {
             if (id == null)
@@ -85,7 +85,7 @@ namespace SoftwareCelta.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [Permissions]
+        [Permissions(Permission1 = 1, Permission2 = 8)]
         public ActionResult Edit([Bind(Include = "dw_areaInternaID,nombre")] dw_areaInterna bodega)
         {
             if (ModelState.IsValid)
@@ -100,7 +100,7 @@ namespace SoftwareCelta.Controllers
         }
 
         // GET: bodegas/Delete/5
-        [Permissions]
+        [Permissions(Permission1 = 1, Permission2 = 8)]
         public ActionResult Delete(int? id)
         {
             if (id == null)
@@ -118,7 +118,7 @@ namespace SoftwareCelta.Controllers
         // POST: bodegas/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        [Permissions]
+        [Permissions(Permission1 = 1, Permission2 = 8)]
         public ActionResult DeleteConfirmed(int id)
         {
             dw_areaInterna bodega = db.Bodegas.Find(id);

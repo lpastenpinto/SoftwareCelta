@@ -23,14 +23,13 @@
         </div>
     </div>
 }
+<h2>Pedido a validar para despachar entre las fechas:</h2>
 <div class="col-md-12">
-    <div class="col-md-12">
-        <h4>Filtros:</h4>
-    </div>
+
     <div class="col-md-3">
         <label class="control-label">Bodegas</label>
         <select class="form-control" name="bodega" id="bodega">
-            <option value="todas">Todas</option>
+            <option value="todas">Todas que tengo Permiso</option>
             @if (permisos.Contains(1))
             {
                 foreach (SoftwareCelta.Models.dw_areaInterna bodega in (List<SoftwareCelta.Models.dw_areaInterna>)ViewData["bodegasTodas"])

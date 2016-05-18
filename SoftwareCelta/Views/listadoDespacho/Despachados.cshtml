@@ -173,7 +173,7 @@
                     </td>
                     <td class="col-md-1">
                         
-                        @if (permisos.Contains(1) || permisos.Contains(3)) { 
+                        @if (permisos.Contains(1) || permisos.Contains(10)) { 
                             @Html.ActionLink("Despacho Devuelto", "despachoDevuelto", null, new { documentoID = item.dw_movinID }, new { @class = "btn btn-danger" })
                         }                        
                     </td>

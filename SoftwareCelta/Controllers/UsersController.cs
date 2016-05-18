@@ -38,6 +38,7 @@ namespace SoftwareCelta.Controllers
                 return View();
             }else{
                 List<permisoUser> permisosUser= db.PermisosUser.Where(s=>s.userID==user.userID).ToList();
+                List<permisosBodegas> permisosBodegas = db.permisosUserBodegas.Where(s => s.userID == user.userID).ToList();
                 List<int> permisos = new List<int>();
                 foreach (var perm in permisosUser) {
                     permisos.Add(perm.rolesID);
@@ -45,6 +46,7 @@ namespace SoftwareCelta.Controllers
                 Session["userID"] = user.userID;
                 Session["userName"] = user.userName;
                 Session["permisosUser"] = permisos;
+                Session["permisosUserBodegas"] = Formateador.listToListInt(permisosBodegas);
                 return RedirectToAction("Index", "Home");
             }                                    
         }
@@ -96,7 +98,7 @@ namespace SoftwareCelta.Controllers
             string[] rolID = Request.Form.GetValues("rolID");
             string[] tienePermiso = Request.Form.GetValues("tienePermiso");
             int userID = Convert.ToInt32((string)form["userID"]);
-
+            user usuario = db.Users.Find(userID);
             var permisosUser = db.PermisosUser.Where(u => u.userID == userID);
 
             foreach (var permiso in permisosUser)
@@ -113,6 +115,7 @@ namespace SoftwareCelta.Controllers
                 }                
             }
             db.SaveChanges();
+            TempData["SuccessBodega"] = "Los permisos del usuario " + usuario.userName + " han sido guardados exitosamente";
             return RedirectToAction("Index");
         }
 

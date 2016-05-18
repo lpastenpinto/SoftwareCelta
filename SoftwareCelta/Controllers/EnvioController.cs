@@ -16,7 +16,7 @@ namespace SoftwareCelta.Controllers
         private ContextBDCelta db = new ContextBDCelta();
 
         // GET: Envio
-        [Permissions]
+        [Permissions(Permission1 = 1, Permission2 = 7)]
         public ActionResult Index(string fechaDesde, string fechaHasta)
         {
             List<dw_envio> listEnvios = new List<dw_envio>();
@@ -39,6 +39,7 @@ namespace SoftwareCelta.Controllers
         }
 
         // GET: Envio/Details/5
+        [Permissions(Permission1 = 1, Permission2 = 7)]
         public ActionResult Details(int? id)
         {
             if (id == null)
@@ -54,7 +55,7 @@ namespace SoftwareCelta.Controllers
         }
 
         // GET: Envio/Create
-        [Permissions(Permission1 = 1, Permission2 = 4)]
+        [Permissions(Permission1 = 1, Permission2 = 7)]
         public ActionResult Create()
         {
             ViewData["dw_ciudades"] = dw_ciudades_despacho.listaCiudades();
@@ -66,17 +67,46 @@ namespace SoftwareCelta.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [Permissions(Permission1 = 1, Permission2 = 4)]
-        public ActionResult Create([Bind(Include = "dw_envioID,valeVenta,nombreCliente,rutCliente,ciudad,telefono,direccion,observacion,fechaValeVenta")] dw_envio dw_envio, FormCollection form)
+        [Permissions(Permission1 = 1, Permission2 = 7)]
+        public ActionResult Create([Bind(Include = "dw_envioID,valeVenta,nombreCliente,rutCliente,ciudad,telefono,direccion,observacion,fechaValeVenta")] dw_envio dw_envioNew, FormCollection form)
         {
             DateTime fecha = Formateador.fechaStringToDateTime((string)form["fechaValeVenta"]);
-            dw_envio.fechaValeVenta = fecha;
-            DateTime fechaD = new DateTime(2000,1,1);
-            
-            dw_envio.fechaDespacho=fechaD;
-                db.DatosEnvio.Add(dw_envio);
+            dw_envioNew.fechaValeVenta = fecha;
+
+            int numVale =Convert.ToInt32(dw_envioNew.valeVenta);
+            dw_movin movin = db.Movins.SingleOrDefault(s => s.numeroVale == numVale);
+            if (movin != null)
+            {
+                int idMovin = movin.dw_movinID;
+                dw_envio dw_envio = db.DatosEnvio.SingleOrDefault(s => s.dw_movinID == idMovin);
+                if (dw_envio != null)
+                {
+                    dw_envio.fechaValeVenta = fecha;
+                    dw_envio.valeVenta = dw_envioNew.valeVenta;
+                    dw_envio.nombreCliente = dw_envioNew.nombreCliente;
+                    dw_envio.rutCliente = dw_envioNew.rutCliente;
+                    dw_envio.direccion = dw_envioNew.direccion;
+                    dw_envio.ciudad = dw_envioNew.ciudad;
+                    dw_envio.telefono = dw_envioNew.telefono;
+                    db.Entry(dw_envio).State = EntityState.Modified;
+                    db.SaveChanges();
+
+                }
+                else {
+                    DateTime fechaD = new DateTime(2000, 1, 1);
+                    dw_envioNew.fechaDespacho = fechaD;
+                    db.DatosEnvio.Add(dw_envioNew);
+                    db.SaveChanges();                
+                }
+            }
+            else { 
+                DateTime fechaD = new DateTime(2000,1,1);            
+                dw_envioNew.fechaDespacho=fechaD;
+                db.DatosEnvio.Add(dw_envioNew);
                 db.SaveChanges();
-                dw_log.registrarLog(Convert.ToInt32(Session["userID"]), Session["userName"].ToString(), "Registro nueva venta Vale Venta:"+dw_envio.valeVenta);
+            }
+
+            dw_log.registrarLog(Convert.ToInt32(Session["userID"]), Session["userName"].ToString(), "Registro nueva venta Vale Venta:" + dw_envioNew.valeVenta);
                 return RedirectToAction("Index");
             
 
@@ -84,7 +114,7 @@ namespace SoftwareCelta.Controllers
         }
 
         // GET: Envio/Edit/5
-        [Permissions(Permission1 = 1, Permission2 = 4)]
+        [Permissions(Permission1 = 1, Permission2 = 7)]
         public ActionResult Edit(int? id)
         {
             if (id == null)
@@ -105,7 +135,7 @@ namespace SoftwareCelta.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [Permissions(Permission1 = 1, Permission2 = 4)]
+        [Permissions(Permission1 = 1, Permission2 = 7)]
         public ActionResult Edit([Bind(Include = "dw_envioID,valeVenta,nombreCliente,rutCliente,ciudad,telefono,direccion,observacion,fechaValeVenta")] dw_envio dw_envio, FormCollection form)
         {
             dw_envio actual_datosEnvio = db.DatosEnvio.Find(Convert.ToInt32((string)form["dw_envioID"]));
@@ -128,7 +158,7 @@ namespace SoftwareCelta.Controllers
         }
 
         // GET: Envio/Delete/5
-        [Permissions(Permission1 = 1, Permission2 = 4)]
+        [Permissions(Permission1 = 1, Permission2 = 7)]
         public ActionResult Delete(int? id)
         {
             if (id == null)

@@ -5,7 +5,11 @@
     string verifNull = "";
 
     fechaDespacho = SoftwareCelta.Models.Formateador.fechaCompletaToStringS0(Model.fechaDespacho);
-    if (fechaDespacho.Equals("1/1/2000"))
+    if (fechaDespacho.Equals("1/1/1")) {
+        verifNull = "NoExiste";
+        fechaDespacho = SoftwareCelta.Models.Formateador.fechaCompletaToStringS0(DateTime.Now.AddDays(2));
+    }
+    else if (fechaDespacho.Equals("1/1/2000"))
     {
         fechaDespacho = SoftwareCelta.Models.Formateador.fechaCompletaToStringS0(DateTime.Now.AddDays(2));
         verifNull = "Ys";
@@ -15,6 +19,7 @@
     List<SoftwareCelta.Models.dw_ciudades_despacho> ciudades = (List<SoftwareCelta.Models.dw_ciudades_despacho>)ViewData["dw_ciudades"];
     
 }
+<br /><br />
 <h2>Boleta N° @dw_movin.numeroDocumento</h2>
 <form role="form" method="post" action="@Url.Action("datosEnvio", "documentos" )">
     <input type="text" class="hidden" value="@dw_movin.dw_movinID" name="idDocumento" />  

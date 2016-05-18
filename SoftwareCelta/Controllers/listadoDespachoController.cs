@@ -15,7 +15,7 @@ namespace SoftwareCelta.Controllers
     {
         private ContextBDCelta db = new ContextBDCelta();
         // GET: listadoDespacho                 
-        [Permissions(Permission1 = 1, Permission3 = 3)]
+        [Permissions(Permission1 = 1, Permission2 = 6)]
         public ActionResult Despachados(string fInicial, string fFinal, string idTransport,string idBodega, string numDoc) {
 
             string estadoFiltroDoc="";
@@ -105,7 +105,7 @@ namespace SoftwareCelta.Controllers
             return View(dw_movinList);
         }
 
-        [Permissions(Permission1 = 1, Permission3 = 3)]
+        [Permissions(Permission1 = 1, Permission2 = 5)]
         public ActionResult noDespachados(string numDoc,string idAreaInt,string ciudad) {
 
             List<dw_movin> dw_movinList = new List<dw_movin>();
@@ -192,7 +192,7 @@ namespace SoftwareCelta.Controllers
             return View(dw_movinList);                     
         }
 
-        [Permissions(Permission1 = 1, Permission3 = 3)]
+        [Permissions(Permission1 = 1, Permission3 = 5)]
         public ActionResult porDespachar(string ciudad,string fechaDesde, string fechaHasta,string estado) {
 
             //int areaInternaID=Convert.ToInt32(arInt);
@@ -222,15 +222,17 @@ namespace SoftwareCelta.Controllers
             }
 
             List<dw_envio> listaFinalEnvios = new List<dw_envio>();
+            if (estado == null)
+            {
+                estado = "1";
+            }
             foreach (var datoEnvio in datosEnvio)
             {
                 dw_movin dw_movin = db.Movins.Find(datoEnvio.dw_movinID);
                 List<dw_detalle> dw_detalleListTotal = new List<dw_detalle>();// db.DetalleMovin.Where(s => s.dw_movinID == dw_movin.dw_movinID & s.estadoDespacho == 1 ).ToList();
                 List<dw_detalle> dw_detalleList = new List<dw_detalle>();//db.DetalleMovin.Where(s => s.dw_movinID == dw_movin.dw_movinID &s.estadoDespacho==1 & s.validado!=0).ToList();
 
-                if (estado == null) {
-                    estado = "1";
-                }
+                
                 if (estado == "todas") {
 
                     dw_detalleList = db.DetalleMovin.Where(s => s.dw_movinID == dw_movin.dw_movinID & s.estadoDespacho == 1).ToList();                    
@@ -304,7 +306,7 @@ namespace SoftwareCelta.Controllers
             return View(dw_movinList);
         }
 
-        [Permissions(Permission1 = 1, Permission3 = 3)]
+        [Permissions(Permission1 = 1, Permission3 = 5)]
         public ActionResult Despachar(int documentoID)
         {
             dw_movin dw_movin = db.Movins.Find(documentoID);
@@ -321,7 +323,7 @@ namespace SoftwareCelta.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [Permissions(Permission1 = 1, Permission3 = 3)]
+        [Permissions(Permission1 = 1, Permission3 = 5)]
         public ActionResult Despachar(FormCollection form) {
             
             DateTime fechaDespacho = Formateador.fechaStringToDateTime((string)form["fechaDespacho"]);
@@ -357,7 +359,7 @@ namespace SoftwareCelta.Controllers
 
         [HttpPost]
         
-        [Permissions(Permission1 = 1, Permission3 = 3)]
+        [Permissions(Permission1 = 1, Permission3 = 5)]
         public string despacharSinEditar(string idDetalleMovin, string idTransportista ) {
             int dw_movinID = Convert.ToInt32(idDetalleMovin);
             int dw_transportistaID=Convert.ToInt32(idTransportista);
@@ -397,7 +399,7 @@ namespace SoftwareCelta.Controllers
             }       
         }
 
-        [Permissions(Permission1 = 1, Permission3 = 3)]
+        [Permissions(Permission1 = 1, Permission3 = 10)]
         public ActionResult despachoDevuelto(int documentoID)
         {
             dw_movin dw_movin = db.Movins.Find(documentoID);
@@ -412,7 +414,7 @@ namespace SoftwareCelta.Controllers
         [HttpPost]
 
         [ValidateAntiForgeryToken]
-        [Permissions(Permission1 = 1, Permission3 = 3)]
+        [Permissions(Permission1 = 1, Permission3 = 10)]
         public ActionResult despachoDevuelto(FormCollection form)
         {
 
@@ -452,7 +454,7 @@ namespace SoftwareCelta.Controllers
         }
 
         [HttpPost]
-        [Permissions(Permission1 = 1, Permission3 = 3)]
+        [Permissions(Permission1 = 1, Permission2 = 5, Permission3 = 6, Permission4 = 10)]
         public string BuscarDocumentoPorNumero(string numDoc,string tipo)
         {
             //1:despachados

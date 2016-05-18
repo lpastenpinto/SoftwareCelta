@@ -4,6 +4,19 @@
     ViewBag.Title = "Usuarios";
 }
 <br /><br />
+@if (TempData["SuccessBodega"] != null)
+{   <br /><br /><br />
+    <div class="col-md-12">
+        <div class="alert alert-success">
+            <button type="button" class="close" data-dismiss="alert"
+                    aria-hidden="true">
+                &times;
+            </button>
+            @TempData["SuccessBodega"]
+        </div>
+    </div>
+}
+<br />
 <h2>Usuarios</h2>
 
 <p>
@@ -31,6 +44,7 @@
         </td>
         <td>
             @Html.ActionLink("Asignar Permisos", "AsignarPermisos", new { userID = item.userID }) |            
+            @Html.ActionLink("Accesos a Bodegas", "listResponsabilidad", "validarProductosDespacho", new { userID = item.userID },null)|
             @Html.ActionLink("Eliminar", "Delete", new { userID = item.userID })
         </td>
     </tr>

@@ -17,14 +17,15 @@ namespace SoftwareCelta.Controllers
         private ContextBDCelta db = new ContextBDCelta();
 
         // GET: Transportista
-        [Permissions]
+
+        [Permissions(Permission1 = 1, Permission2 = 9)]
         public ActionResult Index()
         {
             return View(db.Transportistas.ToList());
         }
 
         // GET: Transportista/Details/5
-        [Permissions]
+        [Permissions(Permission1 = 1, Permission2 = 9)]
         public ActionResult Details(int? id)
         {
             if (id == null)
@@ -40,7 +41,7 @@ namespace SoftwareCelta.Controllers
         }
 
         // GET: Transportista/Create
-        [Permissions]
+        [Permissions(Permission1 = 1, Permission2 = 9)]
         public ActionResult Create()
         {
             return View();
@@ -49,7 +50,7 @@ namespace SoftwareCelta.Controllers
         // POST: Transportista/Create        
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [Permissions]
+        [Permissions(Permission1 = 1, Permission2 = 9)]
         public ActionResult Create([Bind(Include = "dw_datosTransportistaID,nombreCompleto,rut,razonSocial,patente,direccion,telefono,mail,contacto,ciudad,giro")] dw_datosTransportista dw_datosTransportista)
         {
             if (ModelState.IsValid)
@@ -64,7 +65,7 @@ namespace SoftwareCelta.Controllers
         }
 
         // GET: Transportista/Edit/5
-        [Permissions]
+        [Permissions(Permission1 = 1, Permission2 = 9)]
         public ActionResult Edit(int? id)
         {
             if (id == null)
@@ -83,7 +84,7 @@ namespace SoftwareCelta.Controllers
         
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [Permissions]
+        [Permissions(Permission1 = 1, Permission2 = 9)]
         public ActionResult Edit([Bind(Include = "dw_datosTransportistaID,nombreCompleto,rut,razonSocial,patente,direccion,telefono,mail,contacto,ciudad,giro")] dw_datosTransportista dw_datosTransportista)
         {
             if (ModelState.IsValid)
@@ -97,7 +98,7 @@ namespace SoftwareCelta.Controllers
         }
 
         // GET: Transportista/Delete/5
-        [Permissions]
+        [Permissions(Permission1 = 1, Permission2 = 9)]
         public ActionResult Delete(int? id)
         {
             if (id == null)
@@ -114,7 +115,7 @@ namespace SoftwareCelta.Controllers
 
         // POST: Transportista/Delete/5
         [HttpPost, ActionName("Delete")]
-        [Permissions]
+        [Permissions(Permission1 = 1, Permission2 = 9)]
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(int id)
         {

@@ -1,11 +1,12 @@
 ﻿@{
     ViewBag.Title = "Permisos";
-    List<int> listaPermisos = (List<int>)ViewData["permisosUser"];
-    System.Collections.Hashtable hashPerm = (System.Collections.Hashtable)ViewData["permisosBodegas"] ;
+    List<int> permUser = (List<int>)ViewData["permisosActualesUser"];
+    SoftwareCelta.Models.user usuario = (SoftwareCelta.Models.user)ViewData["user"];
+    
     
 }
 <br /><br /><br />
-<h2>Lista Responsabilidad Productos</h2>
+<h2>Asignar Bodegas a Usuario:@usuario.nombreCompleto / @usuario.userName</h2>
 
 @using (Html.BeginForm())
 {
@@ -13,7 +14,7 @@
 
     <div class="form-horizontal">
         
-        
+        <input type="hidden" value="@usuario.userID" name="userID" />
         @Html.ValidationSummary(true, "", new { @class = "text-danger" })        
         
         <br />
@@ -22,8 +23,7 @@
             <table class="table table-condensed" id="tableItems">
                 <thead>
                     <tr>
-                        <th class="col-md-6">Bodega/Area Interna</th>
-                        <th class="col-md-6">Usuario Responsable</th>                        
+                        <th class="col-md-6">Bodega/Area Interna</th>                                                
                     </tr>
                 </thead>
                 <tbody>
@@ -32,17 +32,18 @@
                         <tr>
                             <td>
                                 
-                                <strong>@bodegas.nombre</strong>
-                                <input type="text" class="hidden" name="idBodega" value="@bodegas.dw_areaInternaID" />
+                                <strong>@bodegas.nombre</strong>                                
                             </td>
                             <td>
-
-                                <select class="form-control" name="userID">
-                                    @foreach (SoftwareCelta.Models.user users in (List<SoftwareCelta.Models.user>)ViewData["users"])
-                                    { 
-                                        <option value="@users.userID" @if((hashPerm.ContainsKey(bodegas.dw_areaInternaID))&&(hashPerm[bodegas.dw_areaInternaID].ToString()==users.userID.ToString())){<text>selected</text>}>@users.nombreCompleto / @users.userName</option>                                        
-                                    }
-                                </select>
+                                @if (permUser.Contains(bodegas.dw_areaInternaID))
+                                {
+                                    <input type="checkbox" name="idBodega" value="@bodegas.dw_areaInternaID" checked/>
+                                }
+                                else
+                                {
+                                    <input type="checkbox" name="idBodega" value="@bodegas.dw_areaInternaID" />
+                                }
+                                
                             </td>                            
                         </tr>
                     }
@@ -52,7 +53,9 @@
         </div>
 
         <div class="modal-footer">
+            @Html.ActionLink("Cancelar", "Index", "Users", null, new { @class = "btn btn-primary" })
             <input type="submit" value="Guardar" id="boton" class="btn btn-default btn-lg btn-success" />
+
         </div>
     </div>
 }

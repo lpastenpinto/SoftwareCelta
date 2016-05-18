@@ -24,7 +24,7 @@ namespace SoftwareCelta.Controllers
 
         }
 
-        [Permissions(Permission1 = 1, Permission2 = 2)]
+        [Permissions(Permission1 = 1, Permission2 = 3)]
         public ActionResult despachoDomicilio(string fechaInicial, string fechaFinal) {
             List<dw_movin> documetosRegistrados = new List<dw_movin>();
             if (fechaFinal == null || fechaInicial == null)
@@ -58,7 +58,7 @@ namespace SoftwareCelta.Controllers
             return View(documentosRegistradosParaDespacho);
         }
 
-        [Permissions(Permission1 = 1, Permission2 = 2)]
+        [Permissions(Permission1 = 1, Permission2 = 3)]
         public ActionResult datosEnvio(int documentoID) {
             dw_envio dw_envio = db.DatosEnvio.SingleOrDefault(s=>s.dw_movinID==documentoID);
             if (dw_envio == null) {
@@ -83,6 +83,7 @@ namespace SoftwareCelta.Controllers
                 new_dw_envio.ciudad = (string)form["ciudad"];
                 new_dw_envio.direccion = (string)form["direccion"];
                 new_dw_envio.fechaDespacho = Formateador.fechaStringToDateTime((string)form["fechaDespacho"]);
+                new_dw_envio.fechaValeVenta = new DateTime(2000, 1, 1);
                 new_dw_envio.nombreCliente = (string)form["nombreCliente"];
                 new_dw_envio.observacion = (string)form["observacion"];
                 new_dw_envio.rutCliente = (string)form["rutCliente"];
@@ -108,7 +109,7 @@ namespace SoftwareCelta.Controllers
         }
 
 
-        [Permissions]
+        [Permissions(Permission1 = 1, Permission2 = 4)]
         public ActionResult Buscador(string strFechaInicial, string strFechaFinal, string numDoc,string ciudad, string tipo) {
             DateTime fechaInicial= new DateTime();
             DateTime fechaFinal = new DateTime();
@@ -176,7 +177,7 @@ namespace SoftwareCelta.Controllers
             return View(listDocumentos);
         }
 
-        [Permissions]
+        [Permissions(Permission1 = 1, Permission2 = 3)]
         public ActionResult Documento(int documentoID)
         {
 
@@ -236,7 +237,7 @@ namespace SoftwareCelta.Controllers
             return View(documento);
         }
 
-        [Permissions(Permission1 = 1, Permission2 = 2)]
+        [Permissions(Permission1 = 1, Permission2 = 3)]
         public ActionResult paraDespacharADomicilio(int documentoID)
         {
             dw_movin dw_movin = db.Movins.Find(documentoID);
@@ -248,7 +249,7 @@ namespace SoftwareCelta.Controllers
         }
 
         [HttpPost]
-        [Permissions]
+        [Permissions(Permission1 = 1, Permission2 = 3)]
         public ActionResult paraDespacharADomicilio(FormCollection form) {
             string[] detalleID = Request.Form.GetValues("detalleID");
             string[] estadoDespacho = Request.Form.GetValues("estadoDespacho");
@@ -275,7 +276,7 @@ namespace SoftwareCelta.Controllers
             return RedirectToAction("despachoDomicilio");
         }
 
-        [Permissions]
+        [Permissions(Permission1 = 1, Permission2 = 4)]
         public ActionResult DocumentoRegistrado(int documentoID) {
 
             dw_movin dw_movin = db.Movins.Find(documentoID);
@@ -290,7 +291,7 @@ namespace SoftwareCelta.Controllers
 
       
         [HttpPost]
-        [Permissions(Permission1 = 1, Permission2 = 2)]
+        [Permissions(Permission1 = 1, Permission2 = 2, Permission3 = 3)]
         public ActionResult registrarNuevoDocumento(FormCollection form) {
             int numeroDocumento = Convert.ToInt32((string)form["numeroDocumento"]);
             int numeroVale = Convert.ToInt32((string)form["numeroVale"]);
@@ -318,7 +319,7 @@ namespace SoftwareCelta.Controllers
             for (int i = 0; i < codigoProducto.Length; i++)
             {
                 dw_detalle detalle = new dw_detalle();
-                detalle.cantidadProducto = Convert.ToInt32(cantidadProducto[i]);
+                detalle.cantidadProducto = Convert.ToDouble(cantidadProducto[i]);
                 detalle.codigoProducto = codigoProducto[i];
                 detalle.descripcionProducto = descripcionProducto[i];                
                 detalle.dw_movinID = documento.dw_movinID;                
@@ -333,23 +334,25 @@ namespace SoftwareCelta.Controllers
                     verifDesp = true;
                 }                
                 db.DetalleMovin.Add(detalle);                                
+                db.SaveChanges();
             }
 
-            string valeVentaString= numeroVale.ToString();
+            string valeVentaString= numeroVale.ToString();            
             dw_envio dw_envio = db.DatosEnvio.SingleOrDefault(s => s.valeVenta == valeVentaString);
-            dw_envio.dw_movinID = documento.dw_movinID;
-            dw_envio.fechaDespacho = documento.fechaEmision.AddDays(2);
+            if (dw_envio != null) {
+                dw_envio.dw_movinID = documento.dw_movinID;
+                dw_envio.fechaDespacho = documento.fechaEmision.AddDays(2);
 
-            db.Entry(dw_envio).State = EntityState.Modified;
-            db.SaveChanges();
-                                    
+                db.Entry(dw_envio).State = EntityState.Modified;
+                db.SaveChanges();
+            }                                                
             dw_log.registrarLog(Convert.ToInt32(Session["userID"]), Session["userName"].ToString(), "Registro nuevo documento numero:" + numeroDocumento);
             TempData["Success"] = "Se registro el documento Folio "+documento.numeroDocumento+" Exitosamente";
             return RedirectToAction("Index");
         }
          
         [HttpPost]
-        [Permissions(Permission1 = 1, Permission2 = 2)]
+        [Permissions(Permission1 = 1, Permission2 = 2, Permission3 = 3)]
         public string guardarAreaInteraMovin(List<string> idsDetalles, List<string> areasInternas,string idMovin)
         {
             try
@@ -528,8 +531,14 @@ namespace SoftwareCelta.Controllers
                         {
                             nomAux = "Cliente Boleta";
                         }
-
-                        string valeVentaString=Convert.ToInt32(dr["NroVale"]).ToString();
+                        string valeVentaString = "";
+                        try
+                        {
+                            valeVentaString = Convert.ToInt32(dr["NroVale"]).ToString();
+                        }
+                        catch (Exception) {
+                            valeVentaString = "0";
+                        }
                         //dw_envio dw_envio = db.DatosEnvio.SingleOrDefault(s => s.valeVenta == valeVentaString);
                         if (hashEnvio.ContainsKey(valeVentaString))
                         {

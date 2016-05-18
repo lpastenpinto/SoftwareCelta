@@ -19,7 +19,7 @@
 }
 <br />
 <div class="col-md-12">
-    <h3>Buscar Documento Registrado</h3>  
+    <h3>Documentos Registrado</h3>  
     <div class="col-md-3 fechaInicio">
         <label class="control-label">Desde:</label>
         <input class="form-control fecha" id="fechaInicial" name="fechaInicial" data-val-date="Ingrese por favor una fecha." data-val-required="El campo fecha es obligatorio."
@@ -60,7 +60,7 @@
 </div>
 <br />
 <br />
-<h2>Documentos Registrados Hoy @SoftwareCelta.Models.Formateador.fechaCompletaToString(DateTime.Today)</h2>
+<h2>Documentos Registrados desde @ViewBag.fechaDesde hasta @ViewBag.fechaHasta</h2>
 <br />
 <div class="table-responsive">
     <table class="table table-hover">
@@ -140,7 +140,7 @@
                     </td>
                     <td>
                         <!--
-                        @Html.ActionLink("Asignacion Despacho +", "paraDespacharADomicilio", new { documentoID = item.dw_movinID }, new { @class = "btn btn-primary" })
+                        @Html.ActionLink("Asignacion Despacho", "paraDespacharADomicilio", new { documentoID = item.dw_movinID }, new { @class = "btn btn-primary" })
                         !-->
                         @Html.ActionLink("Asignar Fecha Despacho", "datosEnvio", new { documentoID = item.dw_movinID }, new { @class = "btn btn-primary" })                    
                        

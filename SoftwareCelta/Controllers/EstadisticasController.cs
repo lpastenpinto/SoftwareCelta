@@ -15,7 +15,7 @@ namespace SoftwareCelta.Controllers
         private ContextBDCelta db = new ContextBDCelta();
 
 
-        [Permissions(Permission1 = 1, Permission2=3)]
+        [Permissions]
         public ActionResult bodega(string strFechaInicial, string strFechaFinal, string areaInt)
         {
             DateTime fechaInicial = new DateTime();
@@ -65,7 +65,7 @@ namespace SoftwareCelta.Controllers
 
 
 
-       [Permissions(Permission1 = 1, Permission2=3)]
+       [Permissions]
         public ActionResult transportista(string strFechaInicial, string strFechaFinal, string tipo, string transportista,string ciudad)
         {
             int ids = 100000;

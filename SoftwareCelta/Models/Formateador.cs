@@ -185,6 +185,16 @@ namespace SoftwareCelta.Models
             }
             return hash;
         }
+
+        public static List<int> listToListInt(List<permisosBodegas> permisosBodegas) {
+
+            List<int> salida = new List<int>();
+            foreach (var perm in permisosBodegas) {
+                salida.Add(perm.bodegaID);
+            }
+            return salida;
+        }
+
         public static Hashtable listToHash(List<dw_datosTransportista> Transportista)
         {
             Hashtable hash = new Hashtable();

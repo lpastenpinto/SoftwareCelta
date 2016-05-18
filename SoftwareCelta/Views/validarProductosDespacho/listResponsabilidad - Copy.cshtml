@@ -1,0 +1,57 @@
+﻿@{
+    ViewBag.Title = "Permisos";   
+    System.Collections.Hashtable hashPerm = (System.Collections.Hashtable)ViewData["permisosBodegas"] ;
+    
+}
+<br /><br /><br />
+<h2>Lista Responsabilidad Productos</h2>
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+
+    <div class="form-horizontal">
+        
+        
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })        
+        
+        <br />
+
+        <div class="table-responsive">
+            <table class="table table-condensed" id="tableItems">
+                <thead>
+                    <tr>
+                        <th class="col-md-6">Bodega/Area Interna</th>
+                        <th class="col-md-6">Usuario Responsable</th>                        
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (SoftwareCelta.Models.dw_areaInterna bodegas in (List<SoftwareCelta.Models.dw_areaInterna>)ViewData["bodegas"])
+                    {
+                        <tr>
+                            <td>
+                                
+                                <strong>@bodegas.nombre</strong>
+                                <input type="text" class="hidden" name="idBodega" value="@bodegas.dw_areaInternaID" />
+                            </td>
+                            <td>
+
+                                <select class="form-control" name="userID">
+                                    @foreach (SoftwareCelta.Models.user users in (List<SoftwareCelta.Models.user>)ViewData["users"])
+                                    { 
+                                        <option value="@users.userID" @if((hashPerm.ContainsKey(bodegas.dw_areaInternaID))&&(hashPerm[bodegas.dw_areaInternaID].ToString()==users.userID.ToString())){<text>selected</text>}>@users.nombreCompleto / @users.userName</option>                                        
+                                    }
+                                </select>
+                            </td>                            
+                        </tr>
+                    }
+                </tbody>
+            </table>
+
+        </div>
+
+        <div class="modal-footer">
+            <input type="submit" value="Guardar" id="boton" class="btn btn-default btn-lg btn-success" />
+        </div>
+    </div>
+}

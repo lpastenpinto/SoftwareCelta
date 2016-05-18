@@ -13,12 +13,25 @@ namespace SoftwareCelta.Controllers
     {
         private ContextBDCelta db = new ContextBDCelta();
         // GET: validarProductosDespacho
-        [Permissions(Permission1 = 1, Permission3 = 5)]
+        [Permissions]
         public ActionResult Index(string bodega, string fechaDesde, string fechaHasta)
         {
-
+            List<int> permBodegas = (List<int>)Session["permisosUserBodegas"];
             int userID = Convert.ToInt32(Session["userID"].ToString());
-            List<int> bodegasAutorizadas =Formateador.listToInt(db.permisosUserBodegas.Where(s => s.userID == userID).ToList());
+            if (permBodegas.Count == 0 && userID != 1)
+            {
+                return RedirectToAction("sinPermisos", "Users");
+            }
+            
+            List<int> bodegasAutorizadas= new List<int>();
+            if (userID == 1)
+            {
+                bodegasAutorizadas = Formateador.listToInt(db.permisosUserBodegas.ToList());
+            }
+            else {
+                bodegasAutorizadas = Formateador.listToInt(db.permisosUserBodegas.Where(s => s.userID == userID).ToList());
+            }
+            
 
             DateTime fDesde = new DateTime();
             DateTime fHasta = new DateTime();
@@ -29,8 +42,8 @@ namespace SoftwareCelta.Controllers
             }
             else
             {
-                fDesde = DateTime.Today;
-                fHasta = fDesde;//DateTime.Today.AddDays(-1);    
+                fDesde = DateTime.Today.AddDays(-3);
+                fHasta = fDesde.AddDays(3);//DateTime.Today.AddDays(-1);    
             }
 
             List<dw_movin> dw_movinList = new List<dw_movin>();
@@ -96,17 +109,11 @@ namespace SoftwareCelta.Controllers
 
 
         [Permissions(Permission1 = 1)]
-        public ActionResult listResponsabilidad() {
-            ViewData["bodegas"] = db.Bodegas.ToList();
-            List<permisoUser> listadoPermisos = db.PermisosUser.Where(s => s.rolesID == 1 || s.rolesID == 5).ToList();
-            List<user> usersConPermisos = new List<user>();
-            foreach (var perm in listadoPermisos) {
-                user user = db.Users.Find(perm.userID);
-                usersConPermisos.Add(user);            
-            }
-
-            ViewData["users"] = usersConPermisos;
-            ViewData["permisosBodegas"] = Formateador.listToHash(db.permisosUserBodegas.ToList());
+        public ActionResult listResponsabilidad(int userID)
+        {
+            ViewData["bodegas"] = db.Bodegas.ToList();            
+            ViewData["user"] = db.Users.Find(userID);
+            ViewData["permisosActualesUser"] = Formateador.listToListInt(db.permisosUserBodegas.Where(s => s.userID == userID).ToList());            
             return View();
         }
 
@@ -116,35 +123,46 @@ namespace SoftwareCelta.Controllers
         public ActionResult listResponsabilidad(FormCollection form)
         { 
             string[] idBodegas= Request.Form.GetValues("idBodega");
-            string[] userID = Request.Form.GetValues("userID");
-            
-            List<permisosBodegas> PermisosBodega= db.permisosUserBodegas.ToList();
-            foreach (var perm in PermisosBodega)
-            {
-                permisosBodegas permB = db.permisosUserBodegas.Find(perm.permisosBodegasID);
-                db.permisosUserBodegas.Remove(permB);
+            int userID = Convert.ToInt32((string)form["userID"]);
+            user usuario = db.Users.Find(userID);
+            List<permisosBodegas> PermisosBodegaUser= db.permisosUserBodegas.Where(s=>s.userID==userID).ToList();
+            foreach (var perm in PermisosBodegaUser)
+            {                
+                db.permisosUserBodegas.Remove(perm);
                 db.SaveChanges();
                 
             }
-
-            for (int i = 0; i < idBodegas.Length; i++) {                
-                int idUser = Convert.ToInt32(userID[i]);
-                int idBodega = Convert.ToInt32(idBodegas[i]);
-                permisosBodegas perm = new permisosBodegas();
-                perm.bodegaID = idBodega;
-                perm.userID = idUser;
-                db.permisosUserBodegas.Add(perm);
-                db.SaveChanges();
+            if (idBodegas!=null)
+            {
+                for (int i = 0; i < idBodegas.Length; i++)
+                {
+                    int idBodega = Convert.ToInt32(idBodegas[i]);
+                    permisosBodegas perm = new permisosBodegas();
+                    perm.bodegaID = idBodega;
+                    perm.userID = userID;
+                    db.permisosUserBodegas.Add(perm);
+                    db.SaveChanges();
+                }
             }
             dw_log.registrarLog(Convert.ToInt32(Session["userID"]), Session["userName"].ToString(), "Edita Lista de Responsabilidad");
-            return RedirectToAction("Index");
+            TempData["SuccessBodega"] = "Permisos de Bodega guardados con exito al usuario "+usuario.userName;
+            return RedirectToAction("Index", "Users");
+
         }
 
-        [Permissions(Permission1 = 1, Permission3 = 5)]
+        [Permissions]
         public ActionResult documento(int documentoID) {
 
             int userID = Convert.ToInt32(Session["userID"].ToString());
-            List<int> bodegasAutorizadas =Formateador.listToInt(db.permisosUserBodegas.Where(s => s.userID == userID).ToList());
+            List<int> bodegasAutorizadas = new List<int>();
+            if (userID == 1)
+            {
+                bodegasAutorizadas = Formateador.listToInt(db.permisosUserBodegas.ToList());
+            }
+            else {
+                bodegasAutorizadas = Formateador.listToInt(db.permisosUserBodegas.Where(s => s.userID == userID).ToList());
+            }
+            
 
             dw_movin dw_movin = db.Movins.Find(documentoID);            
             dw_envio datosEnvio = db.DatosEnvio.SingleOrDefault(s => s.dw_movinID == documentoID);
@@ -162,7 +180,7 @@ namespace SoftwareCelta.Controllers
         }
 
         [HttpPost]
-        [Permissions(Permission1 = 1, Permission3 = 5)]
+        [Permissions]
         public ActionResult documento(FormCollection form) {
             string[] prodValidados = Request.Form.GetValues("validarDespacho");
             string numDoc = (string)form["numDoc"];

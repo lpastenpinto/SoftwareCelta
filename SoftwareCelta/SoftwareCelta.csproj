@@ -976,6 +976,7 @@
     <Content Include="Scripts\respond.js" />
     <Content Include="Scripts\respond.min.js" />
     <Content Include="Scripts\_references.js" />
+    <Content Include="Styles\customStyle.css" />
     <Content Include="Web.config">
       <SubType>Designer</SubType>
     </Content>
@@ -1037,6 +1038,7 @@
     <Content Include="Views\validarProductosDespacho\documento.cshtml" />
     <Content Include="Views\Estadisticas\bodega.cshtml" />
     <Content Include="Views\Estadisticas\transportista.cshtml" />
+    <Content Include="Views\validarProductosDespacho\listResponsabilidad - Copy.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
