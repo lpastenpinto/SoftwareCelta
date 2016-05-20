@@ -39,11 +39,21 @@ namespace SoftwareCelta.Controllers
             {
                 fDesde = Formateador.fechaStringToDateTime(fechaDesde);
                 fHasta = Formateador.fechaStringToDateTime(fechaHasta);
+                Session["fechaDesdeValidar"] = fDesde;
+                Session["fechaHastaValidar"] = fHasta;
             }
             else
             {
-                fDesde = DateTime.Today.AddDays(-3);
-                fHasta = fDesde.AddDays(3);//DateTime.Today.AddDays(-1);    
+                if (Session["fechaDesdeValidar"] == null && Session["fechaHastaValidar"] == null)
+                {
+                    fDesde = DateTime.Today.AddDays(-3);
+                    fHasta = fDesde.AddDays(3);//DateTime.Today.AddDays(-1);   
+                }
+                else {
+                    fDesde = (DateTime)Session["fechaDesdeValidar"];
+                    fHasta = (DateTime)Session["fechaHastaValidar"];
+                }
+                
             }
 
             List<dw_movin> dw_movinList = new List<dw_movin>();
@@ -184,6 +194,14 @@ namespace SoftwareCelta.Controllers
         public ActionResult documento(FormCollection form) {
             string[] prodValidados = Request.Form.GetValues("validarDespacho");
             string numDoc = (string)form["numDoc"];
+            int idMovin = Convert.ToInt32((string)form["dw_movinID"]);
+            string notaGeneral = (string)form["notaGeneralValidacionProductos"];
+
+            dw_movin movin = db.Movins.Find(idMovin);
+            movin.notaGeneralValidacionProductos = notaGeneral;
+            db.Entry(movin).State = EntityState.Modified;
+            db.SaveChanges();
+
 
             if (prodValidados != null)
             {

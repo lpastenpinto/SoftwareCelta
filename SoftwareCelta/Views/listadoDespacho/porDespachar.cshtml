@@ -161,8 +161,9 @@
 
                     </td>
                     <td class="col-md-1">
+                        @Html.ActionLink("Nota General", "verObservaciones", new { documentoID = item.dw_movinID }) |
                         @if (System.Convert.ToString(ViewBag.estado) == "1")
-                        { 
+                        {   <br /><br />
                             @Html.ActionLink("Ver detalle y Despachar", "Despachar", new { documentoID = item.dw_movinID })
                         }                        
                     </td>

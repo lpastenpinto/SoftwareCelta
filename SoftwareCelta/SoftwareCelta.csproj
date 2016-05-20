@@ -1039,6 +1039,7 @@
     <Content Include="Views\Estadisticas\bodega.cshtml" />
     <Content Include="Views\Estadisticas\transportista.cshtml" />
     <Content Include="Views\validarProductosDespacho\listResponsabilidad - Copy.cshtml" />
+    <Content Include="Views\listadoDespacho\verObservaciones.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

@@ -11,10 +11,12 @@
 }
 <br /><br />
 <br />
-<h2>Documento @Model.numeroDocumento  | @SoftwareCelta.Models.Formateador.fechaCompletaToString(Model.fechaEmision)</h2>
+<h2>Documento Numero: @Model.numeroDocumento  </h2>
 <br />
-
-
+<h2>Tipo: @Model.tipoDocumento</h2>
+<br />
+<p>Fecha Emision: @SoftwareCelta.Models.Formateador.fechaCompletaToString(Model.fechaEmision)</p> 
+<br />
 @using (Html.BeginForm())
 {
     @Html.AntiForgeryToken()
@@ -143,6 +145,16 @@
             </tbody>
         </table>
         <br />
+        <div class="clearfix"></div>
+        <div class="col-md-12">
+            <label>Nota General Validacion Productos</label>
+            @Model.notaGeneralValidacionProductos
+        </div>
+        <div class="clearfix"></div><br />
+        <div class="col-md-12">
+            <label>Nota General Despacho</label>
+            <textarea style="max-width: 100% !important; width:100%;" class="form-control" name="notaGeneralDespacho">@Model.notaGeneralDespacho</textarea>
+        </div>
         <div class="clearfix"></div>
         <div class="modal-footer">
 		 @Html.ActionLink("Cancelar", "porDespachar",null,null, new { @class = "btn btn-primary" })	

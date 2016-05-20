@@ -1,11 +1,9 @@
 ﻿@model SoftwareCelta.Models.dw_movin
 @{
-    ViewBag.Title = "Documento a Validar";
-    int contadorProductos = 1;
-    string despacho = "estadoDespacho";
+    ViewBag.Title = "Observaciones";
+
     string nombreBodega = "";
     
-    SoftwareCelta.Models.dw_envio datosEnvio = (SoftwareCelta.Models.dw_envio)ViewData["datosEnvio"];
     SoftwareCelta.DAL.ContextBDCelta db = new SoftwareCelta.DAL.ContextBDCelta();
 
 }
@@ -23,7 +21,7 @@
     @Html.AntiForgeryToken()
     @Html.ValidationSummary(true, "", new { @class = "text-danger" })
     @Html.HiddenFor(model => model.dw_movinID)
-   <input class="hidden" name="numDoc" value="@Model.numeroDocumento" />
+    <input class="hidden" name="numDoc" value="@Model.numeroDocumento" />
     <h3>Productos Comprados</h3>
     <br />
     <div class="table-responsive">
@@ -49,7 +47,7 @@
 
                 @foreach (SoftwareCelta.Models.dw_detalle detalle in (List<SoftwareCelta.Models.dw_detalle>)ViewData["detalleDocumento"])
                 {
-                    string nameDespacho = despacho + contadorProductos;
+                    
                     <tr>
                         <td>
                             <input class="hidden" name="dw_detalleID" value="@detalle.dw_detalleID" />
@@ -80,7 +78,7 @@
                                 <text>
                                     Validado
                                 </text>
-                            }                           
+                            }
                             else
                             {
                                 <text>
@@ -88,8 +86,7 @@
                                 </text>
                             }
                         </td>
-                    </tr>
-                            contadorProductos++;
+                    </tr>                            
                 }
             </tbody>
         </table>
@@ -97,12 +94,12 @@
         <div class="clearfix"></div>
         <div class="col-md-12">
             <label>Nota General Validacion Productos</label>
-            <textarea style="max-width: 100% !important; width:100%;" class="form-control" name="notaGeneralValidacionProductos">@Model.notaGeneralValidacionProductos</textarea>
+            @Model.notaGeneralValidacionProductos
         </div>
         <div class="clearfix"></div>
         <div class="modal-footer">
-            @Html.ActionLink("Cancelar", "Index", null, null, new { @class = "btn btn-primary" })
-            <input type="submit" value="Validar" class="btn btn-success btn-lg btn-default" />
+            @Html.ActionLink("Atras", "porDespachar", null, null, new { @class = "btn btn-primary" })
+            
         </div>
     </div>
 }
@@ -120,5 +117,4 @@
         });
     </script>
 }
-
 

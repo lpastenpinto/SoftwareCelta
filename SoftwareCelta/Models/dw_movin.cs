@@ -15,7 +15,8 @@ namespace SoftwareCelta.Models
         public string nombreVendedor { set; get; }
         public string nombreCliente { set; get; }
         public double total { set; get; }
-
+        public string notaGeneralDespacho { set; get; }
+        public string notaGeneralValidacionProductos { set; get; }
         public List<dw_detalle> detalleMovin { set; get; }
     }
 }

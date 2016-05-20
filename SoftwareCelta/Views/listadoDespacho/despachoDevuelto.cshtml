@@ -138,6 +138,12 @@
         </table>
         <br />
         <div class="clearfix"></div>
+        <br />
+        <div class="col-md-12">
+            <label>Nota General Despacho</label>
+            <textarea style="max-width: 100% !important; width:100%;" class="form-control" name="notaGeneralDespacho">@Model.notaGeneralDespacho</textarea>
+        </div>
+        <div class="clearfix"></div><br />
         <div class="modal-footer">
             @Html.ActionLink("Cancelar", "Despachados", null, null, new { @class = "btn btn-primary" })
             <input type="submit" value="Guardar Cambios" class="btn btn-success btn-lg btn-default" />

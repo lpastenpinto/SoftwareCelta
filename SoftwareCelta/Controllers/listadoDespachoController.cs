@@ -202,11 +202,23 @@ namespace SoftwareCelta.Controllers
             {
                 fDesde = Formateador.fechaStringToDateTime(fechaDesde);
                 fHasta = Formateador.fechaStringToDateTime(fechaHasta);
+                Session["fechaDesdeDespachar"] = fDesde;
+                Session["fechaHastaDespachar"] = fHasta;
             }
             else {
-                fDesde = DateTime.Today;
-                fHasta = fDesde;//DateTime.Today.AddDays(-1);    
+
+                if (Session["fechaDesdeDespachar"] == null && Session["fechaHastaDespachar"] == null)
+                {
+                    fDesde = DateTime.Today;
+                    fHasta = fDesde;//DateTime.Today.AddDays(-1);    
+                }
+                else {
+                    fDesde = (DateTime)Session["fechaDesdeDespachar"];
+                    fHasta = (DateTime)Session["fechaHastaDespachar"];
+                }
+                
             }
+           
             
             List<dw_movin> dw_movinList = new List<dw_movin>();
             List<int> cantidadProductosPorDespachar = new List<int>();
@@ -222,9 +234,12 @@ namespace SoftwareCelta.Controllers
             }
 
             List<dw_envio> listaFinalEnvios = new List<dw_envio>();
+
+           
             if (estado == null)
             {
                 estado = "1";
+
             }
             foreach (var datoEnvio in datosEnvio)
             {
@@ -307,6 +322,15 @@ namespace SoftwareCelta.Controllers
         }
 
         [Permissions(Permission1 = 1, Permission3 = 5)]
+        public ActionResult verObservaciones(int documentoID)
+        {
+            dw_movin dw_movin = db.Movins.Find(documentoID);                        
+            List<dw_detalle> listDetalleDocumento = db.DetalleMovin.Where(s => s.dw_movinID == documentoID).ToList();
+            ViewData["detalleDocumento"] = listDetalleDocumento;                                    
+            return View(dw_movin);
+        }
+
+        [Permissions(Permission1 = 1, Permission3 = 5)]
         public ActionResult Despachar(int documentoID)
         {
             dw_movin dw_movin = db.Movins.Find(documentoID);
@@ -329,7 +353,12 @@ namespace SoftwareCelta.Controllers
             DateTime fechaDespacho = Formateador.fechaStringToDateTime((string)form["fechaDespacho"]);
             int dw_movinID= Convert.ToInt32((string)form["dw_movinID"]);
             int numeroDocumento = Convert.ToInt32((string)form["numeroDocumento"]);
-                        
+            string notaGeneral=(string)form["notaGeneralDespacho"];
+
+            dw_movin movin = db.Movins.Find(dw_movinID);
+            movin.notaGeneralDespacho = notaGeneral;
+            db.Entry(movin).State = EntityState.Modified;
+
             dw_envio dw_envio = db.DatosEnvio.SingleOrDefault(s => s.dw_movinID == dw_movinID);
             dw_envio.fechaDespacho = fechaDespacho;
             dw_envio.cantidadVisitasDespacho = dw_envio.cantidadVisitasDespacho + 1;
@@ -420,8 +449,14 @@ namespace SoftwareCelta.Controllers
 
             int dw_movinID = Convert.ToInt32((string)form["dw_movinID"]);
             string numeroBoleta= (string)form["numeroBoleta"];
+            string notaGeneral = (string)form["notaGeneralDespacho"];
             DateTime fechaDespacho = Formateador.fechaStringToDateTime((string)form["fechaDespacho"]);
             string[] despachoDevuelto = Request.Form.GetValues("despachoDevuelto");
+
+            dw_movin movin = db.Movins.Find(dw_movinID);
+            movin.notaGeneralDespacho = notaGeneral;
+            db.Entry(movin).State = EntityState.Modified;
+
             dw_envio datosEnvio = db.DatosEnvio.SingleOrDefault(s => s.dw_movinID == dw_movinID);
             datosEnvio.dw_datosTransportistaID = 0;
             datosEnvio.fechaDespacho=fechaDespacho;

@@ -53,6 +53,10 @@
                                 </ul>
                             </li>
                         }
+                        @if (permisos.Contains(1) || permisosBodegas.Count > 0)
+                        {
+                            <li>@Html.ActionLink("Validar Productos a Despachar", "Index", "validarProductosDespacho")</li>
+                        }
                         @if (permisos.Contains(1) || permisos.Contains(5) || permisos.Contains(6) || permisos.Contains(10))
                         {
                             <li class="dropdown">
@@ -74,10 +78,7 @@
                         {
                             <li>@Html.ActionLink("Registrar Datos Despacho (Venta)", "Index", "Envio")</li>
                         }
-                        @if (permisos.Contains(1) || permisosBodegas.Count>0)
-                        {
-                            <li>@Html.ActionLink("Validar Productos a Despachar", "Index", "validarProductosDespacho")</li>
-                        }
+                        
                         @if (permisos.Contains(1) || permisos.Contains(8))
                         {
                             <li>@Html.ActionLink("Bodegas", "Index", "bodegas") </li>
