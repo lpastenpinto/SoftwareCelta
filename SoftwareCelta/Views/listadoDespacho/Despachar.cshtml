@@ -148,7 +148,10 @@
         <div class="clearfix"></div>
         <div class="col-md-12">
             <label>Nota General Validacion Productos</label>
-            @Model.notaGeneralValidacionProductos
+            @foreach (SoftwareCelta.Models.notaValidacionProd notasUser in (List<SoftwareCelta.Models.notaValidacionProd>)ViewData["listNotasValid"])
+            {
+               <p>@notasUser.UserName:  @notasUser.text</p>
+            }
         </div>
         <div class="clearfix"></div><br />
         <div class="col-md-12">
@@ -164,14 +167,13 @@
 }
 <br />
 @section Scripts {
-    @Styles.Render("~/Content/bootstrap-datetimepicker.css")
-    @Scripts.Render("~/Scripts/datetimepicker/moment.js")
-    @Scripts.Render("~/Scripts/datetimepicker/bootstrap-datetimepicker.js")
+   
     <script>
         $(document).ready(function () {
             $(".fecha").datetimepicker({
                 viewMode: 'days',
-                format: 'DD/MM/YYYY'
+                format: 'DD/MM/YYYY',
+                locale: 'es'
             });
         });
     </script>

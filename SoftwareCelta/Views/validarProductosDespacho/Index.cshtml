@@ -148,15 +148,22 @@
         </tbody>
     </table>
 </div>
+
+<div class="clearfix"></div>
+<div class="modal-footer">
+    <a href="@Url.Action("productosValidar", "listados", new  { bodega= ViewBag.bodega })"
+       target="_blank" class="btn btn-primary btn-lg"><span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span>Descargar Reporte</a>
+</div>
+
+
 @section Scripts {
-    @Styles.Render("~/Content/bootstrap-datetimepicker.css")
-    @Scripts.Render("~/Scripts/datetimepicker/moment.js")
-    @Scripts.Render("~/Scripts/datetimepicker/bootstrap-datetimepicker.js")
+    
     <script>
         $(document).ready(function () {
             $(".fecha").datetimepicker({
                 viewMode: 'days',
-                format: 'DD/MM/YYYY'
+                format: 'DD/MM/YYYY',
+                locale: 'es'
             });
 
             $("#Boton").click(function () {

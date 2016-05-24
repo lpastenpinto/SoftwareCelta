@@ -11,6 +11,18 @@
 }
 
 <br /><br /><br />
+@if (TempData["Success"] != null)
+{   <br /><br /><br />
+    <div class="col-md-12">
+        <div class="alert alert-success">
+            <button type="button" class="close" data-dismiss="alert"
+                    aria-hidden="true">
+                &times;
+            </button>
+            @TempData["Success"]
+        </div>
+    </div>
+}
 <div class="col-md-12 hidden" id="divAlert">
     <div class="alert alert-success">
         <button type="button" class="close" data-dismiss="alert"
@@ -174,14 +186,13 @@
     </table>
 </div>
 @section Scripts {
-    @Styles.Render("~/Content/bootstrap-datetimepicker.css")
-    @Scripts.Render("~/Scripts/datetimepicker/moment.js")
-    @Scripts.Render("~/Scripts/datetimepicker/bootstrap-datetimepicker.js")
+    
     <script>
         $(document).ready(function () {           
             $(".fecha").datetimepicker({
                 viewMode: 'days',
-                format: 'DD/MM/YYYY'
+                format: 'DD/MM/YYYY',
+                locale: 'es'
             });
 
             $("#Boton").click(function () {

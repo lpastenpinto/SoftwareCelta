@@ -27,7 +27,40 @@ namespace SoftwareCelta.Controllers
         [Permissions(Permission1 = 1, Permission2 = 3)]
         public ActionResult despachoDomicilio(string fechaInicial, string fechaFinal) {
             List<dw_movin> documetosRegistrados = new List<dw_movin>();
-            if (fechaFinal == null || fechaInicial == null)
+            if (Session["fechaDesdeDocumentosRegistrado"] == null && Session["fechaHastaDocumentosRegistrado"] == null)
+            {
+
+                if (fechaFinal == null || fechaInicial == null)
+                {
+                    DateTime fechaActual = DateTime.Today;
+                    documetosRegistrados = db.Movins.Where(s => s.fechaEmision == fechaActual).OrderByDescending(s => s.numeroDocumento).ToList();
+                    ViewBag.fechaDesde = Formateador.fechaCompletaToString(fechaActual);
+                    ViewBag.fechaHasta = Formateador.fechaCompletaToString(fechaActual);
+                }
+                else
+                {
+                    DateTime desde = Formateador.fechaStringToDateTime(fechaInicial);
+                    DateTime hasta = Formateador.fechaStringToDateTime(fechaFinal);
+                    Session["fechaDesdeDocumentosRegistrado"] = desde;
+                    Session["fechaHastaDocumentosRegistrado"] = hasta;
+                    documetosRegistrados = db.Movins.Where(s => s.fechaEmision >= desde & s.fechaEmision <= hasta).OrderByDescending(s => s.numeroDocumento).ToList();
+                    ViewBag.fechaDesde = fechaInicial;
+                    ViewBag.fechaHasta = fechaFinal;
+                }
+            }
+            else {
+
+                DateTime desde = (DateTime)Session["fechaDesdeDocumentosRegistrado"];
+                DateTime hasta = (DateTime)Session["fechaHastaDocumentosRegistrado"];
+
+                Session["fechaDesdeDocumentosRegistrado"] = desde;
+                Session["fechaHastaDocumentosRegistrado"] = hasta;
+                documetosRegistrados = db.Movins.Where(s => s.fechaEmision >= desde & s.fechaEmision <= hasta).OrderByDescending(s => s.numeroDocumento).ToList();
+                ViewBag.fechaDesde = Formateador.fechaCompletaToString(desde);// fechaInicial;
+                ViewBag.fechaHasta = Formateador.fechaCompletaToString(hasta);//fechaFinal;
+            
+            }
+            /*if (fechaFinal == null || fechaInicial == null)
             {
                 DateTime fechaActual = DateTime.Today;
                 documetosRegistrados = db.Movins.Where(s => s.fechaEmision == fechaActual).OrderByDescending(s=>s.numeroDocumento).ToList();
@@ -37,10 +70,12 @@ namespace SoftwareCelta.Controllers
             else {
                 DateTime desde = Formateador.fechaStringToDateTime(fechaInicial);
                 DateTime hasta = Formateador.fechaStringToDateTime(fechaFinal);
+                Session["fechaDesdeDocumentosRegistrado"] = desde;
+                Session["fechaHastaDocumentosRegistrado"] = hasta;
                 documetosRegistrados = db.Movins.Where(s => s.fechaEmision >= desde & s.fechaEmision <= hasta).OrderByDescending(s => s.numeroDocumento).ToList();
                 ViewBag.fechaDesde = fechaInicial;
                 ViewBag.fechaHasta = fechaFinal;
-            }
+            }*/
             
             List<List<dw_detalle>> listaDeListaDetalle = new List<List<dw_detalle>>();
             List<dw_movin> documentosRegistradosParaDespacho = new List<dw_movin>();
@@ -456,6 +491,9 @@ namespace SoftwareCelta.Controllers
         [Permissions]
         public JsonResult getNewDocuments(string fechaDesde,string fechaHasta)
         {
+
+           
+
             SqlDataReader dr;// = new SqlDataReader();
             DateTime fecha = DateTime.Now.AddDays(-1);
             SqlConnection cnx = Connection.getConection();
@@ -464,7 +502,8 @@ namespace SoftwareCelta.Controllers
             if (fechaDesde == null && fechaHasta == null)
             {
                 foliosGuardados = generateStringQuery(fecha);
-                
+                Session["fechaBuscarDocumentoAngularDesde"] = null;
+                Session["fechaBuscarDocumentoAngularHasta"] = null;
                 SqlCommand cmd = new SqlCommand();
                 cmd.Connection = cnx;
                 cmd.CommandText = "SELECT * from softland.celta_ventas WHERE Fecha >@fecha AND anno=@anioActual AND CantFacturada>0";
@@ -479,6 +518,9 @@ namespace SoftwareCelta.Controllers
 
                 DateTime fechaInicio = Formateador.fechaStringToDateTime(fechaDesde);
                 DateTime fechaFinal = Formateador.fechaStringToDateTime(fechaHasta);
+                Session["fechaBuscarDocumentoAngularDesde"] = fechaInicio;
+                Session["fechaBuscarDocumentoAngularHasta"] = fechaFinal;   
+
                 foliosGuardados = generateStringQuery(fechaInicio,fechaFinal);
                 SqlCommand cmd = new SqlCommand();
                 cmd.Connection = cnx;

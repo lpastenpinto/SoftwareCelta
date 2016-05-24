@@ -8,6 +8,7 @@ using System.Text;
 using SoftwareCelta.DAL;
 using System.Data.Entity;
 using SoftwareCelta.Filters;
+using System.Collections;
 
 namespace SoftwareCelta.Controllers
 {
@@ -326,7 +327,15 @@ namespace SoftwareCelta.Controllers
         {
             dw_movin dw_movin = db.Movins.Find(documentoID);                        
             List<dw_detalle> listDetalleDocumento = db.DetalleMovin.Where(s => s.dw_movinID == documentoID).ToList();
-            ViewData["detalleDocumento"] = listDetalleDocumento;                                    
+            ViewData["listNotasValidacion"] = db.notasValidaciones.Where(s => s.idMovin == documentoID).ToList();
+            ViewData["detalleDocumento"] = listDetalleDocumento;
+            List<dw_tipoDocumento> tiposDocs = db.tiposDocumentos.ToList();
+            Hashtable hash = new Hashtable();
+            foreach (var tip in tiposDocs)
+            {
+                hash.Add(tip.dw_tipoDocumentoID, tip.nombreTipoDocumento);
+            }
+            ViewData["tiposDocs"] = hash;
             return View(dw_movin);
         }
 
@@ -337,11 +346,16 @@ namespace SoftwareCelta.Controllers
             List<dw_datosTransportista> datosTransportistas = db.Transportistas.ToList();
             dw_envio datosEnvio = db.DatosEnvio.SingleOrDefault(s => s.dw_movinID == documentoID);
             List<dw_detalle> listDetalleDocumento = db.DetalleMovin.Where(s => s.dw_movinID == documentoID).ToList();
+
+            List<notaValidacionProd> listNotasValid = db.notasValidaciones.Where(s => s.idMovin == documentoID).ToList();
+            ViewData["listNotasValid"] = listNotasValid;
             ViewData["detalleDocumento"] = listDetalleDocumento;
             ViewData["datosEnvio"] = datosEnvio;
             ViewData["bodegas"] = db.Bodegas.ToList();
             ViewData["dw_movin"] = dw_movin;
             ViewData["datosTransportistas"] = datosTransportistas;
+
+
             return View(dw_movin);
         }
 
@@ -365,24 +379,38 @@ namespace SoftwareCelta.Controllers
             dw_envio.dw_datosTransportistaID = Convert.ToInt32((string)form["datosTransportista"]);
             db.Entry(dw_envio).State = EntityState.Modified;
 
-            historicoTransportista histTrans = new historicoTransportista();
-            histTrans.fechaAnteriorDespacho = fechaDespacho;
-            histTrans.dw_movinID = dw_movinID;
-            histTrans.idTransportistaAnterior = dw_envio.dw_datosTransportistaID;
-            histTrans.ciudad = dw_envio.ciudad;
-            histTrans.tipo = "despacho";
-            db.historicosTransportistas.Add(histTrans);
-            db.SaveChanges();
-
             string[] checkeoDespacho = Request.Form.GetValues("estadoDespacho");
-            for (int i = 0; i < checkeoDespacho.Length; i++) {
-                dw_detalle detalle = db.DetalleMovin.Find(Convert.ToInt32(checkeoDespacho[i]));
-                detalle.estadoDespacho = 2;
 
-                db.Entry(detalle).State = EntityState.Modified;                
+            if (checkeoDespacho != null)
+            {
+                historicoTransportista histTrans = new historicoTransportista();
+                histTrans.fechaAnteriorDespacho = fechaDespacho;
+                histTrans.dw_movinID = dw_movinID;
+                histTrans.idTransportistaAnterior = dw_envio.dw_datosTransportistaID;
+                histTrans.ciudad = dw_envio.ciudad;
+                histTrans.tipo = "despacho";
+                db.historicosTransportistas.Add(histTrans);
                 db.SaveChanges();
+
+
+
+                for (int i = 0; i < checkeoDespacho.Length; i++)
+                {
+                    dw_detalle detalle = db.DetalleMovin.Find(Convert.ToInt32(checkeoDespacho[i]));
+                    detalle.estadoDespacho = 2;
+
+                    db.Entry(detalle).State = EntityState.Modified;
+                    db.SaveChanges();
+                }
+                dw_log.registrarLog(Convert.ToInt32(Session["userID"]), Session["userName"].ToString(), "Despacho Documento:" + numeroDocumento);
+                TempData["Success"] = "Documento " + numeroDocumento + " despachado conn exito";
             }
-            dw_log.registrarLog(Convert.ToInt32(Session["userID"]), Session["userName"].ToString(), "Despacho Documento:" + numeroDocumento);
+            else {
+
+                TempData["Success"] = "No se despacho ningun producto del Documento " + numeroDocumento ;
+            }
+
+            
             return RedirectToAction("porDespachar");
         }
 

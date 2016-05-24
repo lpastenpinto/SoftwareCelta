@@ -114,6 +114,10 @@ namespace SoftwareCelta.Controllers
             ViewBag.fechaInicial = Formateador.fechaCompletaToString(fDesde);
             ViewBag.fechaFinal = Formateador.fechaCompletaToString(fHasta);
             ViewBag.bodega = bodega;
+
+            Session["listadoModelValidarProductosReport"] = dw_movinList;
+            Session["listadoDetalleValidarProductosReport"] = listaDeListaDetalle;
+
             return View(dw_movinList);
         }
 
@@ -183,9 +187,16 @@ namespace SoftwareCelta.Controllers
                     listDetalleDocumento.Add(detalle);
                 }
             }
+
+
+            List<notaValidacionProd> listNoValid = db.notasValidaciones.Where(s => s.UserID != userID && s.idMovin == documentoID).ToList();
+            List<notaValidacionProd> listValid = db.notasValidaciones.Where(s => s.UserID == userID && s.idMovin == documentoID).ToList();
+            ViewData["tipoDocumentos"] = db.tiposDocumentos.ToList();
+            ViewData["listNotaValid"] = listNoValid;
+            ViewData["listValid"] = listValid;
             ViewData["detalleDocumento"] = listDetalleDocumento;
-            ViewData["datosEnvio"] = datosEnvio;            
-            
+            ViewData["datosEnvio"] = datosEnvio;        
+                        
             return View(dw_movin); 
         }
 
@@ -193,33 +204,67 @@ namespace SoftwareCelta.Controllers
         [Permissions]
         public ActionResult documento(FormCollection form) {
             string[] prodValidados = Request.Form.GetValues("validarDespacho");
+            string[] tipoDocValidacion = Request.Form.GetValues("tipoDocValidacion");
+            string[] numeroDocValidacion = Request.Form.GetValues("numeroDocValidacion");
+            string[] idDetalles = Request.Form.GetValues("dw_detalleID");
+
             string numDoc = (string)form["numDoc"];
             int idMovin = Convert.ToInt32((string)form["dw_movinID"]);
             string notaGeneral = (string)form["notaGeneralValidacionProductos"];
-
-            dw_movin movin = db.Movins.Find(idMovin);
+                 
+            int userID = Convert.ToInt32(Session["userID"].ToString());
+            string nameUser=Session["userName"].ToString();
+            /*dw_movin movin = db.Movins.Find(idMovin);
             movin.notaGeneralValidacionProductos = notaGeneral;
             db.Entry(movin).State = EntityState.Modified;
-            db.SaveChanges();
-
-
-            if (prodValidados != null)
+            db.SaveChanges();*/
+            notaValidacionProd notaVald = db.notasValidaciones.SingleOrDefault(s => s.idMovin == idMovin && s.UserID==userID);
+            if (!notaGeneral.Equals(""))
             {
-                for (int x = 0; x < prodValidados.Length; x++)
+                if (notaVald == null)
                 {
-                    int idDetalle = Convert.ToInt32(prodValidados[x]);
-                    dw_detalle detalle = db.DetalleMovin.Find(idDetalle);
-                    detalle.validado = 1;
-                    db.Entry(detalle).State = EntityState.Modified;
+                    notaVald = new notaValidacionProd();
+                    notaVald.idMovin = idMovin;
+                    notaVald.text = notaGeneral;
+                    notaVald.UserID = userID;
+                    notaVald.UserName = nameUser;
+                    db.notasValidaciones.Add(notaVald);
+                    db.SaveChanges();
+                }
+                else
+                {
+
+                    notaVald.idMovin = idMovin;
+                    notaVald.text = notaGeneral;
+                    notaVald.UserID = userID;
+                    notaVald.UserName = nameUser;
+                    db.Entry(notaVald).State = EntityState.Modified;
                     db.SaveChanges();
 
                 }
-                TempData["Success"] = "Productos del documento " + numDoc + " validados con Exito";
+            }
+
+            for (int x = 0; x < idDetalles.Length; x++)
+            {
+
+                    int idDetalle = Convert.ToInt32(idDetalles[x]);
+                    int tipoDoc = Convert.ToInt32(tipoDocValidacion[x]);
+                    int numeroDoc = Convert.ToInt32(numeroDocValidacion[x]);
+
+                    dw_detalle detalle = db.DetalleMovin.Find(idDetalle);
+                    string inputValid=(string)form["detalleName"+idDetalle+""];
+                    if (inputValid != null) {
+                        detalle.validado = 1;
+                    }                    
+                    detalle.tipoDocValidacion = tipoDoc;
+                    detalle.numeroDocValidacion = numeroDoc;
+                    db.Entry(detalle).State = EntityState.Modified;
+                    db.SaveChanges();
+
+            }
+                TempData["Success"] = "Productos Marcados del documento " + numDoc + " validados con Exito";
                 dw_log.registrarLog(Convert.ToInt32(Session["userID"]), Session["userName"].ToString(), "Valida sus productos del documento:" + numDoc);
-            }
-            else {
-                TempData["Success"] = "No se valido ningun producto del documento " + numDoc + " ya que ninguno fue marcado";
-            }
+           
             
             return RedirectToAction("Index");
         }

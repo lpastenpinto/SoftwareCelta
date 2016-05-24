@@ -1,7 +1,7 @@
 ﻿@model SoftwareCelta.Models.dw_movin
 @{
     ViewBag.Title = "Documento a Validar";
-    int contadorProductos = 1;
+    int contadorProductos = 0;
     string despacho = "estadoDespacho";
     string nombreBodega = "";
     
@@ -43,13 +43,16 @@
                         Area Interna /Bodega
                     </th>
                     <th>Validar?</th>
+                    <th>Tipo Doc.</th>
+                    <th>Numero Doc.</th>
                 </tr>
             </thead>
             <tbody>
 
                 @foreach (SoftwareCelta.Models.dw_detalle detalle in (List<SoftwareCelta.Models.dw_detalle>)ViewData["detalleDocumento"])
                 {
-                    string nameDespacho = despacho + contadorProductos;
+                    string detalleName = "detalleName" + detalle.dw_detalleID;
+                    
                     <tr>
                         <td>
                             <input class="hidden" name="dw_detalleID" value="@detalle.dw_detalleID" />
@@ -84,9 +87,22 @@
                             else
                             {
                                 <text>
-                                    <input type="checkbox" name="validarDespacho" value="@detalle.dw_detalleID" />
+                                    <input type="checkbox" name="@detalleName" value="@detalle.dw_detalleID" />
                                 </text>
                             }
+                        </td>
+                        <td>
+                            <select class="form-control" name="tipoDocValidacion">
+                                <option value="0"></option>
+                                @foreach (SoftwareCelta.Models.dw_tipoDocumento tipoDoc in (List<SoftwareCelta.Models.dw_tipoDocumento>)ViewData["tipoDocumentos"])
+                                {
+                                    <option value="@tipoDoc.dw_tipoDocumentoID" @if (detalle.tipoDocValidacion != null && detalle.tipoDocValidacion == tipoDoc.dw_tipoDocumentoID) { <text> selected</text>}>@tipoDoc.nombreTipoDocumento</option>
+                                }
+                            </select>
+                            
+                        </td>
+                        <td>
+                            <input class="form-control" type="number" name="numeroDocValidacion" value="@detalle.numeroDocValidacion" />
                         </td>
                     </tr>
                             contadorProductos++;
@@ -94,10 +110,21 @@
             </tbody>
         </table>
         <br />
+                
         <div class="clearfix"></div>
         <div class="col-md-12">
             <label>Nota General Validacion Productos</label>
-            <textarea style="max-width: 100% !important; width:100%;" class="form-control" name="notaGeneralValidacionProductos">@Model.notaGeneralValidacionProductos</textarea>
+            @foreach (SoftwareCelta.Models.notaValidacionProd notasNoMias in (List<SoftwareCelta.Models.notaValidacionProd>)ViewData["listNotaValid"])
+            {
+                <p>@notasNoMias.UserName : @notasNoMias.text </p>
+            }
+            <textarea style="max-width: 100% !important; width:100%;" class="form-control" name="notaGeneralValidacionProductos">            
+                @foreach (SoftwareCelta.Models.notaValidacionProd notasUser in (List<SoftwareCelta.Models.notaValidacionProd>)ViewData["listValid"])
+                {
+                    @notasUser.text
+                  
+                }
+            </textarea>
         </div>
         <div class="clearfix"></div>
         <div class="modal-footer">
@@ -108,14 +135,13 @@
 }
 <br />
 @section Scripts {
-    @Styles.Render("~/Content/bootstrap-datetimepicker.css")
-    @Scripts.Render("~/Scripts/datetimepicker/moment.js")
-    @Scripts.Render("~/Scripts/datetimepicker/bootstrap-datetimepicker.js")
+    
     <script>
         $(document).ready(function () {
             $(".fecha").datetimepicker({
                 viewMode: 'days',
-                format: 'DD/MM/YYYY'
+                format: 'DD/MM/YYYY',
+                locale: 'es'
             });
         });
     </script>

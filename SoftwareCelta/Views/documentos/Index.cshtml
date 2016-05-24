@@ -2,8 +2,17 @@
 @{
     ViewBag.Title = "Buscar Documento";
     int i = 0;
-    string fechaDesde = SoftwareCelta.Models.Formateador.fechaCompletaToString(DateTime.Today);
-    string fechaHasta = SoftwareCelta.Models.Formateador.fechaCompletaToString(DateTime.Today);
+
+    DateTime DatefechaDesde = DateTime.Today;
+    DateTime DatefechaHasta = DateTime.Today;   
+        
+    if(Session["fechaBuscarDocumentoAngularDesde"] !=null && Session["fechaBuscarDocumentoAngularHasta"] !=null){
+        DatefechaDesde = (DateTime)Session["fechaBuscarDocumentoAngularDesde"];
+        DatefechaHasta = (DateTime)Session["fechaBuscarDocumentoAngularHasta"];
+    }
+
+    string fechaDesde = SoftwareCelta.Models.Formateador.fechaCompletaToString(DatefechaDesde);
+    string fechaHasta = SoftwareCelta.Models.Formateador.fechaCompletaToString(DatefechaHasta);
     
         
 }
@@ -101,9 +110,12 @@
 </div>
 <br />
 @section Scripts {
-    @Styles.Render("~/Content/bootstrap-datetimepicker.css")
-    @Scripts.Render("~/Scripts/datetimepicker/moment.js")
-    @Scripts.Render("~/Scripts/datetimepicker/bootstrap-datetimepicker.js")
+    
+
+
+
+
+
     <script src="~/Scripts/angular.js"></script>
     <style>
         tr {
@@ -121,7 +133,9 @@
         $(document).ready(function () {
             $(".fecha").datetimepicker({
                 viewMode: 'days',
-                format: 'DD/MM/YYYY'
+                format: 'DD/MM/YYYY',
+                locale: 'es'
+                
             });
             $(".guardarAreaInternaProd").click(function () {               
                 var idsDetalles = $(this).closest('tr').find("input[name='detalleID']").map(function () { return $(this).val(); }).get();
@@ -154,13 +168,19 @@
             $scope.docs = [];
             var orderBy = $filter('orderBy');
             getDocs();
-            function getDocs() {                
-                docsService.getDocs()
+            function getDocs() {
+                var desde = $('#fechaInicial').val();
+                var hasta = $('#fechaFinal').val();
+                $scope.verifSearch = true;
+                $scope.verifSearchExit = false;
+                docsService.getDocs(desde,hasta)
                     .success(function (docs) {
                         /*for (var i = 0; i < docs.length; i++) {
                             $scope.docs.push(docs[i]);
                         }*/
                         $scope.docs = docs;
+                        $scope.verifSearch = false;
+                        $scope.verifSearchExit = true;
                     })
                     .error(function (error) {
                         $scope.status = 'Unable to load customer data: ' + error.message;
@@ -178,7 +198,7 @@
 
             $scope.buscarDocumentos = function () {
                 var desde = $('#fechaInicial').val();
-                var hasta = $('#fechaFinal').val();
+                var hasta = $('#fechaFinal').val();                
                 $scope.verifSearch = true;
                 $scope.verifSearchExit = false;
                 var listDocs = docsService.getListDocs(desde, hasta);
@@ -210,9 +230,14 @@
 
         docsApp.factory('docsService',function ($http,$q) {
             var docsService = {};
-            docsService.getDocs = function () {
+            docsService.getDocs = function (desde,hasta) {
                 var ruta = window.location.pathname + "/getNewDocuments";
-                return $http.get(ruta);
+                return $http.get(ruta, {
+                    params: {
+                        fechaDesde: desde,
+                        fechaHasta: hasta
+                    }
+                });
             };
 
             docsService.getListDocs = function (desde,hasta) {

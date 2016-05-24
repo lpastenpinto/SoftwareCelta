@@ -1,0 +1,26 @@
+﻿@model SoftwareCelta.Models.dw_tipoDocumento
+
+@{
+    ViewBag.Title = "Details";
+}
+
+<h2>Details</h2>
+
+<div>
+    <h4>dw_tipoDocumento</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.nombreTipoDocumento)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.nombreTipoDocumento)
+        </dd>
+
+    </dl>
+</div>
+<p>
+    @Html.ActionLink("Edit", "Edit", new { id = Model.dw_tipoDocumentoID }) |
+    @Html.ActionLink("Back to List", "Index")
+</p>

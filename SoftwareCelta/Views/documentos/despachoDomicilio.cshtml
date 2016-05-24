@@ -152,14 +152,13 @@
     </table>
 </div>
 @section Scripts {
-    @Styles.Render("~/Content/bootstrap-datetimepicker.css")
-    @Scripts.Render("~/Scripts/datetimepicker/moment.js")
-    @Scripts.Render("~/Scripts/datetimepicker/bootstrap-datetimepicker.js")
+   
     <script>
         $(document).ready(function () {
             $(".fecha").datetimepicker({
                 viewMode: 'days',
-                format: 'DD/MM/YYYY'
+                format: 'DD/MM/YYYY',
+                locale: 'es'
             });
             $(".guardarAreaInternaProd").click(function () {
                 var idsDetalles = $(this).closest('tr').find("input[name='detalleID']").map(function () { return $(this).val(); }).get();

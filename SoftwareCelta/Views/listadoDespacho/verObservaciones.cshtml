@@ -5,6 +5,7 @@
     string nombreBodega = "";
     
     SoftwareCelta.DAL.ContextBDCelta db = new SoftwareCelta.DAL.ContextBDCelta();
+    System.Collections.Hashtable hashTipoDoc = (System.Collections.Hashtable)ViewData["tiposDocs"];
 
 }
 <br /><br />
@@ -41,6 +42,8 @@
                         Area Interna /Bodega
                     </th>
                     <th>Validar?</th>
+                    <th>Tipo Doc.</th>
+                    <th>Numero Doc.</th>
                 </tr>
             </thead>
             <tbody>
@@ -86,6 +89,12 @@
                                 </text>
                             }
                         </td>
+                        <td>
+                            @hashTipoDoc[detalle.tipoDocValidacion].ToString()
+                        </td>
+                        <td>
+                            @detalle.numeroDocValidacion
+                        </td>
                     </tr>                            
                 }
             </tbody>
@@ -93,8 +102,12 @@
         <br />
         <div class="clearfix"></div>
         <div class="col-md-12">
-            <label>Nota General Validacion Productos</label>
-            @Model.notaGeneralValidacionProductos
+            <label>Nota General Validacion Productos</label><br />
+            @foreach (SoftwareCelta.Models.notaValidacionProd notasGeneral in (List<SoftwareCelta.Models.notaValidacionProd>)ViewData["listNotasValidacion"])
+            {
+                <p>@notasGeneral.UserName<text>:</text>  @notasGeneral.text </p>
+            }
+            
         </div>
         <div class="clearfix"></div>
         <div class="modal-footer">
@@ -105,14 +118,13 @@
 }
 <br />
 @section Scripts {
-    @Styles.Render("~/Content/bootstrap-datetimepicker.css")
-    @Scripts.Render("~/Scripts/datetimepicker/moment.js")
-    @Scripts.Render("~/Scripts/datetimepicker/bootstrap-datetimepicker.js")
+    
     <script>
         $(document).ready(function () {
             $(".fecha").datetimepicker({
                 viewMode: 'days',
-                format: 'DD/MM/YYYY'
+                format: 'DD/MM/YYYY',
+                locale: 'es'
             });
         });
     </script>
