@@ -1,0 +1,31 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xs:schema id="productosDespachar" targetNamespace="http://tempuri.org/productosDespachar.xsd" xmlns:mstns="http://tempuri.org/productosDespachar.xsd" xmlns="http://tempuri.org/productosDespachar.xsd" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata" xmlns:msprop="urn:schemas-microsoft-com:xml-msprop" attributeFormDefault="qualified" elementFormDefault="qualified">
+  <xs:annotation>
+    <xs:appinfo source="urn:schemas-microsoft-com:xml-msdatasource">
+      <DataSource DefaultConnectionIndex="0" FunctionsComponentName="QueriesTableAdapter" Modifier="AutoLayout, AnsiClass, Class, Public" SchemaSerializationMode="IncludeSchema" xmlns="urn:schemas-microsoft-com:xml-msdatasource">
+        <Connections />
+        <Tables />
+        <Sources />
+      </DataSource>
+    </xs:appinfo>
+  </xs:annotation>
+  <xs:element name="productosDespachar" msdata:IsDataSet="true" msdata:UseCurrentLocale="true" msprop:EnableTableAdapterManager="true" msprop:Generator_DataSetName="productosDespachar" msprop:Generator_UserDSName="productosDespachar">
+    <xs:complexType>
+      <xs:choice minOccurs="0" maxOccurs="unbounded">
+        <xs:element name="productosDespachar" msprop:Generator_TableClassName="productosDespacharDataTable" msprop:Generator_TableVarName="tableproductosDespachar" msprop:Generator_RowChangedName="productosDespacharRowChanged" msprop:Generator_TablePropName="_productosDespachar" msprop:Generator_RowDeletingName="productosDespacharRowDeleting" msprop:Generator_RowChangingName="productosDespacharRowChanging" msprop:Generator_RowEvHandlerName="productosDespacharRowChangeEventHandler" msprop:Generator_RowDeletedName="productosDespacharRowDeleted" msprop:Generator_RowClassName="productosDespacharRow" msprop:Generator_UserTableName="productosDespachar" msprop:Generator_RowEvArgName="productosDespacharRowChangeEvent">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="numeroDocumento" msprop:Generator_ColumnVarNameInTable="columnnumeroDocumento" msprop:Generator_ColumnPropNameInRow="numeroDocumento" msprop:Generator_ColumnPropNameInTable="numeroDocumentoColumn" msprop:Generator_UserColumnName="numeroDocumento" type="xs:string" minOccurs="0" />
+              <xs:element name="fechaDespacho" msprop:Generator_ColumnVarNameInTable="columnfechaDespacho" msprop:Generator_ColumnPropNameInRow="fechaDespacho" msprop:Generator_ColumnPropNameInTable="fechaDespachoColumn" msprop:Generator_UserColumnName="fechaDespacho" type="xs:string" minOccurs="0" />
+              <xs:element name="codigoProducto" msprop:Generator_ColumnVarNameInTable="columncodigoProducto" msprop:Generator_ColumnPropNameInRow="codigoProducto" msprop:Generator_ColumnPropNameInTable="codigoProductoColumn" msprop:Generator_UserColumnName="codigoProducto" type="xs:string" minOccurs="0" />
+              <xs:element name="descripcionProducto" msprop:Generator_ColumnVarNameInTable="columndescripcionProducto" msprop:Generator_ColumnPropNameInRow="descripcionProducto" msprop:Generator_ColumnPropNameInTable="descripcionProductoColumn" msprop:Generator_UserColumnName="descripcionProducto" type="xs:string" minOccurs="0" />
+              <xs:element name="cantidadProducto" msprop:Generator_ColumnVarNameInTable="columncantidadProducto" msprop:Generator_ColumnPropNameInRow="cantidadProducto" msprop:Generator_ColumnPropNameInTable="cantidadProductoColumn" msprop:Generator_UserColumnName="cantidadProducto" type="xs:string" minOccurs="0" />
+              <xs:element name="bodegaProducto" msprop:Generator_ColumnVarNameInTable="columnbodegaProducto" msprop:Generator_ColumnPropNameInRow="bodegaProducto" msprop:Generator_ColumnPropNameInTable="bodegaProductoColumn" msprop:Generator_UserColumnName="bodegaProducto" type="xs:string" minOccurs="0" />
+              <xs:element name="ciudad" msprop:Generator_ColumnVarNameInTable="columnciudad" msprop:Generator_ColumnPropNameInRow="ciudad" msprop:Generator_ColumnPropNameInTable="ciudadColumn" msprop:Generator_UserColumnName="ciudad" type="xs:string" minOccurs="0" />
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+      </xs:choice>
+    </xs:complexType>
+  </xs:element>
+</xs:schema>

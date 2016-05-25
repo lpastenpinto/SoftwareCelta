@@ -249,7 +249,14 @@ namespace SoftwareCelta.Controllers
 
                     int idDetalle = Convert.ToInt32(idDetalles[x]);
                     int tipoDoc = Convert.ToInt32(tipoDocValidacion[x]);
-                    int numeroDoc = Convert.ToInt32(numeroDocValidacion[x]);
+                    int numeroDoc=0;
+                    try
+                    {
+                        numeroDoc = Convert.ToInt32(numeroDocValidacion[x]);
+                    }
+                    catch (Exception) { 
+                    
+                    }
 
                     dw_detalle detalle = db.DetalleMovin.Find(idDetalle);
                     string inputValid=(string)form["detalleName"+idDetalle+""];

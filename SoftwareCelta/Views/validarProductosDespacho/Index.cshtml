@@ -151,8 +151,10 @@
 
 <div class="clearfix"></div>
 <div class="modal-footer">
-    <a href="@Url.Action("productosValidar", "listados", new  { bodega= ViewBag.bodega })"
-       target="_blank" class="btn btn-primary btn-lg"><span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span>Descargar Reporte</a>
+    <a href="@Url.Action("productosValidar", "listados", new { fechaDesde = ViewBag.fechaInicial, fechaHasta = ViewBag.fechaFinal, bodega = ViewBag.bodega })"
+       target="_blank" class="btn btn-primary btn-sm"><span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span>Descargar Reporte</a>
+    <a href="@Url.Action("productosValidarAgrupado", "listados", new { fechaDesde = ViewBag.fechaInicial, fechaHasta = ViewBag.fechaFinal, bodega = ViewBag.bodega })"
+       target="_blank" class="btn btn-primary btn-sm"><span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span>Descargar Reporte agrupado por Productos</a>
 </div>
 
 

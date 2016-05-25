@@ -4,7 +4,8 @@
     int i = 0;
 
     DateTime DatefechaDesde = DateTime.Today;
-    DateTime DatefechaHasta = DateTime.Today;   
+    DateTime DatefechaHasta = DateTime.Today;
+    string fechaActual = SoftwareCelta.Models.Formateador.fechaCompletaToString(DateTime.Today); 
         
     if(Session["fechaBuscarDocumentoAngularDesde"] !=null && Session["fechaBuscarDocumentoAngularHasta"] !=null){
         DatefechaDesde = (DateTime)Session["fechaBuscarDocumentoAngularDesde"];
@@ -34,6 +35,7 @@
 }
 
 <div ng-app="docsApp" ng-controller="docsController">
+    <input class="hidden" value="@fechaActual" id="fechaActual" />
     <div class="col-md-12">
         <div class="col-md-3 fechaInicio">
             <label class="control-label">Desde:</label>
@@ -90,9 +92,10 @@
                 </tr>
             </thead>
             <tbody style="overflow-y: scroll;height: 300px;position: absolute;">
-                <tr ng-repeat="doc in docs | filter : searchDocs:strict">
+                <tr ng-repeat="doc in docs | filter : searchDocs:strict">                    
                     <td class="col-md-1">{{doc.numeroDocumento}}</td>
-                    <td class="col-md-2">{{doc.tipoDocumento}}</td>
+                    <td class="col-md-2" ng-if="doc.tipoDocumento == 'B'">BOLETA</td>
+                    <td class="col-md-2" ng-if="doc.tipoDocumento == 'F'">FACTURA</td>
                     <td class="col-md-1">
                         {{doc.nombreVendedor}}
                     </td>
@@ -164,7 +167,7 @@
         var docsApp = angular.module('docsApp', []);
         docsApp.controller('docsController', function ($scope, $interval, $http,$filter, docsService) {
             $scope.verifSearch = false;
-            $scope.verifSearchExit = false;
+            $scope.verifSearchExit = false;                        
             $scope.docs = [];
             var orderBy = $filter('orderBy');
             getDocs();
@@ -217,7 +220,13 @@
                     console.log(response);
                     $scope.docs = response;
                 });*/
-                $scope.buscarDocumentos();
+                
+                var hasta = $('#fechaFinal').val();
+                var fechaActual = $('#fechaActual').val();
+                
+                if (hasta == fechaActual) {
+                    $scope.buscarDocumentos();
+                }
             }, 60000);
 
 

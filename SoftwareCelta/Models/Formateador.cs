@@ -170,9 +170,11 @@ namespace SoftwareCelta.Models
         public static Hashtable listToHash(List<dw_envio> listaEnvio)
         {
             Hashtable hash = new Hashtable();
+            int id=0;
             foreach (var env in listaEnvio)
             {
-                hash.Add(env.valeVenta, env.direccion);
+                id= Convert.ToInt32(env.valeVenta);
+                hash.Add(id, env.direccion);
             }
             return hash;
         }

@@ -168,6 +168,11 @@
     <Compile Include="Models\roles.cs" />
     <Compile Include="Models\user.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Report\productosDespachar.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>productosDespachar.xsd</DependentUpon>
+    </Compile>
     <Compile Include="Report\productosValidar.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -235,6 +240,17 @@
     <Content Include="Scripts\angular.min.js.map" />
     <Content Include="Report\productosValidar.xsc">
       <DependentUpon>productosValidar.xsd</DependentUpon>
+    </Content>
+    <Content Include="Report\productosDespachar.xsc">
+      <DependentUpon>productosDespachar.xsd</DependentUpon>
+    </Content>
+    <None Include="Report\productosDespachar.xsd">
+      <SubType>Designer</SubType>
+      <Generator>MSDataSetGenerator</Generator>
+      <LastGenOutput>productosDespachar.Designer.cs</LastGenOutput>
+    </None>
+    <Content Include="Report\productosDespachar.xss">
+      <DependentUpon>productosDespachar.xsd</DependentUpon>
     </Content>
     <None Include="Report\productosValidar.xsd">
       <SubType>Designer</SubType>
@@ -1085,6 +1101,8 @@
     <None Include="Project_Readme.html" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="Report\productosDespacharGroup.rdlc" />
+    <EmbeddedResource Include="Report\productosDespachar.rdlc" />
     <EmbeddedResource Include="Report\productosValidar.rdlc" />
   </ItemGroup>
   <PropertyGroup>

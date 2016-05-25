@@ -102,7 +102,8 @@ namespace SoftwareCelta.Controllers
             ViewBag.filtroDoc = estadoFiltroDoc;
             ViewBag.filtroFecha = estadoFiltroFecha;
             ViewBag.idTransportista=idTransport;
-            ViewBag.idBodega=idBodega;            
+            ViewBag.idBodega=idBodega;
+            
             return View(dw_movinList);
         }
 
@@ -319,6 +320,11 @@ namespace SoftwareCelta.Controllers
             ViewBag.fechaFinal = Formateador.fechaCompletaToString(fHasta);
             ViewBag.ciudad = ciudad;
             ViewBag.estado = estado;
+
+            Session["listadoProductosDespachoReport"] = dw_movinList;
+            Session["listadoEnviosProductosDespachoReport"] = listaFinalEnvios;
+            Session["listadoDetalleProductosDespachoReport"] = listaDeListaDetalle;
+
             return View(dw_movinList);
         }
 

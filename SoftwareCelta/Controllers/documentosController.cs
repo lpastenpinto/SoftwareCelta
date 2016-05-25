@@ -490,9 +490,7 @@ namespace SoftwareCelta.Controllers
         [HttpGet]
         [Permissions]
         public JsonResult getNewDocuments(string fechaDesde,string fechaHasta)
-        {
-
-           
+        {           
 
             SqlDataReader dr;// = new SqlDataReader();
             DateTime fecha = DateTime.Now.AddDays(-1);
@@ -506,7 +504,7 @@ namespace SoftwareCelta.Controllers
                 Session["fechaBuscarDocumentoAngularHasta"] = null;
                 SqlCommand cmd = new SqlCommand();
                 cmd.Connection = cnx;
-                cmd.CommandText = "SELECT * from softland.celta_ventas WHERE Fecha >@fecha AND anno=@anioActual AND CantFacturada>0";
+                cmd.CommandText = "SELECT Folio,CantFacturada,CodProd,DesProd,NroVale,NomAux,Tipo,Fecha from softland.celta_ventas WHERE Fecha >@fecha AND anno=@anioActual AND CantFacturada>0";
                 cmd.CommandType = CommandType.Text;
                 cmd.Parameters.Add("@fecha", SqlDbType.DateTime).Value = fecha;
                 cmd.Parameters.Add("@anioActual", SqlDbType.Int).Value = fecha.Year;
@@ -524,7 +522,7 @@ namespace SoftwareCelta.Controllers
                 foliosGuardados = generateStringQuery(fechaInicio,fechaFinal);
                 SqlCommand cmd = new SqlCommand();
                 cmd.Connection = cnx;
-                cmd.CommandText = "SELECT * from softland.celta_ventas WHERE Fecha >=@fechaInicial AND Fecha <=@fechaFinal AND CantFacturada>0";
+                cmd.CommandText = "SELECT Folio,CantFacturada,CodProd,DesProd,NroVale,NomAux,Tipo,Fecha from softland.celta_ventas WHERE Fecha >=@fechaInicial AND Fecha <=@fechaFinal AND CantFacturada>0";
                 cmd.CommandType = CommandType.Text;
                 cmd.Parameters.Add("@fechaInicial", SqlDbType.DateTime).Value = fechaInicio;
                 cmd.Parameters.Add("@fechaFinal", SqlDbType.DateTime).Value = fechaFinal;                
@@ -537,74 +535,85 @@ namespace SoftwareCelta.Controllers
             int folio = 0;
 
             dw_movin mov = new dw_movin();
+            dw_detalle detalle = new dw_detalle();
             List<dw_movin> documentosRegistrados = new List<dw_movin>();
             List<dw_detalle> listDetalle = new List<dw_detalle>();
             
-            double totalDoc = 0;
+            //double totalDoc = 0;
             while (dr.Read())
             {
-                if (!foliosGuardados.Contains(Convert.ToInt32(dr["Folio"])))
+                int folioDocumento = Convert.ToInt32(dr["Folio"]);
+                
+
+                if (!foliosGuardados.Contains(folioDocumento))
                 {
-                    if (folio != Convert.ToInt32(dr["Folio"]))
+                    if (folio != folioDocumento)
                     {
-                        totalDoc = 0;
-                        x++;
+                        
+                        string tipoDocumento = (string)dr["Tipo"];
+                        DateTime fechaDocumento = (DateTime)dr["Fecha"];
                         mov = new dw_movin();
                         listDetalle = new List<dw_detalle>();
-                        mov.dw_movinID = x;
-                        mov.fechaEmision = (DateTime)dr["Fecha"];
-                        mov.numeroDocumento = Convert.ToInt32(dr["Folio"]);
-                        mov.nombreVendedor = Formateador.fechaCompletaToString((DateTime)dr["Fecha"]);
-                        mov.tipoDocumento = (string)dr["Tipo"];
-                        if ((string)dr["Tipo"] == "B")
-                        {
-                            mov.tipoDocumento = "BOLETA";
-                        }
-                        else if ((string)dr["Tipo"] == "F")
-                        {
-                            mov.tipoDocumento = "FACTURA";
-                        }
-                        string nomAux = "";
-                        try
+                        
+                        mov.fechaEmision = fechaDocumento;
+                        mov.numeroDocumento = folioDocumento;
+                        mov.nombreVendedor = Formateador.fechaCompletaToString(fechaDocumento);
+                        mov.tipoDocumento = tipoDocumento;
+
+                        string nomAux = "Cliente Boleta";
+                        if (!DBNull.Value.Equals(dr["NomAux"]))
                         {
                             nomAux = (string)dr["NomAux"];
                         }
-                        catch (Exception)
+
+                        int valeVentaString = 0;
+                        if (!DBNull.Value.Equals(dr["NroVale"]))
                         {
-                            nomAux = "Cliente Boleta";
+                            valeVentaString = Convert.ToInt32(dr["NroVale"]);
                         }
-                        string valeVentaString = "";
-                        try
-                        {
-                            valeVentaString = Convert.ToInt32(dr["NroVale"]).ToString();
-                        }
-                        catch (Exception) {
-                            valeVentaString = "0";
-                        }
-                        //dw_envio dw_envio = db.DatosEnvio.SingleOrDefault(s => s.valeVenta == valeVentaString);
+
+
                         if (hashEnvio.ContainsKey(valeVentaString))
+                        {
+                            mov.nombreCliente = nomAux + " /" + hashEnvio[valeVentaString].ToString();
+                        }
+                        else
+                        {
+                            mov.nombreCliente = nomAux + " / ";
+                        }
+                        /*try
+                        {
+                            valeVentaString = Convert.ToInt32(dr["NroVale"]) ;
+                        }
+                        catch (Exception) {                            
+                        }
+                        try {
+                            mov.nombreCliente = nomAux + " /" + hashEnvio[valeVentaString].ToString();
+                        }catch(Exception){
+                            mov.nombreCliente = nomAux + " / ";
+                        }
+                        /*if (hashEnvio.ContainsKey(valeVentaString))
                         {
                             mov.nombreCliente = nomAux + " /" + hashEnvio[valeVentaString].ToString();
                         }
                         else {
                             mov.nombreCliente = nomAux + " / ";
                         }
-                        
-                        folio = Convert.ToInt32(dr["Folio"]);
+                        */
+                        folio = folioDocumento;
                         documentosRegistrados.Add(mov);
                     }
-                    dw_detalle detalle = new dw_detalle();
+                    detalle = new dw_detalle();
                     detalle.cantidadProducto = Convert.ToDouble(dr["CantFacturada"]);
                     detalle.codigoProducto = (string)dr["CodProd"];
                     detalle.descripcionProducto = (string)dr["DesProd"];
                     detalle.dw_movinID = mov.dw_movinID;
                     listDetalle.Add(detalle);
                     mov.detalleMovin = listDetalle;
-                    double Valor = (double)dr["Valor"];
-                    double Descuento = (double)dr["Descuento"];
-                    totalDoc = totalDoc + (Valor - Descuento);
-
-                    mov.total = Math.Round(totalDoc, 0);                    
+                    //double Valor = (double)dr["Valor"];
+                    //double Descuento = (double)dr["Descuento"];
+                    //totalDoc = totalDoc + (Valor - Descuento);
+                    //mov.total = Math.Round(totalDoc, 0);                    
                 }
             }
 

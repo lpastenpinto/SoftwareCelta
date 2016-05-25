@@ -185,6 +185,15 @@
         </tbody>
     </table>
 </div>
+@if (System.Convert.ToString(ViewBag.estado) == "1") { 
+    <div class="clearfix"></div>
+    <div class="modal-footer">
+        <a href="@Url.Action("productosDespachar", "listados", new { ciudad = ViewBag.ciudad, fechaDesde = ViewBag.fechaInicial, fechaHasta = ViewBag.fechaFinal })"
+        target="_blank" class="btn btn-primary btn-sm"><span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span>Descargar Reporte</a>
+        <a href="@Url.Action("productosDespacharAgrupados", "listados", new { ciudad = ViewBag.ciudad, fechaDesde = ViewBag.fechaInicial, fechaHasta = ViewBag.fechaFinal })"
+        target="_blank" class="btn btn-primary btn-sm"><span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span>Descargar Reporte agrupado por Productos</a>
+    </div>
+}
 @section Scripts {
     
     <script>
