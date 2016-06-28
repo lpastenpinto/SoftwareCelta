@@ -60,6 +60,7 @@ namespace SoftwareCelta.Controllers
             List<int> cantidadProductosPorDespachar = new List<int>();
             List<List<dw_detalle>> listaDeListaDetalle = new List<List<dw_detalle>>();
             List<dw_envio> datosEnvio = new List<dw_envio>();
+            List<dw_envio> datosEnvioFinal = new List<dw_envio>();
             datosEnvio = db.DatosEnvio.Where(s => s.fechaDespacho <= fHasta & s.fechaDespacho >= fDesde).ToList();
 
             foreach (var datoEnvio in datosEnvio)
@@ -91,6 +92,7 @@ namespace SoftwareCelta.Controllers
                         cantidadProductosPorDespachar.Add(count);
                         dw_movinList.Add(dw_movin);
                         listaDeListaDetalle.Add(detalleTemp);
+                        datosEnvioFinal.Add(datoEnvio);
                     }
                     
                 }
@@ -110,13 +112,15 @@ namespace SoftwareCelta.Controllers
             ViewData["listaDeListaDetalle"] = listaDeListaDetalle;
             ViewData["bodegas"] = dw_areaInternaList;
             ViewData["bodegasTodas"] = db.Bodegas.ToList();
-                        
+            ViewData["datosEnvio"] = datosEnvioFinal;           
+
             ViewBag.fechaInicial = Formateador.fechaCompletaToString(fDesde);
             ViewBag.fechaFinal = Formateador.fechaCompletaToString(fHasta);
             ViewBag.bodega = bodega;
 
             Session["listadoModelValidarProductosReport"] = dw_movinList;
             Session["listadoDetalleValidarProductosReport"] = listaDeListaDetalle;
+            Session["datosEnvioProductosReport"] = datosEnvioFinal;
 
             return View(dw_movinList);
         }

@@ -5,6 +5,7 @@
     List<SoftwareCelta.Models.dw_ciudades_despacho> ciudades = (List<SoftwareCelta.Models.dw_ciudades_despacho>)ViewData["dw_ciudades"];
 
 }
+<br /><br /><br />
 
 <h2>Nuevo</h2>
 
@@ -12,9 +13,18 @@
 {
     @Html.AntiForgeryToken()
     <div class="row">
-        <div class="col-md-4">
+        <div class="col-md-12 bigDiv">
             <label class="control-label">Vale Venta</label>
-            <input class="form-control" name="valeVenta" type="number" required/>
+            <a id="botonAgregarItem" class="btn btn-primary btnAgregarNumVale"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span>Adjuntar Vale Venta</a>
+            <br /><br />
+            <div class="divNumVale col-md-12">
+                <input class="form-control" name="valeVenta" type="number" style="display:initial;" required />
+               
+                <a class="btn btn-danger btnEliminarNumVale" id="botonEliminarItem"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></a>
+                
+            </div>
+            <br />
+            
         </div>
         <div class="col-md-4">
             <label class="control-label">Nombre Cliente</label>
@@ -68,12 +78,34 @@
     
     <script>
         $(document).ready(function () {
+            var numeroItem = 1;
             $(".fecha").datetimepicker({
                 viewMode: 'days',
                 format: 'DD/MM/YYYY',
                 locale: 'es'
             });
-
+            $(".btnAgregarNumVale").click(function () {                
+                
+                var $bigDiv = $(".bigDiv");
+                var $lastDivNumVale = $bigDiv.find(".divNumVale:last");
+                var $temp = $lastDivNumVale.clone();
+                $temp.find('.form-control').val('');                
+                
+                $bigDiv.append($temp);
+                $bigDiv.append('<br />');
+                numeroItem++;             
+                return false;
+            });
+            $(document).on("click", ".btnEliminarNumVale", function () {
+                var element = this;
+                if (numeroItem > 1) {
+                    $(element).closest('.divNumVale').remove();                    
+                    numeroItem--;
+                } else {
+                    alert("No puede eliminar este item , ya que se debe por lo menos tener un numero de vale.")
+                }
+                return false;
+            });
         });
     </script>
 }

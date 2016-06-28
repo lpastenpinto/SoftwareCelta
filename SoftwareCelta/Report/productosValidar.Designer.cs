@@ -291,6 +291,8 @@ namespace SoftwareCelta.Report {
             
             private global::System.Data.DataColumn columnbodega;
             
+            private global::System.Data.DataColumn columnciudad;
+            
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
             public DataTableProductosValidarDataTable() {
@@ -374,6 +376,14 @@ namespace SoftwareCelta.Report {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public global::System.Data.DataColumn ciudadColumn {
+                get {
+                    return this.columnciudad;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
             [global::System.ComponentModel.Browsable(false)]
             public int Count {
                 get {
@@ -409,7 +419,7 @@ namespace SoftwareCelta.Report {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            public DataTableProductosValidarRow AddDataTableProductosValidarRow(string numeroDocumento, string fechaEmision, string codigoProducto, string descripcionProducto, string cantidadProducto, string bodega) {
+            public DataTableProductosValidarRow AddDataTableProductosValidarRow(string numeroDocumento, string fechaEmision, string codigoProducto, string descripcionProducto, string cantidadProducto, string bodega, string ciudad) {
                 DataTableProductosValidarRow rowDataTableProductosValidarRow = ((DataTableProductosValidarRow)(this.NewRow()));
                 object[] columnValuesArray = new object[] {
                         numeroDocumento,
@@ -417,7 +427,8 @@ namespace SoftwareCelta.Report {
                         codigoProducto,
                         descripcionProducto,
                         cantidadProducto,
-                        bodega};
+                        bodega,
+                        ciudad};
                 rowDataTableProductosValidarRow.ItemArray = columnValuesArray;
                 this.Rows.Add(rowDataTableProductosValidarRow);
                 return rowDataTableProductosValidarRow;
@@ -446,6 +457,7 @@ namespace SoftwareCelta.Report {
                 this.columndescripcionProducto = base.Columns["descripcionProducto"];
                 this.columncantidadProducto = base.Columns["cantidadProducto"];
                 this.columnbodega = base.Columns["bodega"];
+                this.columnciudad = base.Columns["ciudad"];
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -463,6 +475,8 @@ namespace SoftwareCelta.Report {
                 base.Columns.Add(this.columncantidadProducto);
                 this.columnbodega = new global::System.Data.DataColumn("bodega", typeof(string), null, global::System.Data.MappingType.Element);
                 base.Columns.Add(this.columnbodega);
+                this.columnciudad = new global::System.Data.DataColumn("ciudad", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnciudad);
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -706,6 +720,22 @@ namespace SoftwareCelta.Report {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public string ciudad {
+                get {
+                    try {
+                        return ((string)(this[this.tableDataTableProductosValidar.ciudadColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'ciudad\' in table \'DataTableProductosValidar\' is DBNull.", e);
+                    }
+                }
+                set {
+                    this[this.tableDataTableProductosValidar.ciudadColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
             public bool IsnumeroDocumentoNull() {
                 return this.IsNull(this.tableDataTableProductosValidar.numeroDocumentoColumn);
             }
@@ -774,6 +804,18 @@ namespace SoftwareCelta.Report {
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
             public void SetbodegaNull() {
                 this[this.tableDataTableProductosValidar.bodegaColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public bool IsciudadNull() {
+                return this.IsNull(this.tableDataTableProductosValidar.ciudadColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public void SetciudadNull() {
+                this[this.tableDataTableProductosValidar.ciudadColumn] = global::System.Convert.DBNull;
             }
         }
         

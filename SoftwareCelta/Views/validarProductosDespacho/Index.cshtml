@@ -6,6 +6,8 @@
 
     List<List<SoftwareCelta.Models.dw_detalle>> listaDeListaDetalle = (List<List<SoftwareCelta.Models.dw_detalle>>)ViewData["listaDeListaDetalle"];
     List<int> cantidadProductosPorDespachar = (List<int>)ViewData["cantidadProductosPorDespachar"];
+    
+    List<SoftwareCelta.Models.dw_envio> datosEnvio = (List<SoftwareCelta.Models.dw_envio>)ViewData["datosEnvio"];
     List<int> permisos = (List<int>)Session["permisosUser"];
     //System.Collections.Hashtable hashAreaInterna = (System.Collections.Hashtable)ViewData["hashBodegas"];
 }
@@ -92,6 +94,9 @@
                     Numero Boleta
                 </th>
                 <th>
+                    Destino
+                </th>
+                <th>
                     Cant. Prod. por despachar
                 </th>
                 <th>Productos a Despachar</th>                
@@ -104,10 +109,13 @@
             {
                 string nameDiv = "divProd" + @i;
                 <tr>
-                    <td class="col-xs-2">
+                    <td class="col-xs-1">
                         @Html.DisplayFor(modelItem => item.numeroDocumento)
                         <input class="hidden idMovin" name="idMovin" value="@item.dw_movinID" />
                         <input class="hidden numeroDocumento" value="@item.numeroDocumento" />
+                    </td>
+                    <td class="col-xs-1">
+                        @datosEnvio[i].ciudad
                     </td>
                     <td class="col-xs-1">
                         @cantidadProductosPorDespachar[i]

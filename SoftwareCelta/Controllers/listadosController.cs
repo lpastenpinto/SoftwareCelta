@@ -32,13 +32,14 @@ namespace SoftwareCelta.Controllers
             LocalReport reporte_local = new LocalReport();            
             List<dw_movin> listaMovi = (List<dw_movin>)Session["listadoModelValidarProductosReport"];
             List<List<dw_detalle>> listaDetalle =(List<List<dw_detalle>>)Session["listadoDetalleValidarProductosReport"];
-            
-            reporte_local.ReportPath = Server.MapPath("~/Report/productosValidar.rdlc");
+            List<dw_envio> datosEnvio = (List<dw_envio>)Session["datosEnvioProductosReport"];
+
+            reporte_local.ReportPath = Server.MapPath("~/Report/productosValidarCiudad.rdlc");
             ReportDataSource conjunto_datos = new ReportDataSource();
             conjunto_datos.Name = "DataSet1";
 
             reportValidarProduct ReportClass = new reportValidarProduct();
-            List<reportValidarProduct> lista = ReportClass.toReport(listaMovi, listaDetalle, bodega);
+            List<reportValidarProduct> lista = ReportClass.toReport(listaMovi, listaDetalle, bodega, datosEnvio);
 
             ReportParameter fecha1 = new ReportParameter("fechaInicial", fechaDesde);
             ReportParameter fecha2 = new ReportParameter("fechaFinal", fechaHasta);
@@ -176,11 +177,12 @@ namespace SoftwareCelta.Controllers
         public string codigoProducto { set; get; }
         public string descripcionProducto { set; get; }
         public string cantidadProducto { set; get; }
-        public string bodega{ set; get; }       
+        public string bodega{ set; get; }
+        public string ciudad { set; get; }
 
         public reportValidarProduct() { }
 
-            public List<reportValidarProduct> toReport(List<dw_movin> movin, List<List<dw_detalle>> detalle, string bodega) {
+            public List<reportValidarProduct> toReport(List<dw_movin> movin, List<List<dw_detalle>> detalle, string bodega,List<dw_envio> datosEnvio) {
 
             ContextBDCelta db = new ContextBDCelta();
             Hashtable hash = new Hashtable();
@@ -203,6 +205,7 @@ namespace SoftwareCelta.Controllers
                     newClass.descripcionProducto = detalle[x][i].descripcionProducto;
                     newClass.fechaEmision = Formateador.fechaCompletaToString(mov.fechaEmision);
                     newClass.numeroDocumento = mov.numeroDocumento.ToString();
+                    newClass.ciudad = datosEnvio[x].ciudad;
                     lista.Add(newClass);
                 }                    
                 x++;

@@ -68,45 +68,72 @@ namespace SoftwareCelta.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Permissions(Permission1 = 1, Permission2 = 7)]
-        public ActionResult Create([Bind(Include = "dw_envioID,valeVenta,nombreCliente,rutCliente,ciudad,telefono,direccion,observacion,fechaValeVenta")] dw_envio dw_envioNew, FormCollection form)
+        public ActionResult Create([Bind(Include = "dw_envioID,nombreCliente,rutCliente,ciudad,telefono,direccion,observacion,fechaValeVenta")] dw_envio dw_envioNew, FormCollection form)
         {
             DateTime fecha = Formateador.fechaStringToDateTime((string)form["fechaValeVenta"]);
             dw_envioNew.fechaValeVenta = fecha;
 
-            int numVale =Convert.ToInt32(dw_envioNew.valeVenta);
-            dw_movin movin = db.Movins.SingleOrDefault(s => s.numeroVale == numVale);
-            if (movin != null)
+            string[] valeVenta = Request.Form.GetValues("valeVenta");
+            for (int i = 0; i < valeVenta.Length; i++)
             {
-                int idMovin = movin.dw_movinID;
-                dw_envio dw_envio = db.DatosEnvio.SingleOrDefault(s => s.dw_movinID == idMovin);
-                if (dw_envio != null)
+                int numVale = Convert.ToInt32(valeVenta[i]);
+                dw_movin movin = db.Movins.SingleOrDefault(s => s.numeroVale == numVale);
+                if (movin != null)
                 {
-                    dw_envio.fechaValeVenta = fecha;
-                    dw_envio.valeVenta = dw_envioNew.valeVenta;
-                    dw_envio.nombreCliente = dw_envioNew.nombreCliente;
-                    dw_envio.rutCliente = dw_envioNew.rutCliente;
-                    dw_envio.direccion = dw_envioNew.direccion;
-                    dw_envio.ciudad = dw_envioNew.ciudad;
-                    dw_envio.telefono = dw_envioNew.telefono;
-                    db.Entry(dw_envio).State = EntityState.Modified;
-                    db.SaveChanges();
+                    int idMovin = movin.dw_movinID;
+                    dw_envio dw_envio = db.DatosEnvio.SingleOrDefault(s => s.dw_movinID == idMovin);
+                    if (dw_envio != null)
+                    {
+                        dw_envio.fechaValeVenta = fecha;
+                        dw_envio.valeVenta = valeVenta[i];
+                        dw_envio.nombreCliente = dw_envioNew.nombreCliente;
+                        dw_envio.rutCliente = dw_envioNew.rutCliente;
+                        dw_envio.direccion = dw_envioNew.direccion;
+                        dw_envio.ciudad = dw_envioNew.ciudad;
+                        dw_envio.telefono = dw_envioNew.telefono;
+                        db.Entry(dw_envio).State = EntityState.Modified;
+                        db.SaveChanges();
 
+                    }
+                    else
+                    {
+                        DateTime fechaD = new DateTime(2000, 1, 1);
+                        dw_envioNew.fechaDespacho = fechaD;
+                        dw_envioNew.valeVenta = valeVenta[i];
+                        db.DatosEnvio.Add(dw_envioNew);
+                        db.SaveChanges();
+                    }
                 }
-                else {
-                    DateTime fechaD = new DateTime(2000, 1, 1);
-                    dw_envioNew.fechaDespacho = fechaD;
-                    db.DatosEnvio.Add(dw_envioNew);
-                    db.SaveChanges();                
-                }
-            }
-            else { 
-                DateTime fechaD = new DateTime(2000,1,1);            
-                dw_envioNew.fechaDespacho=fechaD;
-                db.DatosEnvio.Add(dw_envioNew);
-                db.SaveChanges();
-            }
+                else
+                {
+                    string vale=numVale.ToString();
+                    dw_envio dw_envio = db.DatosEnvio.SingleOrDefault(s => s.valeVenta == vale);
+                    if (dw_envio != null)
+                    {
+                        dw_envio.fechaValeVenta = fecha;
+                        dw_envio.valeVenta = valeVenta[i];
+                        dw_envio.nombreCliente = dw_envioNew.nombreCliente;
+                        dw_envio.rutCliente = dw_envioNew.rutCliente;
+                        dw_envio.direccion = dw_envioNew.direccion;
+                        dw_envio.ciudad = dw_envioNew.ciudad;
+                        dw_envio.telefono = dw_envioNew.telefono;
+                        db.Entry(dw_envio).State = EntityState.Modified;
+                        db.SaveChanges();
 
-            dw_log.registrarLog(Convert.ToInt32(Session["userID"]), Session["userName"].ToString(), "Registro nueva venta Vale Venta:" + dw_envioNew.valeVenta);
+                    }
+                    else
+                    {
+                        DateTime fechaD = new DateTime(2000, 1, 1);
+                        dw_envioNew.fechaDespacho = fechaD;
+                        dw_envioNew.valeVenta = valeVenta[i];
+                        db.DatosEnvio.Add(dw_envioNew);
+                        db.SaveChanges();
+                    }
+                   
+                }
+                //dw_log.registrarLog(Convert.ToInt32(Session["userID"]), Session["userName"].ToString(), "Registro nueva venta Vale Venta:" + valeVenta[i]);
+            }
+            
                 return RedirectToAction("Index");
             
 

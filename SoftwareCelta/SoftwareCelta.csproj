@@ -1117,6 +1117,7 @@
   <ItemGroup>
     <EmbeddedResource Include="Report\productosDespacharGroup.rdlc" />
     <EmbeddedResource Include="Report\productosDespachar.rdlc" />
+    <EmbeddedResource Include="Report\productosValidarCiudad.rdlc" />
     <EmbeddedResource Include="Report\productosValidar.rdlc" />
   </ItemGroup>
   <PropertyGroup>
