@@ -50,8 +50,10 @@ namespace SoftwareCelta.Controllers
             }
             else {
 
-                DateTime desde = (DateTime)Session["fechaDesdeDocumentosRegistrado"];
-                DateTime hasta = (DateTime)Session["fechaHastaDocumentosRegistrado"];
+                DateTime desde = Formateador.fechaStringToDateTime(fechaInicial);
+                DateTime hasta = Formateador.fechaStringToDateTime(fechaFinal);
+                //DateTime desde = (DateTime)Session["fechaDesdeDocumentosRegistrado"];
+                //DateTime hasta = (DateTime)Session["fechaHastaDocumentosRegistrado"];
 
                 Session["fechaDesdeDocumentosRegistrado"] = desde;
                 Session["fechaHastaDocumentosRegistrado"] = hasta;
