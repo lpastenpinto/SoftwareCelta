@@ -330,12 +330,17 @@ namespace SoftwareCelta.Controllers
         [HttpPost]
         [Permissions(Permission1 = 1, Permission2 = 2, Permission3 = 3)]
         public ActionResult registrarNuevoDocumento(FormCollection form) {
+            
             int numeroDocumento = Convert.ToInt32((string)form["numeroDocumento"]);
             int numeroVale = Convert.ToInt32((string)form["numeroVale"]);
             string tipoDoc = (string)form["Tipo"];
             string nombreVendedor = (string)form["CodVendedor"];
             DateTime fechaEmision = Formateador.fechaFormatoGuardar((string)form["fechaEmision"]);
-            
+
+            dw_movin doc = db.Movins.SingleOrDefault(s => s.numeroDocumento == numeroDocumento);
+            if (!Object.ReferenceEquals(null, doc)) {
+                return RedirectToAction("Index");
+            }
             dw_movin documento = new dw_movin();
             documento.fechaEmision = fechaEmision;            
             documento.numeroDocumento = numeroDocumento;
