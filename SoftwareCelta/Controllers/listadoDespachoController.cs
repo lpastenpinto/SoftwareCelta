@@ -249,62 +249,66 @@ namespace SoftwareCelta.Controllers
                 List<dw_detalle> dw_detalleListTotal = new List<dw_detalle>();// db.DetalleMovin.Where(s => s.dw_movinID == dw_movin.dw_movinID & s.estadoDespacho == 1 ).ToList();
                 List<dw_detalle> dw_detalleList = new List<dw_detalle>();//db.DetalleMovin.Where(s => s.dw_movinID == dw_movin.dw_movinID &s.estadoDespacho==1 & s.validado!=0).ToList();
 
-                
-                if (estado == "todas") {
-
-                    dw_detalleList = db.DetalleMovin.Where(s => s.dw_movinID == dw_movin.dw_movinID & s.estadoDespacho == 1).ToList();                    
-                    int cantidadProductosMovin = dw_detalleList.Count;
-                    if (cantidadProductosMovin > 0)
+                if (dw_movin != null)
+                {
+                    if (estado == "todas")
                     {
-                        cantidadProductosPorDespachar.Add(cantidadProductosMovin);
-                        dw_movinList.Add(dw_movin);
-                        listaDeListaDetalle.Add(dw_detalleList);
-                        listaFinalEnvios.Add(datoEnvio);
+
+                        dw_detalleList = db.DetalleMovin.Where(s => s.dw_movinID == dw_movin.dw_movinID & s.estadoDespacho == 1).ToList();
+                        int cantidadProductosMovin = dw_detalleList.Count;
+                        if (cantidadProductosMovin > 0)
+                        {
+                            cantidadProductosPorDespachar.Add(cantidadProductosMovin);
+                            dw_movinList.Add(dw_movin);
+                            listaDeListaDetalle.Add(dw_detalleList);
+                            listaFinalEnvios.Add(datoEnvio);
+                        }
                     }
-                }
-                else  if(estado=="0"){
-                    dw_detalleListTotal = db.DetalleMovin.Where(s => s.dw_movinID == dw_movin.dw_movinID & s.estadoDespacho == 1).ToList();
-                    dw_detalleList = db.DetalleMovin.Where(s => s.dw_movinID == dw_movin.dw_movinID & s.estadoDespacho == 1 & s.validado == 0).ToList();
-                    
-                    int cantidadTotalProdDoc = dw_detalleListTotal.Count;
-                    int cantidadProductosMovin = dw_detalleList.Count;
-                    if (cantidadProductosMovin > 0)
+                    else if (estado == "0")
                     {
-                        cantidadProductosPorDespachar.Add(cantidadProductosMovin);
-                        dw_movinList.Add(dw_movin);
-                        listaDeListaDetalle.Add(dw_detalleListTotal);
-                        listaFinalEnvios.Add(datoEnvio);
+                        dw_detalleListTotal = db.DetalleMovin.Where(s => s.dw_movinID == dw_movin.dw_movinID & s.estadoDespacho == 1).ToList();
+                        dw_detalleList = db.DetalleMovin.Where(s => s.dw_movinID == dw_movin.dw_movinID & s.estadoDespacho == 1 & s.validado == 0).ToList();
+
+                        int cantidadTotalProdDoc = dw_detalleListTotal.Count;
+                        int cantidadProductosMovin = dw_detalleList.Count;
+                        if (cantidadProductosMovin > 0)
+                        {
+                            cantidadProductosPorDespachar.Add(cantidadProductosMovin);
+                            dw_movinList.Add(dw_movin);
+                            listaDeListaDetalle.Add(dw_detalleListTotal);
+                            listaFinalEnvios.Add(datoEnvio);
+                        }
+
+                    }
+                    else if (estado == "1")
+                    {
+                        dw_detalleListTotal = db.DetalleMovin.Where(s => s.dw_movinID == dw_movin.dw_movinID & s.estadoDespacho == 1).ToList();
+                        dw_detalleList = db.DetalleMovin.Where(s => s.dw_movinID == dw_movin.dw_movinID & s.estadoDespacho == 1 & s.validado == 1).ToList();
+                        int cantidadTotalProdDoc = dw_detalleListTotal.Count;
+                        int cantidadProductosMovin = dw_detalleList.Count;
+                        if (cantidadProductosMovin > 0 && cantidadTotalProdDoc == cantidadProductosMovin)
+                        {
+                            cantidadProductosPorDespachar.Add(cantidadProductosMovin);
+                            dw_movinList.Add(dw_movin);
+                            listaDeListaDetalle.Add(dw_detalleList);
+                            listaFinalEnvios.Add(datoEnvio);
+                        }
                     }
 
-                }
-                else if (estado =="1") {
-                    dw_detalleListTotal = db.DetalleMovin.Where(s => s.dw_movinID == dw_movin.dw_movinID & s.estadoDespacho == 1).ToList();
-                    dw_detalleList = db.DetalleMovin.Where(s => s.dw_movinID == dw_movin.dw_movinID & s.estadoDespacho == 1 & s.validado == 1).ToList();
-                    int cantidadTotalProdDoc = dw_detalleListTotal.Count;
-                    int cantidadProductosMovin = dw_detalleList.Count;
-                    if (cantidadProductosMovin > 0 && cantidadTotalProdDoc == cantidadProductosMovin)
-                    {
-                        cantidadProductosPorDespachar.Add(cantidadProductosMovin);
-                        dw_movinList.Add(dw_movin);
-                        listaDeListaDetalle.Add(dw_detalleList);
-                        listaFinalEnvios.Add(datoEnvio);
-                    }
-                }
-                
-                /*int estadoInt = Convert.ToInt32(estado);
-                    dw_detalleListTotal = db.DetalleMovin.Where(s => s.dw_movinID == dw_movin.dw_movinID & s.estadoDespacho == 1).ToList();
-                    dw_detalleList = db.DetalleMovin.Where(s => s.dw_movinID == dw_movin.dw_movinID & s.estadoDespacho == 1 & s.validado != 0).ToList();
+                    /*int estadoInt = Convert.ToInt32(estado);
+                        dw_detalleListTotal = db.DetalleMovin.Where(s => s.dw_movinID == dw_movin.dw_movinID & s.estadoDespacho == 1).ToList();
+                        dw_detalleList = db.DetalleMovin.Where(s => s.dw_movinID == dw_movin.dw_movinID & s.estadoDespacho == 1 & s.validado != 0).ToList();
 
-                    int cantidadTotalProdDoc = dw_detalleListTotal.Count;
-                    int cantidadProductosMovin = dw_detalleList.Count;
-                    if (cantidadProductosMovin > 0 && cantidadTotalProdDoc == cantidadProductosMovin)
-                    {
-                        cantidadProductosPorDespachar.Add(cantidadProductosMovin);
+                        int cantidadTotalProdDoc = dw_detalleListTotal.Count;
+                        int cantidadProductosMovin = dw_detalleList.Count;
+                        if (cantidadProductosMovin > 0 && cantidadTotalProdDoc == cantidadProductosMovin)
+                        {
+                            cantidadProductosPorDespachar.Add(cantidadProductosMovin);
 
-                        dw_movinList.Add(dw_movin);
-                        listaDeListaDetalle.Add(dw_detalleList);
-                    }*/
-               
+                            dw_movinList.Add(dw_movin);
+                            listaDeListaDetalle.Add(dw_detalleList);
+                        }*/
+                }
             }
 
 

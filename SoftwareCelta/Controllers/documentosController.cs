@@ -19,7 +19,11 @@ namespace SoftwareCelta.Controllers
         // GET: documentos
         [Permissions(Permission1 = 1, Permission2 = 2)]
         public ActionResult Index()
-        {                        
+        {
+            dw_envio envio = db.DatosEnvio.Find(344);
+            envio.valeVenta = "105758";
+            db.Entry(envio).State = EntityState.Modified;
+            db.SaveChanges();
             return View();
 
         }
@@ -50,8 +54,23 @@ namespace SoftwareCelta.Controllers
             }
             else {
 
-                DateTime desde = Formateador.fechaStringToDateTime(fechaInicial);
-                DateTime hasta = Formateador.fechaStringToDateTime(fechaFinal);
+                DateTime desde = new DateTime();
+                DateTime hasta = new DateTime();
+                if (fechaFinal == null || fechaInicial == null)
+                {
+                    DateTime fechaActual = DateTime.Today;
+                    documetosRegistrados = db.Movins.Where(s => s.fechaEmision == fechaActual).OrderByDescending(s => s.numeroDocumento).ToList();
+                    ViewBag.fechaDesde = Formateador.fechaCompletaToString(fechaActual);
+                    ViewBag.fechaHasta = Formateador.fechaCompletaToString(fechaActual);
+                    desde = Formateador.fechaStringToDateTime(Formateador.fechaCompletaToString(fechaActual));
+                    hasta = Formateador.fechaStringToDateTime(Formateador.fechaCompletaToString(fechaActual));
+                }
+                else {
+                    desde = Formateador.fechaStringToDateTime(fechaInicial);
+                    hasta = Formateador.fechaStringToDateTime(fechaFinal);
+                }
+
+                
                 //DateTime desde = (DateTime)Session["fechaDesdeDocumentosRegistrado"];
                 //DateTime hasta = (DateTime)Session["fechaHastaDocumentosRegistrado"];
 
