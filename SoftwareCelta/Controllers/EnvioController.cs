@@ -105,7 +105,7 @@ namespace SoftwareCelta.Controllers
                             dw_envio.ciudad = dw_envioNew.ciudad;
                             dw_envio.telefono = dw_envioNew.telefono;
                             db.Entry(dw_envio).State = EntityState.Modified;
-                            //db.SaveChanges();
+                            db.SaveChanges();
 
                         }
                         else
@@ -114,7 +114,7 @@ namespace SoftwareCelta.Controllers
                             dw_envioNew.fechaDespacho = fechaD;
                             dw_envioNew.valeVenta = valeVenta[i];
                             db.DatosEnvio.Add(dw_envioNew);
-                            //db.SaveChanges();
+                            db.SaveChanges();
                         }
                     }
                     else
@@ -131,7 +131,7 @@ namespace SoftwareCelta.Controllers
                             dw_envio.ciudad = dw_envioNew.ciudad;
                             dw_envio.telefono = dw_envioNew.telefono;
                             db.Entry(dw_envio).State = EntityState.Modified;
-                            //db.SaveChanges();
+                            db.SaveChanges();
 
                         }
                         else
@@ -140,11 +140,11 @@ namespace SoftwareCelta.Controllers
                             dw_envioNew.fechaDespacho = fechaD;
                             dw_envioNew.valeVenta = valeVenta[i];
                             db.DatosEnvio.Add(dw_envioNew);
-                            //db.SaveChanges();
+                            db.SaveChanges();
                         }
 
                     }
-                    //dw_log.registrarLog(Convert.ToInt32(Session["userID"]), Session["userName"].ToString(), "Registro nueva venta Vale Venta:" + valeVenta[i]);
+                    dw_log.registrarLog(Convert.ToInt32(Session["userID"]), Session["userName"].ToString(), "Registro nueva venta Vale Venta:" + valeVenta[i]);
                 }
                 TempData["Success"] = "Informacion Guardada con exito";
             }
