@@ -20,10 +20,10 @@ namespace SoftwareCelta.Controllers
         [Permissions(Permission1 = 1, Permission2 = 2)]
         public ActionResult Index()
         {
-            dw_envio envio = db.DatosEnvio.Find(344);
+            /*dw_envio envio = db.DatosEnvio.Find(344);
             envio.valeVenta = "105758";
             db.Entry(envio).State = EntityState.Modified;
-            db.SaveChanges();
+            db.SaveChanges();*/
             return View();
 
         }

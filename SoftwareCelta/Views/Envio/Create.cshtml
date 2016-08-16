@@ -21,7 +21,7 @@
             <a id="botonAgregarItem" class="btn btn-primary btnAgregarNumVale"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span>Adjuntar Vale Venta</a>
             <br /><br />
             <div class="divNumVale col-md-12">
-                <input class="form-control" name="valeVenta" type="number" style="display:initial;" required />
+                <input class="form-control Int" name="valeVenta" type="number" style="display:initial;" required />
                
                 <a class="btn btn-danger btnEliminarNumVale" id="botonEliminarItem"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></a>
                 
@@ -98,6 +98,14 @@
                 $bigDiv.append('<br />');
                 numeroItem++;             
                 return false;
+            });
+            $('.Int').bind('keypress', function (event) {
+                var regex = new RegExp("^([0-9])$");
+                var key = String.fromCharCode(!event.charCode ? event.which : event.charCode);
+                if (!regex.test(key)) {
+                    event.preventDefault();
+                    return false;
+                }
             });
             $(document).on("click", ".btnEliminarNumVale", function () {
                 var element = this;

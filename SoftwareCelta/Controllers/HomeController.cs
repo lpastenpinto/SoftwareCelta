@@ -17,8 +17,8 @@ namespace SoftwareCelta.Controllers
         [Permissions]
         public ActionResult Index()
         {
-            /*dw_envio envio1 = db.DatosEnvio.Find(410);
-            envio1.valeVenta = "106394";
+            dw_envio envio1 = db.DatosEnvio.Find(410);
+            envio1.valeVenta = "106394";/*
             db.Entry(envio1).State = EntityState.Modified;
             db.SaveChanges();
 
